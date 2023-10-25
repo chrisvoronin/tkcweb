@@ -1,0 +1,55 @@
+﻿@model Music
+@{
+    ViewData["Title"] = "The Kings Congreation";
+}
+
+<section class="sermon_video_btn">
+    <div class="container">
+        <div class="inner_video_sermons">
+
+            <div class="info_sermon_img">
+                <img src="/img/info-point 1.svg" alt="">
+                <span>@Model.Title</span>
+            </div>
+            <div class="sermons_btns">
+                <a class="all_btns_sermon" asp-controller="Music" asp-action="Index">All Music</a>
+                <a class="all_btns_sermon" asp-controller="Home" asp-action="Resources">Resources</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="sermons_video_section">
+    <div class="container">
+        <div class="sermons_video_content">
+            <span>@Model.SubTitle</span>
+            <h3>@Model.Title</h3>
+            <div class="inner_video_date">
+                @if (Model.Author != null)
+                {
+                    <span>@Model.Author</span><span>•</span>
+                }
+
+                <span>@Model.DateCreated.ToLongDateString()</span>
+            </div>
+        </div>
+        @if (!string.IsNullOrWhiteSpace(Model.VideoUrl))
+        {
+            <div class="sermons_video_img">
+                @*<img src="/img/sermons_video_img.png" alt="">*@
+                <iframe width="100%" height="100%" src="@Model.VideoUrl" title="@Model.Title" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen id="video"></iframe>
+                <a href="" id="play-video">
+                    <img class="play_button" src="/img/play_button.svg" alt="" id="cover">
+                </a>
+            </div>
+        }
+
+        <div class="audio_section">
+            <div class="audio_img flex-column">
+                @*<audio controls>
+                </audio>*@
+                <a class="downloadBtn" asp-controller="Music" asp-action="PDF" asp-route-id="@Model.Id">Download PDF <img src="/img/downloadBtn.svg" alt=""></a>
+            </div>
+        </div>
+    </div>
+</section>

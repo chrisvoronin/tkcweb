@@ -1,0 +1,119 @@
+﻿@{
+    ViewData["Title"] = "The Kings Congreation";
+}
+
+<section class="sermon_video_btn">
+    <div class="container">
+        <div class="inner_video_sermons">
+
+            <div class="info_sermon_img">
+                <img src="/img/info-point 1.svg" alt="">
+                <span>Admin - Music</span>
+            </div>
+            <div class="sermons_btns">
+                <a class="all_btns_sermon" asp-controller="Admin" asp-action="Music">All Music</a>
+                <a class="all_btns_sermon" asp-controller="Admin" asp-action="Index">Admin Home</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section class="sermons_video_section">
+    <div class="container">
+        <div id="inner">
+            <div class="form-floating mb-3">
+                <input class="form-control" aria-required="true" placeholder="Title" id="itemtitle" />
+                <label class="form-label">Title</label>
+                <span class="text-danger"></span>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input class="form-control" aria-required="true" placeholder="SubTitle" id="itemsubtitle" />
+                <label class="form-label">SubTitle</label>
+                <span class="text-danger"></span>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input class="form-control" aria-required="true" placeholder="Author" id="itemauthor" />
+                <label class="form-label">Author</label>
+                <span class="text-danger"></span>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input class="form-control" aria-required="true" placeholder="Video Url" id="itemvideourl" />
+                <label class="form-label">Video Url</label>
+                <span class="text-danger"></span>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input class="form-control" aria-required="true" placeholder="Audio Url" id="itemaudiourl" />
+                <label class="form-label">Audio Url</label>
+                <span class="text-danger"></span>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input class="form-control" aria-required="true" placeholder="Pdf Url" id="itempdfurl" />
+                <label class="form-label">Pdf Url</label>
+                <span class="text-danger"></span>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input class="form-control" aria-required="true" type="date" placeholder="Date Created" id="itemdate" />
+                <label class="form-label">Date Created</label>
+                <span class="text-danger"></span>
+            </div>
+
+            <div>
+                <button id="submit" type="submit" class="w-100 btn btn-lg btn-primary" onclick="save();">Save</button>
+                <input type="hidden" id="itemid" value="@Model.Id" />
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<script type="text/javascript">
+
+    function save() {
+
+        const itemId = $("#itemid").val();
+        const title = $("#itemtitle").val();
+        const subTitle = $("#itemsubtitle").val();
+        const author = $("#itemauthor").val();
+
+        const videoUrl = $("#itemvideourl").val();
+        const audioUrl = $("#itemaudiourl").val();
+        const pdfUrl = $("#itempdfurl").val();
+
+        const dateCreated = $("#itemdate").val();
+
+        var item = {
+            id: itemId,
+            title: title,
+            subTitle: subTitle,
+            author: author,
+            videoUrl: videoUrl,
+            audioUrl: audioUrl,
+            pdfUrl: pdfUrl,
+            dateCreated: dateCreated
+        }
+
+        var jsonString = JSON.stringify(jsonData);
+        
+        $.ajax({
+            url: '/api/music/,
+            type: 'PATCH',
+            contentType: 'application/json',
+            data: jsonString,
+            success: function (results) {
+                alert("Saved");
+
+            },
+            error: function (error) {
+                alert("Unable to save, check your internet connection please.");
+            }
+        });
+    }
+
+</script>

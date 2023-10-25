@@ -1,0 +1,69 @@
+﻿@{
+    ViewData["Title"] = "The Kings Congreation";
+}
+@model SermonListResponse
+
+<section class="Sermons_section">
+    <div class="container">
+        <div class="Sermons_content">
+            <h2>Sermons</h2>
+            <div class="inner_search_bar">
+
+                @*<div class="search_bar">
+                    <input class="form-control" type="text" name="" id="" placeholder="Search">
+                    <img src="/img/search.svg" alt="">
+                </div>*@
+                <div class="showing_arrow">
+
+                    @if (Model.PrevPageToken != null)
+                    {
+                        <a class="left_arrow" href="@Url.Action("Index", new { p = @Model.PrevPageToken, pn = Model.CurrentPage-1 })">
+                            <img src="/img/left-arrow 1.svg" alt="">
+                        </a>
+                    }
+
+                    <span>Showing @((Model.CurrentPage - 1) * Model.ResultsPerPage + 1) - @(Model.Sermons.Count + (Model.CurrentPage-1) * Model.ResultsPerPage) / @Model.TotalResults</span>
+
+                    @if (Model.NextPageToken != null)
+                    {
+                        <a class="left_arrow" href="@Url.Action("Index", new { p = @Model.NextPageToken, pn = Model.CurrentPage+1 })">
+                            <img src="/img/right-arrow 1.svg" alt="">
+                        </a>
+                    }
+
+                </div>
+            </div>
+            @foreach (var sermon in Model.Sermons)
+            {
+                <div class="inner_valus_data">
+                    <div class="sermons_values">
+                        <a class="nounderline sermons_values" href="@Url.Action("Detail", new { id = sermon.Id })">
+                            <h4>@sermon.Title</h4>
+                            <span>@sermon.Passage</span>
+                        </a>
+                    </div>
+                    <div class="sermons_date">
+                        <span>@sermon.Speaker</span>
+                        <span>•</span>
+                        <span>@sermon.DateCreated</span>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<!-- Learn More Section start -->
+<section class="learnmore">
+    <div class="container">
+        <div class="inner_learn">
+            <div class="learn_contenet">
+                <h2>Want to Learn More?</h2>
+            </div>
+            <div class="learn_btn">
+                <a class="contact_learn_btn" asp-controller="Home" asp-action="Contact"> Contact</a>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Learn More Section End -->

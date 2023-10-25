@@ -1,0 +1,61 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+}
+@model AdminSummary
+
+<section class="Sermons_section">
+    <div class="container">
+        <div class="Sermons_content">
+            <h2>Dashboard</h2>
+            <div id="inner">
+
+                @*Sermons*@
+                <div class="inner_valus_data">
+                    <div class="sermons_values">
+                        <a class="nounderline sermons_values" asp-controller="Admin" asp-action="Sermons">
+                            <h4>Sermons</h4>
+                            <span>(@Model.SermonsCount)</span>
+                        </a>
+                    </div>
+                    <div class="sermons_date">
+                        <a class="nounderline sermons_values" asp-controller="Admin" asp-action="Sermons"><span>Edit</span></a>
+                        <span>•</span>
+                        <a class="nounderline sermons_values" asp-controller="Admin" asp-action="SermonsNew"><span>Add</span></a>
+                    </div>
+                </div>
+
+                @*Short Takes*@
+                <div class="inner_valus_data">
+                    <div class="sermons_values">
+                        <a class="nounderline sermons_values" asp-controller="Admin" asp-action="ShortTakes">
+                            <h4>Short Takes</h4>
+                            <span>(@Model.ShortTakeCount)</span>
+                        </a>
+                    </div>
+                    <div class="sermons_date">
+                        <a class="nounderline sermons_values" asp-controller="Admin" asp-action="ShortTakes"><span>Edit</span></a>
+                        <span>•</span>
+                        <a class="nounderline sermons_values" asp-controller="Admin" asp-action="ShortTakeNew"><span>Add</span></a>
+                    </div>
+                </div>
+
+                @*Music*@
+                <div class="inner_valus_data">
+                    <div class="sermons_values">
+                        <a class="nounderline sermons_values" asp-controller="Admin" asp-action="Musics">
+                            <h4>Music</h4>
+                            <span>(@Model.MusicCount)</span>
+                        </a>
+                    </div>
+                    <div class="sermons_date">
+                        <a class="nounderline sermons_values" asp-controller="Admin" asp-action="Musics"><span>Edit</span></a>
+                        <span>•</span>
+                        <a class="nounderline sermons_values" asp-controller="Admin" asp-action="MusicNew"><span>Add</span></a>
+                    </div>
+                </div>
+
+            </div>
+            
+        </div>
+    </div>
+</section>

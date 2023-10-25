@@ -1,0 +1,43 @@
+﻿@{
+    ViewData["Title"] = "The Kings Congreation";
+}
+
+@model ShortTake
+
+<section class="sermon_video_btn">
+    <div class="container">
+        <div class="inner_video_sermons">
+
+            <div class="info_sermon_img">
+                <img src="/img/info-point 1.svg" alt="">
+                <span>Short Takes</span>
+            </div>
+            <div class="sermons_btns">
+                <a class="all_btns_sermon" asp-controller="ShortTakes" asp-action="Index">All ShortTakes</a>
+                <a class="all_btns_sermon" asp-controller="Home" asp-action="Resources">Resources</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section class="sermons_video_section">
+    <div class="container">
+        <div class="sermons_video_content">
+            <h3>@Model.Title</h3>
+            <div class="inner_video_date">
+                <span>@Model.Speaker</span><span>•</span><span>@Model.DateCreated.ToLongDateString()</span>
+            </div>
+        </div>
+        
+        <div class="audio_section">
+            <span>Audio Transcript</span>
+            <div class="audio_img">
+                <audio controls="controls">
+                    <source src="@Model.Url" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+            </div>
+        </div>
+    </div>
+</section>

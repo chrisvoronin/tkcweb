@@ -1,0 +1,133 @@
+﻿@{
+    ViewData["Title"] = "The Kings Congreation";
+}
+
+<section class="sermon_video_btn">
+    <div class="container">
+        <div class="inner_video_sermons">
+
+            <div class="info_sermon_img">
+                <img src="/img/info-point 1.svg" alt="">
+                <span>Add Short Take</span>
+            </div>
+            <div class="sermons_btns">
+                <a class="all_btns_sermon" asp-controller="Admin" asp-action="ShortTakes">All ShortTakes</a>
+                <a class="all_btns_sermon" asp-controller="Admin" asp-action="Index">Admin Home</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section class="sermons_video_section">
+    <div class="container">
+        <div class="form-floating mb-3">
+            <input class="form-control" aria-required="true" placeholder="Title" id="itemtitle" />
+            <label class="form-label">Title</label>
+            <span class="text-danger"></span>
+        </div>
+
+        <div class="form-floating mb-3">
+            <input class="form-control" aria-required="true" placeholder="Speaker" id="itemspeaker" />
+            <label class="form-label">Speaker</label>
+            <span class="text-danger"></span>
+        </div>
+
+        <div class="form-floating mb-3">
+            <input class="form-control" aria-required="true" type="date" placeholder="Date Created" id="itemdate" />
+            <label class="form-label">Date Created</label>
+            <span class="text-danger"></span>
+        </div>
+
+        <div class="form-floating mb-3">
+            <input type="file" class="form-control" aria-required="true" id="itemfile" placeholder="File" />
+        </div>
+
+        <div>
+            <button id="submit" type="submit" class="w-100 btn btn-lg btn-primary" onclick="save();">Save</button>
+            <input type="hidden" id="itemid" value="" />
+            <input type="hidden" id="itemurl" value="" />
+        </div>
+        <br />
+        <br />
+
+    </div>
+</section>
+
+<script type="text/javascript">
+    function save() {
+
+        var inputFile = $('#itemfile')[0].files[0];
+
+        if (inputFile) {
+            uploadFile(inputFile);
+        } else {
+            runSave();
+        }
+    }
+
+    function runSave() {
+
+        const itemId = 0;
+        const title = $("#itemtitle").val();
+        const speaker = $("#itemspeaker").val();
+        const url = $("#itemurl").val();
+        const dateCreated = $("#itemdate").val();
+
+        var jsonData = {
+            id: itemId,
+            title: title,
+            speaker: speaker,
+            url: url,
+            dateCreated: dateCreated
+        };
+
+        var jsonString = JSON.stringify(jsonData);
+        
+        $.ajax({
+            url: '/api/shorttakes/',
+            type: 'POST',
+            contentType: 'application/json',
+            data: jsonString,
+            success: function (results) {
+                console.log("Saved ok");
+                handleResults(results);
+
+            },
+            error: function (error) {
+                alert("Paging didn't work,please check your internet connection");
+            }
+        });
+    }
+
+    function handleResults(results) {
+
+    }
+
+    function uploadFile(file) {
+        // Implement your file upload logic here
+        // You can use AJAX to send the file to the server
+        // For example:
+        var formData = new FormData();
+        formData.append('file', file);
+
+        $.ajax({
+            url: '/api/upload',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                console.log("Uploaded file " + response.FileName);
+                $("#itemurl").val(response.FileName);
+                $('#itemfile').val('');
+                runSave();
+            },
+            error: function (error) {
+                console.error('Error uploading file:', error);
+                // Handle the error
+            }
+        });
+    }
+
+</script>

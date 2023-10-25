@@ -1,0 +1,65 @@
+﻿@{
+    ViewData["Title"] = "The Kings Congreation";
+}
+
+<section class="contact_section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 p-0">
+                <div class="contact_img">
+                    <!-- <img src="assets/img/contact.png" alt=""> -->
+                </div>
+            </div>
+            <div class="col-md-6 p-0">
+                <div class="content_contact">
+                    <h1>Get in Touch</h1>
+                    <input class="form-control" type="text" name="name" id="name" placeholder="Name">
+                    <input class="form-control" type="text" name="email" id="email" placeholder="Email">
+                    <textarea class="form-control" id="message" name="message" rows="3"
+                              placeholder="Your Massage"></textarea>
+                    <a class="contact_btn_sub" onclick="submitEmailForm(); return false;">Submit</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="services_section">
+    <div class="container">
+        <div class="inner_services">
+            <div class="content_services">
+                <h2>Sunday Service</h2>
+                <span>Sunday Worship Service, 8:30 AM</span>
+                <br>
+                <span>
+                    Ambrose School Great Hall 6100 North Locust Grove RoadMeridian, Idaho 83646
+                </span>
+            </div>
+            <div class="content_services email">
+                <h2>Email</h2>
+                <span>office@TheKingsCongregation.com</span>
+            </div>
+        </div>
+    </div>
+</section>
+<script type="text/javascript">
+    function submitEmailForm() {
+        var formData = {
+            name: $("#name").val(),
+            email: $("#email").val(),
+            message: $("#message").val()
+        };
+        //post, show alert as thank you.
+        $.ajax({
+            type: "POST",
+            url: "/Contact",
+            data: formData,
+            success: function (response) {
+                alert("Message Sent");
+            },
+            error: function (error) {
+                alert("Unable to send message. Please check your internet connection.");
+            }
+        });
+    }
+</script>
