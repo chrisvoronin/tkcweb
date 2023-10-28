@@ -3,7 +3,7 @@
     Layout = "_LayoutAdmin";
 }
 
-@model Music
+@model Sermon
 
 <section class="sermon_video_btn">
     <div class="container">
@@ -64,7 +64,19 @@
 
             <div>
                 <button id="submit" type="submit" class="w-100 btn btn-lg btn-primary" onclick="save();">Save</button>
+                <br />
+                <br />
                 <input type="hidden" id="itemid" value="@Model.Id" />
+            </div>
+
+            <div class="audio_section">
+                <span>Audio Preview</span>
+                <div class="audio_img">
+                    <audio controls="controls">
+                        <source src="/File/@Model.AudioUrl" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
             </div>
 
         </div>

@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using TKC.Data;
 using TKC.Models;
 
@@ -13,7 +14,6 @@ public class HomeController : Controller
 
     private readonly CacheService _cache;
     private readonly YoutubeAPI _api;
-    private readonly int sermonsPerPage = 10;
 
     public HomeController(ILogger<HomeController> logger, ApplicationDbContext context, CacheService cache, YoutubeAPI api)
     {
@@ -70,17 +70,17 @@ public class HomeController : Controller
     {
         ResourcesViewModel vm = new ResourcesViewModel()
         {
-            Music = _context.Musics.Take(3).ToList(),
-            Sermons = new List<Sermon>(),
-            Shorts = _context.ShortTakes.Take(3).ToList()
+            Music = await _context.Musics.Take(3).ToListAsync(),
+            Sermons = await _context.Sermons.Take(6).ToListAsync(),
+            Shorts = await _context.ShortTakes.Take(3).ToListAsync()
         };
 
-        var apiResponse = await _api.GetPlaylistVideos(_cache, _api.PlayListIdSermons, sermonsPerPage);
-        if (apiResponse != null)
-        {
-            var conv = SermonConverter.Convert(apiResponse);
-            vm.Sermons = conv.Sermons.Take(6).ToList();
-        }
+        //var apiResponse = await _api.GetPlaylistVideos(_cache, _api.PlayListIdSermons, sermonsPerPage);
+        //if (apiResponse != null)
+        //{
+        //    var conv = SermonConverter.Convert(apiResponse);
+        //    vm.Sermons = conv.Sermons.Take(6).ToList();
+        //}
 
         return View(vm);
     }
