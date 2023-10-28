@@ -18,23 +18,23 @@
                 @foreach (var s in Model.Sermons)
                 {
 
-                <div class="resources_values">
-                    <div class="box_info">
-                        <img src="/img/info-point 1.svg" alt="">
+                    <div class="resources_values">
+                        <div class="box_info">
+                            <img src="/img/info-point 1.svg" alt="">
+                        </div>
+                        <div class="resources_data">
+                            <a class="nounderline sermons_values" asp-controller="Sermons" asp-action="Detail" asp-route-id="@s.Id">
+                                <span>@s.SubTitle</span>
+                                <h4>@s.Title</h4>
+                                <span>@s.Author</span>
+                                <span class="dout">•</span>
+                                <span>@s.DateCreated</span>
+                            </a>
+                        </div>
                     </div>
-                    <div class="resources_data">
-                        <a class="nounderline sermons_values" asp-controller="Sermons" asp-action="Detail" asp-route-id="@s.Id">
-                            <span>@s.Passage</span>
-                            <h4>@s.Title</h4>
-                            <span>@s.Speaker</span>
-                            <span class="dout">•</span>
-                            <span>@s.DateCreated</span>
-                        </a>
-                    </div>
-                </div>
 
                 }
-                
+
             </div>
             <div class="music_section">
                 <div class="resources_content">
@@ -43,85 +43,67 @@
                         <span>See All <img src="/img/arrow-right 1.svg" alt=""></span>
                     </a>
                 </div>
-                @foreach(var m in Model.Music)
+                @foreach (var m in Model.Music)
                 {
-                <div class="resources_values">
-                    <div class="box_info">
-                        <img src="/img/phone-music 1.svg" alt="">
-                    </div>
-                    <div class="resources_data">
+                    <div class="resources_values">
+                        <div class="box_info">
+                            <img src="/img/phone-music 1.svg" alt="">
+                        </div>
+                        <div class="resources_data">
 
-                        <a class="nounderline sermons_values" asp-controller="Music" asp-action="Detail" asp-route-id="@m.Id">
-                            <h4>@m.Title</h4>
-                        </a>
+                            <a class="nounderline sermons_values" asp-controller="Music" asp-action="Detail" asp-route-id="@m.Id">
+                                <h4>@m.Title</h4>
+                            </a>
 
-                        @if (!string.IsNullOrWhiteSpace(m.PdfUrl))
-                        {
-                            <a class="nounderline sermons_values" asp-controller="Music" asp-action="PDF" asp-route-id="@m.Id">
-                                <span>PDF</span>
-                            </a>
-                            <span class="dout">•</span>
-                        }
-                        @if (!string.IsNullOrWhiteSpace(m.FileUrl))
-                        {
-                            <a class="nounderline sermons_values" asp-controller="Music" asp-action="MP3" asp-route-id="@m.Id">
-                                <span>MP3</span>
-                            </a>
-                            <span class="dout">•</span>
-                        }
-                        <a class="nounderline sermons_values" asp-controller="Music" asp-action="Detail" asp-route-id="@m.Id">
-                            <span>Video</span>
-                        </a>
+                            @if (!string.IsNullOrWhiteSpace(m.PdfUrl))
+                            {
+                                <a class="nounderline sermons_values" asp-controller="Music" asp-action="Detail" asp-route-id="@m.Id">
+                                    <span>PDF</span>
+                                </a>
+                                <span class="dout">•</span>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(m.AudioUrl))
+                            {
+                                <a class="nounderline sermons_values" asp-controller="Music" asp-action="Detail" asp-route-id="@m.Id">
+                                    <span>MP3</span>
+                                </a>
+                                <span class="dout">•</span>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(m.VideoUrl))
+                            {
+                                <a class="nounderline sermons_values" asp-controller="Music" asp-action="Detail" asp-route-id="@m.Id">
+                                    <span>Video</span>
+                                </a>
+                            }
+
+                        </div>
                     </div>
-                </div>
                 }
-                
-                
+
+
                 <div class="resources_content">
                     <h5>ShortTakes</h5>
                     <a class="see_all" asp-controller="ShortTakes" asp-action="Index">
                         <span>See All <img src="/img/arrow-right 1.svg" alt=""></span>
                     </a>
                 </div>
-                <div class="resources_values">
-                    <div class="box_info">
-                        <img src="/img/mic-2 1.svg" alt="">
+
+                @foreach (var m in Model.Shorts)
+                {
+                    <div class="resources_values">
+                        <div class="box_info">
+                            <img src="/img/mic-2 1.svg" alt="">
+                        </div>
+                        <div class="resources_data">
+                            <a class="nounderline sermons_values" asp-controller="ShortTakes" asp-action="Detail" asp-route-id="@m.Id">
+                                <h4>@m.Title</h4>
+                                <span>@m.Author</span>
+                                <span class="dout">•</span>
+                                <span>@m.DateCreated.ToShortDateString()</span>
+                            </a>
+                        </div>
                     </div>
-                    <div class="resources_data">
-                        <a class="nounderline sermons_values" href="sermons_song.html">
-                            <h4>Union with Christ</h4>
-                            <span>Alan Burrow</span>
-                            <span class="dout">•</span>
-                            <span>May 14, 2023</span>
-                        </a>
-                    </div>
-                </div>
-                <div class="resources_values">
-                    <div class="box_info">
-                        <img src="/img/mic-2 1.svg" alt="">
-                    </div>
-                    <div class="resources_data">
-                        <a class="nounderline sermons_values" href="sermons_song.html">
-                            <h4>Spiritually Dead</h4>
-                            <span>Alan Burrow</span>
-                            <span class="dout">•</span>
-                            <span>May 14, 2023</span>
-                        </a>
-                    </div>
-                </div>
-                <div class="resources_values">
-                    <div class="box_info">
-                        <img src="/img/mic-2 1.svg" alt="">
-                    </div>
-                    <div class="resources_data">
-                        <a class="nounderline sermons_values" href="sermons_song.html">
-                            <h4>The Ninth Commandment (Part 2)</h4>
-                            <span>Alan Burrow</span>
-                            <span class="dout">•</span>
-                            <span>May 14, 2023</span>
-                        </a>
-                    </div>
-                </div>
+                }
 
             </div>
         </div>
@@ -148,3 +130,4 @@
         </div>
     </div>
 </section>
+

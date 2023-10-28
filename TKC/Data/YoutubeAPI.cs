@@ -156,15 +156,15 @@ namespace TKC.Data
 
             var serm = new Sermon()
             {
-                Id = video.Snippet.ResourceId.VideoId
+                VideoUrl = video.Snippet.ResourceId.VideoId
                 ,
                 Title = video.Snippet.Title
                 ,
-                Passage = passage
+                SubTitle = passage
                 ,
-                Speaker = speaker
+                Author = speaker
                 ,
-                DateCreated = dateCreated
+                DateCreated = DateTime.Now
             };
 
             if (serm.Title.Contains("-"))

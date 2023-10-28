@@ -28,30 +28,18 @@ public class ApplicationDbContext : IdentityDbContext
 
         modelBuilder.Entity<Sermon>(entity =>
         {
-            entity.ToTable("Sermon");
+            entity.ToTable("Sermons");
         });
 
         modelBuilder.Entity<ShortTake>(entity =>
         {
-            entity.ToTable("ShortTake");
+            entity.ToTable("ShortTakes");
         });
 
         modelBuilder.Entity<AppSettingModel>(entity =>
         {
             entity.ToTable("AppSettings");
         });
-    }
-
-    // Method to get all music records
-    public List<Music> GetAllMusic()
-    {
-        return Musics.ToList();
-    }
-
-    // Method to get music by ID
-    public Music? GetMusicById(int id)
-    {
-        return Musics.FirstOrDefault(m => m.Id == id);
     }
 
 }

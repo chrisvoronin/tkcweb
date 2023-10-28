@@ -1,0 +1,303 @@
+﻿@{
+    ViewData["Title"] = "Admin - Short Takes";
+    Layout = "_LayoutAdmin";
+}
+
+<section class="sermon_video_btn">
+    <div class="container">
+        <div class="inner_video_sermons">
+
+            <div class="info_sermon_img">
+                <img src="/img/mic-2 1.svg" alt="">
+                <span>Short Takes</span>
+            </div>
+            <div class="sermons_btns">
+                <a class="all_btns_sermon" asp-controller="Admin" asp-action="Index">Admin Home</a>
+                <a class="all_btns_sermon_highlight" asp-controller="Admin" asp-action="ShortTakeNew">Add New</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="Sermons_section">
+    <div class="container">
+        <div class="Sermons_content">
+            <h2>Admin - Short Takes</h2>
+
+            <div class="inner_search_bar">
+
+                <div class="search_bar">
+                    <img src="/img/search.svg" alt="" onclick="focusSearch()" />
+                    <input class="form-control" style="margin-left: 10px;" type="text" name="search" id="search" placeholder="Search" onkeydown="handleKeyDown(event)">
+                    <img id="iconclear" style="display: none;" src="/img/close.svg" alt="" onclick="clearSearch()" />
+                </div>
+                <div class="showing_arrow">
+
+                    <a id="prevpage" style="visibility:hidden;" class="left_arrow" onclick="prevPage(); return false;">
+                        <img src="/img/left-arrow 1.svg" alt="" />
+                    </a>
+
+                    <span id="summary"></span>
+
+                    <a id="nextpage" style="visibility:hidden;" class="left_arrow" onclick="nextPage(); return false;">
+                        <img src="/img/right-arrow 1.svg" alt="" onclick="nextPage();" />
+                    </a>
+
+
+                </div>
+            </div>
+
+            <div id="inner">
+                <div>Getting Music...</div>
+            </div>
+
+            <div id="noresultstemplate" style="display:none;">
+                No search results
+            </div>
+
+            <div id="itemtemplate" style="display:none;">
+                <div class="inner_valus_data" id="item_{{id}}">
+                    <div class="sermons_values">
+                        <a class="nounderline sermons_values" href="{{link}}">
+                            <h4>{{title}}</h4>
+                            <span>{{date}}</span>
+                        </a>
+                    </div>
+                    <div class="sermons_date">
+                        <a class="nounderline sermons_values" href="{{link}}"><span>Edit</span></a>
+                        <span>•</span>
+                        <input type="hidden" id="title_{{id}}" value="{{title}}" />
+                        <a class="nounderline sermons_values" href="#" onclick="deleteItem({{id}}); return false;"><span>Delete</span></a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+<!-- Hidden fields for script Start -->
+<div style="display:none;">
+    <input type="hidden" id="currentpage" value="" />
+    <input type="hidden" id="totalresults" value="" />
+    <input type="hidden" id="itemsperpage" value="" />
+    <input type="hidden" id="itemscount" value="" />
+</div>
+<!-- Hidden fields for script End -->
+
+<script type="text/javascript">function deleteItem(itemId) {
+
+        const selector = "#title_" + itemId;
+        const title = $(selector).val();
+        const messageTitle = "Are you sure you want to delete " + title + "?";
+
+        var isConfirmed = window.confirm(messageTitle);
+        if (isConfirmed) {
+            runDelete(itemId);
+        }
+    }
+
+    function runDelete(itemId) {
+
+        const url = '/api/shorttake/' + itemId;
+        const selector = "#item_" + itemId;
+
+        $.ajax({
+            url: url,
+            type: 'DELETE',
+            dataType: 'json',
+            success: function (results) {
+                $(selector).remove();
+            },
+            error: function (error) {
+                alert("Delete didn't work,please check your internet connection");
+            }
+        });
+    }</script>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        goToPage(1);
+    });
+
+    function summaryUI(res) {
+
+        $("#currentpage").val(res.currentPage);
+        $("#totalresults").val(res.totalResults);
+        $("#itemscount").val(res.items.length);
+        $("#itemsperpage").val(res.itemsPerPage);
+
+        var currPage = res.currentPage;
+        var totalResults = res.totalResults;
+        var itemsPerPage = res.itemsPerPage;
+        var itemsCount = res.items.length;
+
+        var start = (currPage - 1) * itemsPerPage + 1;
+        var end = start + itemsCount - 1;
+        var summaryText = "Showing " + start + " - " + end + " / " + totalResults;
+        $("#summary").text(summaryText);
+
+        if (itemsCount == 0) {
+            $("#summary").text("No Results Found");
+        }
+
+        //update prev and next buttons
+        if (start == 1) {
+            $("#prevpage").css('visibility', 'hidden');
+        } else {
+            $('#prevpage').css('visibility', 'visible');
+        }
+        if (end == totalResults) {
+            $("#nextpage").css('visibility', 'hidden');
+        } else {
+            $('#nextpage').css('visibility', 'visible');
+        }
+    }
+
+    function listUI(items) {
+
+        var itemTemplate = $('#itemtemplate').clone();
+        var itemTemplateHTML = itemTemplate.html();
+
+        $('#inner').empty();
+
+        $.each(items, function (index, item) {
+            var link = '/admin/shorttake/' + item.id;
+            var resultHtml = itemTemplateHTML
+                .replace(/{{link}}/g, link)
+                .replace(/{{title}}/g, item.title)
+                .replace(/{{id}}/g, item.id)
+                .replace(/{{date}}/g, formatDate(item.dateCreated));
+
+            $('#inner').append(resultHtml);
+        });
+    }
+
+    function clearSearch() {
+        var text = $("#search").val("");
+        $("#iconclear").hide();
+        goToPage(1);
+
+    }
+
+    function focusSearch() {
+        $("#search").focus();
+    }
+
+    function prevPage() {
+        var currentPageValue = $("#currentpage").val();
+        var currentPageInt = parseInt(currentPageValue, 10);
+        if (isNaN(currentPageInt)) {
+            return;
+        }
+        var pageNumber = currentPageInt - 1;
+        if (pageNumber < 1) {
+            return;
+        }
+        goToPage(pageNumber);
+    }
+
+    function nextPage() {
+        var currentPageValue = $("#currentpage").val();
+        var currentPageInt = parseInt(currentPageValue, 10);
+        if (isNaN(currentPageInt)) {
+            return;
+        }
+        var pageNumber = currentPageInt + 1;
+        if (pageNumber < 1) {
+            return;
+        }
+        goToPage(pageNumber);
+    }
+
+    function search(text) {
+
+        var encodedSearchTerm = encodeURIComponent(text);
+
+        $.ajax({
+            url: '/api/shorttake/search?q=' + encodedSearchTerm,
+            type: 'GET',
+            dataType: 'json',
+            success: function (results) {
+                handleResults(results);
+
+            },
+            error: function (error) {
+                alert("Search didn't work,please check your internet connection");
+            }
+        });
+    }
+
+    function goToPage(pageNumber) {
+
+        $.ajax({
+            url: '/api/shorttake/page/' + pageNumber,
+            type: 'GET',
+            dataType: 'json',
+            success: function (results) {
+                handleResults(results);
+
+            },
+            error: function (error) {
+                alert("Paging didn't work,please check your internet connection");
+            }
+        });
+    }
+
+    function handleResults(res) {
+
+        console.log(res);
+        summaryUI(res);
+        listUI(res.items);
+
+        if (res.items.length == 0) {
+            var emptyHtml = $('#noresultstemplate').clone().html();
+            $('#inner').empty();
+            $('#inner').append(emptyHtml);
+        }
+
+    }
+
+    function handleKeyDown(event) {
+
+        var text = $("#search").val().trim();
+        if (text.length == 0) {
+            $("#iconclear").hide();
+            goToPage(1);
+            return;
+        } else {
+            $("#iconclear").show();
+        }
+
+        // Check if the pressed key is "Enter" (key code 13)
+        if (event.keyCode === 13) {
+            // Prevent the default behavior (form submission)
+            event.preventDefault();
+
+            if (text.length >= 3) {
+                search(text);
+            }
+        }
+    }
+
+    function formatDate(dateString) {
+
+        const date = new Date(dateString);
+
+        const months = [
+            'January', 'February', 'March', 'April', 'May', 'June',
+            'July', 'August', 'September', 'October', 'November', 'December'
+        ];
+
+        const monthIndex = date.getMonth();
+        const day = date.getDate();
+        const year = date.getFullYear();
+
+        const formattedDate = `${months[monthIndex]} ${day}, ${year}`;
+
+        return formattedDate;
+    }
+
+</script>

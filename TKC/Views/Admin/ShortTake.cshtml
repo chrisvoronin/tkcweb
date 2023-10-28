@@ -1,5 +1,6 @@
 ﻿@{
     ViewData["Title"] = "The Kings Congreation";
+    Layout = "_LayoutAdmin";
 }
 
 @model ShortTake
@@ -9,49 +10,52 @@
         <div class="inner_video_sermons">
 
             <div class="info_sermon_img">
-                <img src="/img/info-point 1.svg" alt="">
+                <img src="/img/mic-2 1.svg" alt="">
                 <span>Admin - Short Takes</span>
             </div>
             <div class="sermons_btns">
-                <a class="all_btns_sermon" asp-controller="Admin" asp-action="ShortTakes">All ShortTakes</a>
+                <a id="allitemslink" class="all_btns_sermon" asp-controller="Admin" asp-action="ShortTake">All ShortTakes</a>
                 <a class="all_btns_sermon" asp-controller="Admin" asp-action="Index">Admin Home</a>
             </div>
         </div>
     </div>
 </section>
 
-
 <section class="sermons_video_section">
+
+    <h3>Edit Short Take</h3>
+
     <div class="container">
-        <form enctype="multipart/form-data" asp-action="ShortTake" asp-controller="Admin" asp-route-id="@Model.Id">
-            <div class="form-floating mb-3">
-                <input class="form-control" aria-required="true" placeholder="Title" id="itemtitle" value="@Model.Title" />
-                <label class="form-label">Title</label>
-                <span class="text-danger"></span>
-            </div>
+        <div class="form-floating mb-3">
+            <input class="form-control" aria-required="true" placeholder="Title" id="itemtitle" value="@Model.Title" />
+            <label class="form-label">Title</label>
+            <span id="error_itemtitle" style="display:none;" class="text-danger">Title is required</span>
+        </div>
 
-            <div class="form-floating mb-3">
-                <input class="form-control" aria-required="true" placeholder="Speaker" id="itemspeaker" value="@Model.Speaker" />
-                <label class="form-label">Speaker</label>
-                <span class="text-danger"></span>
-            </div>
+        <div class="form-floating mb-3">
+            <input class="form-control" aria-required="true" placeholder="Speaker" id="itemspeaker" value="@Model.Author" />
+            <label class="form-label">Speaker</label>
+            <span id="error_itemspeaker" style="display:none;" class="text-danger">Speaker is required</span>
+        </div>
 
-            <div class="form-floating mb-3">
-                <input class="form-control" aria-required="true" type="date" placeholder="Date Created" id="itemdate" value="@Model.DateCreated.ToShortDateString()" />
-                <label class="form-label">Date Created</label>
-                <span class="text-danger"></span>
-            </div>
+        <div class="form-floating mb-3">
+            <input class="form-control" aria-required="true" type="date" placeholder="Date Created" id="itemdate" value="@Model.DateCreated.ToString("yyyy-MM-dd")" />
+            <label class="form-label">Date Created</label>
+            <span id="error_itemdate" style="display:none;" class="text-danger">Date is required</span>
+        </div>
 
-            <div class="form-floating mb-3">
-                <input type="file" class="form-control" aria-required="true" id="itemfile" placeholder="File" />
-            </div>
+        <div class="form-floating mb-3">
+            <label class="form-label" style="padding: 0.1rem .75rem;">Update Audio file (optional)</label>
+            <input type="file" class="form-control" aria-required="true" id="itemfile" placeholder="File" />
+        </div>
 
-            <div>
-                <button id="submit" type="submit" class="w-100 btn btn-lg btn-primary" onclick="save();">Save</button>
-                <input type="hidden" id="itemid" value="@Model.Id" />
-                <input type="hidden" id="itemurl" value="@Model.Url" />
-            </div>
-        </form>
+        <div>
+            <button id="submit" type="submit" class="w-100 btn btn-lg btn-primary" onclick="save(); return false;">Save</button>
+            <input type="hidden" id="itemid" value="@Model.Id" />
+            <input type="hidden" id="itemurl" value="@Model.AudioUrl" />
+            <button type="button" class="btn btn-delete" onclick="deleteItem(@Model.Id, '@Model.Title');">Delete</button>
+        </div>
+
         <br />
         <br />
 
@@ -59,7 +63,7 @@
             <span>Audio Preview</span>
             <div class="audio_img">
                 <audio controls="controls">
-                    <source src="@Model.Url" type="audio/mpeg">
+                    <source src="/File/@Model.AudioUrl" type="audio/mpeg">
                     Your browser does not support the audio element.
                 </audio>
             </div>
@@ -72,9 +76,13 @@
 
 @section Scripts {
 
-    <script type="text/javascript">
+    <script type="text/javascript">function save() {
 
-        function save() {
+            const isValid = validateForm();
+            console.log(isValid);
+            if (!isValid) {
+                return;
+            }
 
             var inputFile = $('#itemfile')[0].files[0];
 
@@ -85,7 +93,40 @@
             }
         }
 
+        function validateForm() {
+            const title = $("#itemtitle").val().trim();
+            const speaker = $("#itemspeaker").val().trim();
+            const dateCreated = $("#itemdate").val().trim();
+
+            var isValid = true;
+
+            if (title.length == 0) {
+                isValid = false;
+                $("#error_itemtitle").show();
+            } else {
+                $("#error_itemtitle").hide();
+            }
+
+            if (speaker.length == 0 || dateCreated.length == 0) {
+                isValid = false;
+                $("#error_itemspeaker").show();
+            } else {
+                $("#error_itemspeaker").hide();
+            }
+
+            if (dateCreated.length == 0) {
+                isValid = false;
+                $("#error_itemdate").show();
+            } else {
+                $("#error_itemdate").hide();
+            }
+
+            return isValid;
+        }
+
         function runSave() {
+
+            console.log("saving");
 
             const itemId = $("#itemid").val();
             const title = $("#itemtitle").val();
@@ -93,35 +134,42 @@
             const url = $("#itemurl").val();
             const dateCreated = $("#itemdate").val();
 
-            var shortTake = {
-                id: itemId,
+            var jsonData = {
+                id: parseInt(itemId),
                 title: title,
-                speaker: speaker,
-                url: url,
+                author: speaker,
+                audioUrl: url,
                 dateCreated: dateCreated
             };
 
             var jsonString = JSON.stringify(jsonData);
 
+            console.log(jsonString);
+
             $.ajax({
-                url: '/api/shorttakes/',
+                url: '/api/shorttake/',
                 type: 'PATCH',
                 contentType: 'application/json',
                 data: jsonString,
                 success: function (results) {
-                    handleResults(results);
+                    console.log("saved");
+                    handleResults();
 
                 },
                 error: function (error) {
-                    alert("Paging didn't work,please check your internet connection");
+                    console.error('Error saving:', error);
+                    alert("Error saving, please check your internet connection");
                 }
             });
         }
 
+        function handleResults() {
+            var url = $("#allitemslink").attr("href");
+            window.location.href = url;
+        }
+
         function uploadFile(file) {
-            // Implement your file upload logic here
-            // You can use AJAX to send the file to the server
-            // For example:
+
             var formData = new FormData();
             formData.append('file', file);
 
@@ -132,13 +180,40 @@
                 processData: false,
                 contentType: false,
                 success: function (response) {
-                    $("#itemurl").val(response.FileName);
+                    console.log(response);
+                    $("#itemurl").val(response.fileName);
                     $('#itemfile').val('');
                     runSave();
                 },
                 error: function (error) {
                     console.error('Error uploading file:', error);
-                    // Handle the error
+                    alert("Error uploading media file, please check your internet connection.");
+                }
+            });
+        }
+
+        function deleteItem(itemId, title) {
+
+            const messageTitle = "Are you sure you want to delete " + title + "?";
+            var isConfirmed = window.confirm(messageTitle);
+            if (isConfirmed) {
+                runDelete(itemId);
+            }
+        }
+
+        function runDelete(itemId) {
+
+            const url = '/api/shorttake/' + itemId;
+            $.ajax({
+                url: url,
+                type: 'DELETE',
+                dataType: 'json',
+                success: function (results) {
+                    handleResults();
+
+                },
+                error: function (error) {
+                    alert("Could not delete, please check your internet connection");
                 }
             });
         }

@@ -5,8 +5,7 @@ using TKC.Models;
 namespace TKC.Controllers
 {
 
-    [Route("[controller]")]
-    //[Authorize]
+    [Route("sermon")]
     public class SermonsController : Controller
     {
         private readonly CacheService _cache;
@@ -22,37 +21,44 @@ namespace TKC.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(string? p = null, int? pn = null)
+        public IActionResult Index()
         {
-            var apiResponse = await _api.GetPlaylistVideos(_cache, _api.PlayListIdSermons, sermonsPerPage, p);
-            if (apiResponse == null)
-            {
-                return View(new SermonListResponse());
-            }
-            else
-            {
-                var resp = SermonConverter.Convert(apiResponse);
-                if (pn != null)
-                {
-                    resp.CurrentPage = (int)pn;
-                }
+            return View();
+            //var apiResponse = await _api.GetPlaylistVideos(_cache, _api.PlayListIdSermons, sermonsPerPage, p);
+            //if (apiResponse == null)
+            //{
+            //    return View(new SermonListResponse());
+            //}
+            //else
+            //{
+            //    var resp = SermonConverter.Convert(apiResponse);
+            //    if (pn != null)
+            //    {
+            //        resp.CurrentPage = (int)pn;
+            //    }
 
-                return View(resp);
-            }
+            //    return View(resp);
+            //}
         }
 
         [HttpGet("{id}")]
-        public IActionResult Detail(string id)
+        public IActionResult Detail(int id)
         {
-            var item = _cache.Get<YouTubeVideo>(id);
-            if (item == null)
-            {
-                //TODO: Get video details
-                return Redirect("/Sermons");
-            }
+            //var item = _cache.Get<YouTubeVideo>(id);
+            //if (item == null)
+            //{
+            //    //TODO: Get video details
+            //    return Redirect("/Sermons");
+            //}
 
-            var serm = SermonConverter.Convert(item);
-            return View(serm);
+            //var serm = SermonConverter.Convert(item);
+
+            var m = _context.Sermons.FirstOrDefault(m => m.Id == id);
+            if (m == null)
+            {
+                return NotFound();
+            }
+            return View(m);
         }
 
         [HttpGet("playlist")]

@@ -1,5 +1,4 @@
-﻿using System.Drawing.Printing;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TKC.Data;
@@ -22,22 +21,22 @@ namespace TKC.Controllers
             _api = api;
         }
 
-        // GET: /<controller>/
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
-            int sermonCount = 0;
-            var apiResponse = await _api.GetPlaylistVideos(_cache, _api.PlayListIdSermons, 1);
-            if (apiResponse != null)
-            {
-                var resp = SermonConverter.Convert(apiResponse);
-                sermonCount = resp.TotalResults;
-            }
+            //int sermonCount = 0;
+            //var apiResponse = await _api.GetPlaylistVideos(_cache, _api.PlayListIdSermons, 1);
+            //if (apiResponse != null)
+            //{
+            //    var resp = SermonConverter.Convert(apiResponse);
+            //    sermonCount = resp.TotalResults;
+            //}
 
             AdminSummary sum = new AdminSummary()
             {
                 MusicCount = await _context.Musics.CountAsync(),
                 ShortTakeCount = await _context.ShortTakes.CountAsync(),
-                SermonsCount = sermonCount
+                SermonsCount = await _context.Sermons.CountAsync()
             };
 
             return View(sum);
@@ -46,15 +45,14 @@ namespace TKC.Controllers
         // SHORT TAKES SHORT TAKES SHORT TAKES SHORT TAKES SHORT TAKES SHORT TAKES SHORT TAKES SHORT TAKES SHORT TAKES SHORT TAKES SHORT TAKES 
 
         // List
-        [HttpGet("ShortTakes")]
-        public async Task<IActionResult> ShortTakes()
+        [HttpGet("ShortTake")]
+        public IActionResult ShortTakeList()
         {
-            List<ShortTake> resp = await _context.ShortTakes.ToListAsync();
-            return View(resp);
+            return View();
         }
 
         // View Single
-        [HttpGet("ShortTakes/{id}")]
+        [HttpGet("ShortTake/{id}")]
         public async Task<IActionResult> ShortTake(int id)
         {
             var m = await _context.ShortTakes.FirstOrDefaultAsync(m => m.Id == id);
@@ -65,7 +63,7 @@ namespace TKC.Controllers
             return View(m);
         }
 
-        [HttpGet("ShortTakes/new")]
+        [HttpGet("ShortTake/new")]
         public IActionResult ShortTakeNew()
         {
             return View();
@@ -75,11 +73,11 @@ namespace TKC.Controllers
 
         // List
         [HttpGet("Music")]
-        public async Task<IActionResult> Musics()
+        public IActionResult MusicList()
         {
-            List<Music> resp = await _context.Musics.ToListAsync();
-            return View(resp);
+            return View();
         }
+
         // View Single
         [HttpGet("Music/{id}")]
         public async Task<IActionResult> Music(int id)
@@ -95,6 +93,34 @@ namespace TKC.Controllers
         // Add New
         [HttpGet("Music/new")]
         public IActionResult MusicNew()
+        {
+            return View();
+        }
+
+        // SERMONS SERMONS SERMONS SERMONS SERMONS SERMONS SERMONS SERMONS SERMONS SERMONS SERMONS SERMONS SERMONS SERMONS SERMONS SERMONS SERMONS SERMONS SERMONS
+
+        // List
+        [HttpGet("Sermon")]
+        public IActionResult SermonList()
+        {
+            return View();
+        }
+
+        // View Single
+        [HttpGet("Sermon/{id}")]
+        public async Task<IActionResult> Sermon(int id)
+        {
+            var m = await _context.Sermons.FirstOrDefaultAsync(m => m.Id == id);
+            if (m == null)
+            {
+                return NotFound();
+            }
+            return View(m);
+        }
+
+        // Add New
+        [HttpGet("Sermon/new")]
+        public IActionResult SermonNew()
         {
             return View();
         }

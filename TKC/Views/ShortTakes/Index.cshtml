@@ -2,12 +2,6 @@
     ViewData["Title"] = "The Kings Congreation";
 }
 
-@{
-    string currentController = ViewContext.RouteData.Values["controller"].ToString();
-}
-
-@model ShortTakeResponse
-
 <section class="Sermons_section">
     <div class="container">
         <div class="Sermons_content">
@@ -25,7 +19,7 @@
                         <img src="/img/left-arrow 1.svg" alt="" />
                     </a>
 
-                    <span id="summary">Showing 1 - @Model.Items.Count / @Model.TotalResults</span>
+                    <span id="summary"></span>
 
                     <a id="nextpage" style="visibility:hidden;" class="left_arrow" onclick="nextPage(); return false;">
                         <img src="/img/right-arrow 1.svg" alt="" onclick="nextPage();" />
@@ -36,24 +30,9 @@
             </div>
 
             <div id="inner">
-
-                @foreach (var m in Model.Items)
-                {
-                    <div class="inner_valus_data">
-                        <div class="sermons_values">
-                            <a class="nounderline sermons_values" asp-controller="ShortTakes" asp-action="Detail" asp-route-id="@m.Id">
-                                <h4>@m.Title</h4>
-                                <span></span>
-                            </a>
-                        </div>
-                        <div class="sermons_date">
-                            <span>@m.Speaker</span>
-                            <span>•</span>
-                            <span>@m.DateCreated.ToString("MMM dd, yyyy")</span>
-                        </div>
-                    </div>
-                }
+                <div>Getting Short Takes...</div>
             </div>
+
             <div id="noresultstemplate" style="display:none;">
                 No search results
             </div>
@@ -93,35 +72,16 @@
 <!-- Learn More Section End -->
 <!-- Hidden fields for script Start -->
 <div style="display:none;">
-    <input type="hidden" id="currentpage" value="@Model.CurrentPage" />
-    <input type="hidden" id="totalresults" value="@Model.TotalResults" />
-    <input type="hidden" id="itemsperpage" value="@Model.ItemsPerPage" />
-    <input type="hidden" id="itemscount" value="@Model.Items.Count" />
-    <input type="hidden" id="controllername" value="@currentController" />
+    <input type="hidden" id="currentpage" value="" />
+    <input type="hidden" id="totalresults" value="" />
+    <input type="hidden" id="itemsperpage" value="" />
+    <input type="hidden" id="itemscount" value="" />
 </div>
 <!-- Hidden fields for script End -->
 <script type="text/javascript">
 
     $(document).ready(function () {
-
-        var currPage = parseInt($("#currentpage").val(), 10);
-        var itemsPerPage = parseInt($("#itemsperpage").val(), 10);
-        var itemsCount = parseInt($("#itemscount").val(), 10);
-        var totalResults = parseInt($("#totalresults").val(), 10);
-
-        var start = (currPage - 1) * itemsPerPage + 1;
-        var end = start + itemsCount - 1;
-
-        if (start == 1) {
-            $("#prevpage").css('visibility', 'hidden');
-        } else {
-            $('#prevpage').css('visibility', 'visible');
-        }
-        if (end == totalResults) {
-            $("#nextpage").css('visibility', 'hidden');
-        } else {
-            $('#nextpage').css('visibility', 'visible');
-        }
+        goToPage(1);
     });
 
     function summaryUI(res) {
@@ -160,8 +120,6 @@
 
     function listUI(items) {
 
-        var controllerName = $("#controllername").val();
-
         var itemTemplate = $('#itemtemplate').clone();
 
         var itemTemplateHTML = itemTemplate.html();
@@ -169,11 +127,11 @@
         $('#inner').empty();
 
         $.each(items, function (index, item) {
-            var link = '/' + controllerName + '/' + item.id;
+            var link = '/shorttake/' + item.id;
             var resultHtml = itemTemplateHTML
                 .replace('{{link}}', link)
                 .replace('{{title}}', item.title)
-                .replace('{{speaker}}', item.speaker)
+                .replace('{{speaker}}', item.author)
                 .replace('{{date}}', formatDate(item.dateCreated));
             $('#inner').append(resultHtml);
         });
@@ -221,7 +179,7 @@
         var encodedSearchTerm = encodeURIComponent(text);
 
         $.ajax({
-            url: '/shorttakes/api/search?q=' + encodedSearchTerm,
+            url: '/api/shorttake/search?q=' + encodedSearchTerm,
             type: 'GET',
             dataType: 'json',
             success: function (results) {
@@ -237,7 +195,7 @@
     function goToPage(pageNumber) {
 
         $.ajax({
-            url: '/shorttakes/api/page/' + pageNumber,
+            url: '/api/shorttake/page/' + pageNumber,
             type: 'GET',
             dataType: 'json',
             success: function (results) {

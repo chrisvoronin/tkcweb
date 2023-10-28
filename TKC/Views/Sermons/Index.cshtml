@@ -1,54 +1,54 @@
 ﻿@{
-    ViewData["Title"] = "The Kings Congreation";
+    ViewData["Title"] = "The Kings Congreation - Sermons";
 }
-@model SermonListResponse
 
 <section class="Sermons_section">
     <div class="container">
         <div class="Sermons_content">
-            <h2>Sermons</h2>
-            <div class="inner_search_bar">
 
-                @*<div class="search_bar">
-                    <input class="form-control" type="text" name="" id="" placeholder="Search">
-                    <img src="/img/search.svg" alt="">
-                </div>*@
+            <h2>Sermons</h2>
+
+            <div class="inner_search_bar">
+                <div class="search_bar">
+                    <img src="/img/search.svg" alt="" onclick="focusSearch()" />
+                    <input class="form-control" style="margin-left: 10px;" type="text" name="search" id="search" placeholder="Search" onkeydown="handleKeyDown(event)">
+                    <img id="iconclear" style="display: none;" src="/img/close.svg" alt="" onclick="clearSearch()" />
+                </div>
                 <div class="showing_arrow">
 
-                    @if (Model.PrevPageToken != null)
-                    {
-                        <a class="left_arrow" href="@Url.Action("Index", new { p = @Model.PrevPageToken, pn = Model.CurrentPage-1 })">
-                            <img src="/img/left-arrow 1.svg" alt="">
-                        </a>
-                    }
+                    <a id="prevpage" style="visibility:hidden;" class="left_arrow" onclick="prevPage(); return false;">
+                        <img src="/img/left-arrow 1.svg" alt="" />
+                    </a>
 
-                    <span>Showing @((Model.CurrentPage - 1) * Model.ResultsPerPage + 1) - @(Model.Sermons.Count + (Model.CurrentPage-1) * Model.ResultsPerPage) / @Model.TotalResults</span>
+                    <span id="summary"></span>
 
-                    @if (Model.NextPageToken != null)
-                    {
-                        <a class="left_arrow" href="@Url.Action("Index", new { p = @Model.NextPageToken, pn = Model.CurrentPage+1 })">
-                            <img src="/img/right-arrow 1.svg" alt="">
-                        </a>
-                    }
-
+                    <a id="nextpage" style="visibility:hidden;" class="left_arrow" onclick="nextPage(); return false;">
+                        <img src="/img/right-arrow 1.svg" alt="" onclick="nextPage();" />
+                    </a>
                 </div>
             </div>
-            @foreach (var sermon in Model.Sermons)
-            {
+
+            <div id="inner">
+                <div>Getting Sermons...</div>
+            </div>
+
+            <div id="noresultstemplate" style="display:none;">
+                No search results
+            </div>
+            <div id="itemtemplate" style="display:none;">
                 <div class="inner_valus_data">
                     <div class="sermons_values">
-                        <a class="nounderline sermons_values" href="@Url.Action("Detail", new { id = sermon.Id })">
-                            <h4>@sermon.Title</h4>
-                            <span>@sermon.Passage</span>
+                        <a class="nounderline sermons_values" href="{{link}}">
+                            <h4>{{title}}</h4>
+                            <span>{{subtitle}}</span>
                         </a>
                     </div>
                     <div class="sermons_date">
-                        <span>@sermon.Speaker</span>
-                        <span>•</span>
-                        <span>@sermon.DateCreated</span>
+                        <span>{{speaker}}&nbsp; • &nbsp;{{date}}</span>
                     </div>
                 </div>
-            }
+            </div>
+
         </div>
     </div>
 </section>
@@ -67,3 +67,200 @@
     </div>
 </section>
 <!-- Learn More Section End -->
+<!-- Hidden fields for script Start -->
+<div style="display:none;">
+    <input type="hidden" id="currentpage" value="" />
+    <input type="hidden" id="totalresults" value="" />
+    <input type="hidden" id="itemsperpage" value="" />
+    <input type="hidden" id="itemscount" value="" />
+</div>
+<!-- Hidden fields for script End -->
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        goToPage(1);
+    });
+
+    function summaryUI(res) {
+
+        $("#currentpage").val(res.currentPage);
+        $("#totalresults").val(res.totalResults);
+        $("#itemscount").val(res.items.length);
+        $("#itemsperpage").val(res.itemsPerPage);
+
+        var currPage = res.currentPage;
+        var totalResults = res.totalResults;
+        var itemsPerPage = res.itemsPerPage;
+        var itemsCount = res.items.length;
+
+        var start = (currPage - 1) * itemsPerPage + 1;
+        var end = start + itemsCount - 1;
+        var summaryText = "Showing " + start + " - " + end + " / " + totalResults;
+        $("#summary").text(summaryText);
+
+        if (itemsCount == 0) {
+            $("#summary").text("No Results Found");
+        }
+
+        //update prev and next buttons
+        if (start == 1) {
+            $("#prevpage").css('visibility', 'hidden');
+        } else {
+            $('#prevpage').css('visibility', 'visible');
+        }
+        if (end == totalResults) {
+            $("#nextpage").css('visibility', 'hidden');
+        } else {
+            $('#nextpage').css('visibility', 'visible');
+        }
+    }
+
+    function listUI(items) {
+
+        var itemTemplate = $('#itemtemplate').clone();
+        var itemTemplateHTML = itemTemplate.html();
+
+        $('#inner').empty();
+
+        $.each(items, function (index, item) {
+
+            var link = '/sermon/' + item.id;
+
+            var resultHtml = itemTemplateHTML
+                .replace('{{link}}', link)
+                .replace('{{title}}', item.title)
+                .replace('{{subtitle}}', item.subTitle)
+                .replace('{{speaker}}', item.author)
+                .replace('{{date}}', formatDate(item.dateCreated));
+
+            $('#inner').append(resultHtml);
+        });
+    }
+
+    function clearSearch() {
+        var text = $("#search").val("");
+        $("#iconclear").hide();
+        goToPage(1);
+
+    }
+
+    function focusSearch() {
+        $("#search").focus();
+    }
+
+    function prevPage() {
+        var currentPageValue = $("#currentpage").val();
+        var currentPageInt = parseInt(currentPageValue, 10);
+        if (isNaN(currentPageInt)) {
+            return;
+        }
+        var pageNumber = currentPageInt - 1;
+        if (pageNumber < 1) {
+            return;
+        }
+        goToPage(pageNumber);
+    }
+
+    function nextPage() {
+        var currentPageValue = $("#currentpage").val();
+        var currentPageInt = parseInt(currentPageValue, 10);
+        if (isNaN(currentPageInt)) {
+            return;
+        }
+        var pageNumber = currentPageInt + 1;
+        if (pageNumber < 1) {
+            return;
+        }
+        goToPage(pageNumber);
+    }
+
+    function search(text) {
+
+        var encodedSearchTerm = encodeURIComponent(text);
+
+        $.ajax({
+            url: '/api/sermon/search?q=' + encodedSearchTerm,
+            type: 'GET',
+            dataType: 'json',
+            success: function (results) {
+                handleResults(results);
+
+            },
+            error: function (error) {
+                alert("Search didn't work,please check your internet connection");
+            }
+        });
+    }
+
+    function goToPage(pageNumber) {
+
+        $.ajax({
+            url: '/api/sermon/page/' + pageNumber,
+            type: 'GET',
+            dataType: 'json',
+            success: function (results) {
+                handleResults(results);
+
+            },
+            error: function (error) {
+                alert("Paging didn't work,please check your internet connection");
+            }
+        });
+    }
+
+    function handleResults(res) {
+
+        console.log(res);
+        summaryUI(res);
+        listUI(res.items);
+
+        if (res.items.length == 0) {
+            var emptyHtml = $('#noresultstemplate').clone().html();
+            $('#inner').empty();
+            $('#inner').append(emptyHtml);
+        }
+
+    }
+
+    function handleKeyDown(event) {
+
+        var text = $("#search").val().trim();
+        if (text.length == 0) {
+            $("#iconclear").hide();
+            goToPage(1);
+            return;
+        } else {
+            $("#iconclear").show();
+        }
+
+        // Check if the pressed key is "Enter" (key code 13)
+        if (event.keyCode === 13) {
+            // Prevent the default behavior (form submission)
+            event.preventDefault();
+
+            if (text.length >= 3) {
+                search(text);
+            }
+        }
+    }
+
+    function formatDate(dateString) {
+
+        const date = new Date(dateString);
+
+        const months = [
+            'January', 'February', 'March', 'April', 'May', 'June',
+            'July', 'August', 'September', 'October', 'November', 'December'
+        ];
+
+        const monthIndex = date.getMonth();
+        const day = date.getDate();
+        const year = date.getFullYear();
+
+        const formattedDate = `${months[monthIndex]} ${day}, ${year}`;
+
+        return formattedDate;
+    }
+
+</script>

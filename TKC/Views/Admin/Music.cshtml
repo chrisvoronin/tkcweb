@@ -1,5 +1,6 @@
 ﻿@{
     ViewData["Title"] = "The Kings Congreation";
+    Layout = "_LayoutAdmin";
 }
 
 @model Music
@@ -9,12 +10,12 @@
         <div class="inner_video_sermons">
 
             <div class="info_sermon_img">
-                <img src="/img/info-point 1.svg" alt="">
+                <img src="/img/phone-music 1.svg" alt="">
                 <span>Admin - Music</span>
             </div>
             <div class="sermons_btns">
-                <a class="all_btns_sermon" asp-controller="Admin" asp-action="Music">All Music</a>
                 <a class="all_btns_sermon" asp-controller="Admin" asp-action="Index">Admin Home</a>
+                <a class="all_btns_sermon" asp-controller="Admin" asp-action="Music">All Music</a>
             </div>
         </div>
     </div>
@@ -24,39 +25,34 @@
 <section class="sermons_video_section">
     <div class="container">
         <div id="inner">
+
             <div class="form-floating mb-3">
-                <input class="form-control" aria-required="true" placeholder="Title" id="itemtitle" value="@Model.Title" />
-                <label class="form-label">Title</label>
+                <input class="form-control" aria-required="true" placeholder="Song Name" id="itemtitle" value="@Model.Title" />
+                <label class="form-label">Song Name</label>
                 <span class="text-danger"></span>
             </div>
 
             <div class="form-floating mb-3">
-                <input class="form-control" aria-required="true" placeholder="SubTitle" id="itemsubtitle" value="@Model.SubTitle" />
-                <label class="form-label">SubTitle</label>
+                <input type="file" class="form-control" aria-required="true" placeholder="Audio" id="itemaudiourl" value="@Model.AudioUrl" />
+                <label class="form-label">Audio File</label>
                 <span class="text-danger"></span>
             </div>
 
             <div class="form-floating mb-3">
-                <input class="form-control" aria-required="true" placeholder="Author" id="itemauthor" value="@Model.Author" />
-                <label class="form-label">Author</label>
+                <input class="form-control" aria-required="true" placeholder="Pdf" id="itempdfurl" value="@Model.PdfUrl" />
+                <label class="form-label">Pdf</label>
                 <span class="text-danger"></span>
             </div>
 
             <div class="form-floating mb-3">
-                <input class="form-control" aria-required="true" placeholder="Video Url" id="itemvideourl" value="@Model.VideoUrl" />
+                <input class="form-control" aria-required="true" placeholder="Video" id="itemvideourl" value="@Model.VideoUrl" />
                 <label class="form-label">Video Url</label>
                 <span class="text-danger"></span>
             </div>
 
             <div class="form-floating mb-3">
-                <input class="form-control" aria-required="true" placeholder="Audio Url" id="itemaudiourl" value="@Model.FileUrl" />
-                <label class="form-label">Audio Url</label>
-                <span class="text-danger"></span>
-            </div>
-
-            <div class="form-floating mb-3">
-                <input class="form-control" aria-required="true" placeholder="Pdf Url" id="itempdfurl" value="@Model.PdfUrl" />
-                <label class="form-label">Pdf Url</label>
+                <input class="form-control" aria-required="true" placeholder="Sing Along" id="itemsingalongurl" value="@Model.PdfUrl" />
+                <label class="form-label">Sing Along Url</label>
                 <span class="text-danger"></span>
             </div>
 
@@ -70,6 +66,7 @@
                 <button id="submit" type="submit" class="w-100 btn btn-lg btn-primary" onclick="save();">Save</button>
                 <input type="hidden" id="itemid" value="@Model.Id" />
             </div>
+
         </div>
 
     </div>
@@ -81,20 +78,20 @@
 
         const itemId = $("#itemid").val();
         const title = $("#itemtitle").val();
-        const subTitle = $("#itemsubtitle").val();
-        const author = $("#itemauthor").val();
 
         const videoUrl = $("#itemvideourl").val();
         const audioUrl = $("#itemaudiourl").val();
         const pdfUrl = $("#itempdfurl").val();
+        const singAlongUrl = $("#itemsingalongurl").val();
 
         const dateCreated = $("#itemdate").val();
 
         var item = {
             id: itemId,
             title: title,
-            subTitle: subTitle,
-            author: author,
+            subTitle: "",
+            author: "",
+            singAlongUrl: singAlongUrl,
             videoUrl: videoUrl,
             audioUrl: audioUrl,
             pdfUrl: pdfUrl,

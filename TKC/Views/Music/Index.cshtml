@@ -1,7 +1,6 @@
 ﻿@{
-    ViewData["Title"] = "The Kings Congreation";
+    ViewData["Title"] = "The Kings Congreation - Music";
 }
-@model MusicViewModel
 
 <section class="Sermons_section">
     <div class="container">
@@ -10,82 +9,49 @@
             <div class="inner_search_bar">
 
                 <div class="search_bar">
-                    <input class="form-control" type="text" name="q" id="q" placeholder="Search" onkeydown="handleKeyDown(event)">
-                    <img src="/img/search.svg" alt="" onclick="performSearch()">
+                    <img src="/img/search.svg" alt="" onclick="focusSearch()" />
+                    <input class="form-control" style="margin-left: 10px;" type="text" name="search" id="search" placeholder="Search" onkeydown="handleKeyDown(event)">
+                    <img id="iconclear" style="display: none;" src="/img/close.svg" alt="" onclick="clearSearch()" />
                 </div>
                 <div class="showing_arrow">
-                    @if (Model.PreviousPage != 0)
-                    {
-                        @if (Model.PreviousPage == 1) {
-                            <a class="left_arrow" asp-controller="Music" asp-action="Index">
-                                <img src="/img/left-arrow 1.svg" alt="">
-                            </a>
-                        } else {
-                            <a class="left_arrow" asp-controller="Music" asp-action="Index" asp-route-page="@Model.PreviousPage">
-                                <img src="/img/left-arrow 1.svg" alt="">
-                            </a>
-                        }
-                    }
 
-                    <span>Showing @((Model.CurrentPage - 1) * Model.PageSize + 1) - @(Model.Data.Count + (Model.CurrentPage-1) * Model.PageSize) / @Model.TotalCount</span>
+                    <a id="prevpage" style="visibility:hidden;" class="left_arrow" onclick="prevPage(); return false;">
+                        <img src="/img/left-arrow 1.svg" alt="" />
+                    </a>
 
-                    @if (Model.NextPage != 0)
-                    {
-                        <a class="left_arrow" asp-controller="Music" asp-action="Index" asp-route-page="@Model.NextPage">
-                            <img src="/img/right-arrow 1.svg" alt="">
-                        </a>
-                    }
+                    <span id="summary"></span>
+
+                    <a id="nextpage" style="visibility:hidden;" class="left_arrow" onclick="nextPage(); return false;">
+                        <img src="/img/right-arrow 1.svg" alt="" onclick="nextPage();" />
+                    </a>
+
 
                 </div>
             </div>
 
-            @foreach (var m in Model.Data)
-            {
+            <div id="inner">
+                <div>Getting Music...</div>
+            </div>
+
+            <div id="noresultstemplate" style="display:none;">
+                No search results
+            </div>
+            <div id="itemtemplate" style="display:none;">
                 <div class="inner_valus_data">
                     <div class="sermons_values">
-                        <a class="nounderline sermons_values" asp-controller="Music" asp-action="Detail" asp-route-id="@m.Id">
-                            <h4>@m.Title</h4>
-                            @if (!string.IsNullOrWhiteSpace(m.SubTitle))
-                            {
-                            <span>@m.SubTitle</span>
-                            }
+                        <a class="nounderline sermons_values" href="{{link}}">
+                            <h4>{{title}}</h4>
+                            <span></span>
                         </a>
                     </div>
                     <div class="sermons_date">
-                        @if (!string.IsNullOrWhiteSpace(m.PdfUrl))
-                        {
-                            <a class="nounderline sermons_values" asp-controller="Music" asp-action="PDF" asp-route-id="@m.Id"><span>PDF</span></a>
-                            <span>•</span>
-                        }
-                        @if (!string.IsNullOrWhiteSpace(m.FileUrl))
-                        {
-                            <a class="nounderline sermons_values" asp-controller="Music" asp-action="MP3" asp-route-id="@m.Id"><span>MP3</span></a>
-                            <span>•</span>
-                        }
-                        <a class="nounderline sermons_values" asp-controller="Music" asp-action="Detail" asp-route-id="@m.Id"><span>Video</span></a>
+                        <span>{{options}}</span>
                     </div>
                 </div>
-            }
-
-            @*<div class="inner_valus_data">
-                <div class="sermons_values">
-                    <h4>Song Name</h4>
-                    <span>Small Font</span>
-                </div>
-                <div class="sermons_date">
-                    <span>PDF</span>
-                    <span>•</span>
-                    <span>MP3</span>
-                    <span>•</span>
-                    <span>Video</span>
-                </div>
-            </div>*@
-
+            </div>
         </div>
     </div>
 </section>
-
-
 
 <!-- Learn More Section start -->
 <section class="learnmore">
@@ -95,37 +61,234 @@
                 <h2>Want to Learn More?</h2>
             </div>
             <div class="learn_btn">
-                <a class="contact_learn_btn" asp-controller="Home" asp-action="Contact"> Contact</a>
+                <a class="contact_learn_btn" hasp-controller="Home" asp-action="Contact"> Contact</a>
             </div>
         </div>
     </div>
 </section>
-<!-- Learn More Section End -->
 
+<!-- Learn More Section End -->
+<!-- Hidden fields for script Start -->
+<div style="display:none;">
+    <input type="hidden" id="currentpage" value="" />
+    <input type="hidden" id="totalresults" value="" />
+    <input type="hidden" id="itemsperpage" value="" />
+    <input type="hidden" id="itemscount" value="" />
+</div>
+<!-- Hidden fields for script End -->
 <script type="text/javascript">
 
-    function performSearch() {
-        // Get the value from the input field
-        var inputValue = document.getElementById("q").value;
-        if (inputValue.length < 3) {
+    $(document).ready(function () {
+        goToPage(1);
+    });
+
+    function summaryUI(res) {
+
+        $("#currentpage").val(res.currentPage);
+        $("#totalresults").val(res.totalResults);
+        $("#itemscount").val(res.items.length);
+        $("#itemsperpage").val(res.itemsPerPage);
+
+        var currPage = res.currentPage;
+        var totalResults = res.totalResults;
+        var itemsPerPage = res.itemsPerPage;
+        var itemsCount = res.items.length;
+
+        var start = (currPage - 1) * itemsPerPage + 1;
+        var end = start + itemsCount - 1;
+        var summaryText = "Showing " + start + " - " + end + " / " + totalResults;
+        $("#summary").text(summaryText);
+
+        if (itemsCount == 0) {
+            $("#summary").text("No Results Found");
+        }
+
+        //update prev and next buttons
+        if (start == 1) {
+            $("#prevpage").css('visibility', 'hidden');
+        } else {
+            $('#prevpage').css('visibility', 'visible');
+        }
+        if (end == totalResults) {
+            $("#nextpage").css('visibility', 'hidden');
+        } else {
+            $('#nextpage').css('visibility', 'visible');
+        }
+    }
+
+    function listUI(items) {
+
+        var itemTemplate = $('#itemtemplate').clone();
+        var itemTemplateHTML = itemTemplate.html();
+
+        $('#inner').empty();
+
+        $.each(items, function (index, item) {
+            var link = '/music/' + item.id;
+
+            var text = "";
+            if (item.pdfUrl != null) {
+                if (text.length > 0) {
+                    text += "&nbsp; • &nbsp;";
+                }
+                text += "PDF";
+            }
+            if (item.audioUrl != null) {
+                if (text.length > 0) {
+                    text += "&nbsp; • &nbsp;";
+                }
+                text += "MP3";
+            }
+            if (item.videoUrl != null) {
+                if (text.length > 0) {
+                    text += "&nbsp; • &nbsp;";
+                }
+                text += "VIDEO";
+            }
+            if (item.pdfUrl != null) {
+                if (text.length > 0) {
+                    text += "&nbsp; • &nbsp;";
+                }
+                text += "SING ALONG";
+            }
+
+            var resultHtml = itemTemplateHTML
+                .replace('{{link}}', link)
+                .replace('{{title}}', item.title)
+                .replace('{{pdf}}', item.pdfUrl)
+                .replace('{{mp3}}', item.audioUrl)
+                .replace('{{video}}', item.videoUrl)
+                .replace('{{singalong}}', item.pdfUrl)
+                .replace('{{options}}', text)
+                .replace('{{date}}', formatDate(item.dateCreated));
+
+            $('#inner').append(resultHtml);
+        });
+    }
+
+    function clearSearch() {
+        var text = $("#search").val("");
+        $("#iconclear").hide();
+        goToPage(1);
+
+    }
+
+    function focusSearch() {
+        $("#search").focus();
+    }
+
+    function prevPage() {
+        var currentPageValue = $("#currentpage").val();
+        var currentPageInt = parseInt(currentPageValue, 10);
+        if (isNaN(currentPageInt)) {
             return;
         }
-        // Construct the URL with the query parameter
-        var redirectUrl = "/Music/Search?q=" + encodeURIComponent(inputValue);
+        var pageNumber = currentPageInt - 1;
+        if (pageNumber < 1) {
+            return;
+        }
+        goToPage(pageNumber);
+    }
 
-        // Redirect the browser to the new URL
-        window.location.href = redirectUrl;
+    function nextPage() {
+        var currentPageValue = $("#currentpage").val();
+        var currentPageInt = parseInt(currentPageValue, 10);
+        if (isNaN(currentPageInt)) {
+            return;
+        }
+        var pageNumber = currentPageInt + 1;
+        if (pageNumber < 1) {
+            return;
+        }
+        goToPage(pageNumber);
+    }
+
+    function search(text) {
+
+        var encodedSearchTerm = encodeURIComponent(text);
+
+        $.ajax({
+            url: '/api/music/search?q=' + encodedSearchTerm,
+            type: 'GET',
+            dataType: 'json',
+            success: function (results) {
+                handleResults(results);
+
+            },
+            error: function (error) {
+                alert("Search didn't work,please check your internet connection");
+            }
+        });
+    }
+
+    function goToPage(pageNumber) {
+
+        $.ajax({
+            url: '/api/music/page/' + pageNumber,
+            type: 'GET',
+            dataType: 'json',
+            success: function (results) {
+                handleResults(results);
+
+            },
+            error: function (error) {
+                alert("Paging didn't work,please check your internet connection");
+            }
+        });
+    }
+
+    function handleResults(res) {
+
+        console.log(res);
+        summaryUI(res);
+        listUI(res.items);
+
+        if (res.items.length == 0) {
+            var emptyHtml = $('#noresultstemplate').clone().html();
+            $('#inner').empty();
+            $('#inner').append(emptyHtml);
+        }
+
     }
 
     function handleKeyDown(event) {
+
+        var text = $("#search").val().trim();
+        if (text.length == 0) {
+            $("#iconclear").hide();
+            goToPage(1);
+            return;
+        } else {
+            $("#iconclear").show();
+        }
+
         // Check if the pressed key is "Enter" (key code 13)
         if (event.keyCode === 13) {
             // Prevent the default behavior (form submission)
             event.preventDefault();
 
-            // Trigger the search function
-            performSearch();
+            if (text.length >= 3) {
+                search(text);
+            }
         }
+    }
+
+    function formatDate(dateString) {
+
+        const date = new Date(dateString);
+
+        const months = [
+            'January', 'February', 'March', 'April', 'May', 'June',
+            'July', 'August', 'September', 'October', 'November', 'December'
+        ];
+
+        const monthIndex = date.getMonth();
+        const day = date.getDate();
+        const year = date.getFullYear();
+
+        const formattedDate = `${months[monthIndex]} ${day}, ${year}`;
+
+        return formattedDate;
     }
 
 </script>

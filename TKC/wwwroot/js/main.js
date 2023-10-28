@@ -28,32 +28,3 @@ function backToTop() {
   document.body.scrollTop = 0;
   document.documentElement.scrollTop = 0;
 }
-
-$(document).ready(function () {
-
-    const playVideoElement = document.querySelector('#play-video');
-
-    if (playVideoElement) {
-        playVideoElement.addEventListener('click', ev => ev.target.style.display = 'none');
-    } else {
-        console.log("No Play Video")
-    }
-
-  //document.querySelector('#play-video').addEventListener('click', ev => ev.target.style.display = 'none');
-
-    var hasVideo = $('#play-video').length > 0;
-    if (hasVideo == false) {
-        return;
-    } else {
-        $('#play-video').on('click', function (e) {
-            //the video id
-            $('#video')[0].src += "?&autoplay=1";
-            e.preventDefault();
-        });
-    }
-    //get the video src url
-    //var youTubeUrl = $('#video').attr('src');
-    //the play / start button
-    
-});
-

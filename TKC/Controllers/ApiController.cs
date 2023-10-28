@@ -12,7 +12,7 @@ using TKC.Models;
 
 namespace TKC.Controllers
 {
-
+    [ApiController]
     [Authorize]
     [Route("[controller]")]
     public class ApiController : Controller
@@ -27,109 +27,6 @@ namespace TKC.Controllers
             _context = context;
             _api = api;
         }
-
-        // GET: /<controller>/
-        // get
-        [HttpGet("shorttakes/{id}")]
-        public async Task<IActionResult> Read(int id)
-        {
-            try
-            {
-                var shortTake = await _context.ShortTakes.FirstOrDefaultAsync(st => st.Id == id);
-
-                if (shortTake == null)
-                {
-                    return NotFound();
-                }
-
-                return Json(shortTake);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, "Internal Server Error");
-            }
-        }
-
-        [HttpDelete("shorttakes/{id}")]
-        public async Task<IActionResult> Delete(int id)
-        {
-
-            try
-            {
-                var toDelete = _context.ShortTakes.Find(id);
-
-                if (toDelete != null)
-                {
-                    _context.ShortTakes.Remove(toDelete);
-                    await _context.SaveChangesAsync();
-                }
-
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, "Internal Server Error");
-            }
-        }
-
-        [HttpPost("shorttakes")]
-        public async Task<IActionResult> Create(ShortTake st)
-        {
-            if (st == null)
-            {
-                return BadRequest("The ShortTake data is null.");
-            }
-
-            try
-            {
-                _context.ShortTakes.Add(st);
-                await _context.SaveChangesAsync();
-
-                return Json(st);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, "Internal Server Error");
-            }
-        }
-
-        [HttpPatch("shorttakes")]
-        public async Task<IActionResult> Update(ShortTake st)
-        {
-            if (st == null)
-            {
-                return BadRequest("ShortTake data is null.");
-            }
-
-            try
-            {
-                var existing = _context.ShortTakes.Find(st.Id);
-
-                if (existing == null)
-                {
-                    return NotFound();
-                }
-
-                existing.Title = st.Title;
-                existing.Speaker = st.Speaker;
-                existing.Url = st.Url;
-
-                await _context.SaveChangesAsync();
-
-                return Json(true);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, "Internal Server Error");
-            }
-        }
-
-        // Music
-
-
-
-
-        // Generic
 
         [HttpPost("upload")]
         public async Task<IActionResult> UploadFile(IFormFile file)

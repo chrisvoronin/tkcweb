@@ -22,25 +22,38 @@
 <section class="sermons_video_section">
     <div class="container">
         <div class="sermons_video_content">
-            <span>@Model.Passage</span>
+            <span>@Model.SubTitle</span>
             <h3>@Model.Title</h3>
             <div class="inner_video_date">
-                <span>@Model.Speaker</span><span>•</span><span>@Model.DateCreated</span>
+                <span>@Model.Author</span><span>•</span><span>@Model.DateCreated</span>
             </div>
         </div>
         <div class="sermons_video_img">
-            <!-- <img src="assets/img/sermons_video_img.png" alt=""> -->
             <iframe width="100%" height="100%" src="@Model.Url" title="@Model.Title" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen id="video"></iframe>
-            <a href="" id="play-video">
-                <img class="play_button" src="/img/play_button.svg" alt="">
-            </a>
         </div>
-        @*<div class="audio_section">
+
+        <div class="audio_section">
             <span>Audio Transcript</span>
-            <div class="audio_img">
-                <audio controls>
-                </audio>
+            <div class="audio_img flex-column">
+
+                @if (!string.IsNullOrEmpty(Model.AudioUrl))
+                {
+                    <audio controls="controls">
+                        <source src="/File/@Model.AudioUrl" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                }
             </div>
-        </div>*@
+        </div>
+
     </div>
 </section>
+
+@if (!string.IsNullOrEmpty(Model.PdfUrl))
+{
+    <section style="background: #F7F4F2;">
+        <div class="download_section" style="padding-top: 10px; padding-bottom: 15px;">
+            <a class="downloadBtn" href="@Model.PdfUrl">Download PDF <img src="/img/downloadBtn.svg" alt=""></a>
+        </div>
+    </section>
+}

@@ -1,5 +1,6 @@
 ﻿@{
     ViewData["Title"] = "The Kings Congreation";
+    Layout = "_LayoutAdmin";
 }
 
 <section class="sermon_video_btn">
@@ -7,11 +8,11 @@
         <div class="inner_video_sermons">
 
             <div class="info_sermon_img">
-                <img src="/img/info-point 1.svg" alt="">
+                <img src="/img/mic-2 1.svg" alt="">
                 <span>Add Short Take</span>
             </div>
             <div class="sermons_btns">
-                <a class="all_btns_sermon" asp-controller="Admin" asp-action="ShortTakes">All ShortTakes</a>
+                <a id="allitemslink" class="all_btns_sermon" asp-controller="Admin" asp-action="ShortTake">All ShortTakes</a>
                 <a class="all_btns_sermon" asp-controller="Admin" asp-action="Index">Admin Home</a>
             </div>
         </div>
@@ -24,23 +25,25 @@
         <div class="form-floating mb-3">
             <input class="form-control" aria-required="true" placeholder="Title" id="itemtitle" />
             <label class="form-label">Title</label>
-            <span class="text-danger"></span>
+            <span id="error_itemtitle" style="display:none;" class="text-danger">Title is required</span>
         </div>
 
         <div class="form-floating mb-3">
             <input class="form-control" aria-required="true" placeholder="Speaker" id="itemspeaker" />
             <label class="form-label">Speaker</label>
-            <span class="text-danger"></span>
+            <span id="error_itemspeaker" style="display:none;" class="text-danger">Speaker is required</span>
         </div>
 
         <div class="form-floating mb-3">
             <input class="form-control" aria-required="true" type="date" placeholder="Date Created" id="itemdate" />
             <label class="form-label">Date Created</label>
-            <span class="text-danger"></span>
+            <span id="error_itemdate" style="display:none;" class="text-danger">Date is required</span>
         </div>
 
         <div class="form-floating mb-3">
+            <label class="form-label" style="padding: 0.1rem .75rem;">Audio file</label>
             <input type="file" class="form-control" aria-required="true" id="itemfile" placeholder="File" />
+            <span id="error_itemfile" style="display:none;" class="text-danger">File is required</span>
         </div>
 
         <div>
@@ -57,13 +60,54 @@
 <script type="text/javascript">
     function save() {
 
+        const isValid = validateForm();
+        console.log(isValid);
+        if (!isValid) {
+            return;
+        }
+
+        var inputFile = $('#itemfile')[0].files[0];
+        uploadFile(inputFile);        
+    }
+
+    function validateForm() {
+        const title = $("#itemtitle").val().trim();
+        const speaker = $("#itemspeaker").val().trim();
+        const dateCreated = $("#itemdate").val().trim();
+
         var inputFile = $('#itemfile')[0].files[0];
 
-        if (inputFile) {
-            uploadFile(inputFile);
+        var isValid = true;
+
+        if (title.length == 0) {
+            isValid = false;
+            $("#error_itemtitle").show();
         } else {
-            runSave();
+            $("#error_itemtitle").hide();
         }
+
+        if (speaker.length == 0 || dateCreated.length == 0) {
+            isValid = false;
+            $("#error_itemspeaker").show();
+        } else {
+            $("#error_itemspeaker").hide();
+        }
+
+        if (dateCreated.length == 0) {
+            isValid = false;
+            $("#error_itemdate").show();
+        } else {
+            $("#error_itemdate").hide();
+        }
+
+        if (inputFile) {
+            $("#error_itemfile").hide();
+        } else {
+            isValid = false;
+            $("#error_itemfile").show();
+        }
+
+        return isValid;
     }
 
     function runSave() {
@@ -83,9 +127,9 @@
         };
 
         var jsonString = JSON.stringify(jsonData);
-        
+        console.log(jsonString);
         $.ajax({
-            url: '/api/shorttakes/',
+            url: '/api/shorttake/',
             type: 'POST',
             contentType: 'application/json',
             data: jsonString,
@@ -95,13 +139,15 @@
 
             },
             error: function (error) {
-                alert("Paging didn't work,please check your internet connection");
+                console.error('Error saving:', error);
+                alert("Error saving, please check your internet connection");
             }
         });
     }
 
     function handleResults(results) {
-
+        var url = $("#allitemslink").attr("href");
+        window.location.href = url;
     }
 
     function uploadFile(file) {
@@ -118,14 +164,14 @@
             processData: false,
             contentType: false,
             success: function (response) {
-                console.log("Uploaded file " + response.FileName);
-                $("#itemurl").val(response.FileName);
+                console.log("Uploaded file " + response.fileName);
+                $("#itemurl").val(response.fileName);
                 $('#itemfile').val('');
                 runSave();
             },
             error: function (error) {
                 console.error('Error uploading file:', error);
-                // Handle the error
+                alert("Error uploading media file, please check your internet connection.");
             }
         });
     }

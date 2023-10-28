@@ -1,5 +1,6 @@
 ﻿@{
     ViewData["Title"] = "The Kings Congreation";
+    Layout = "_LayoutAdmin";
 }
 
 <section class="sermon_video_btn">
@@ -7,12 +8,12 @@
         <div class="inner_video_sermons">
 
             <div class="info_sermon_img">
-                <img src="/img/info-point 1.svg" alt="">
+                <img src="/img/phone-music 1.svg" alt="">
                 <span>Admin - Music</span>
             </div>
             <div class="sermons_btns">
-                <a class="all_btns_sermon" asp-controller="Admin" asp-action="Music">All Music</a>
                 <a class="all_btns_sermon" asp-controller="Admin" asp-action="Index">Admin Home</a>
+                <a class="all_btns_sermon" asp-controller="Admin" asp-action="Music">All Music</a>
             </div>
         </div>
     </div>
@@ -35,26 +36,32 @@
             </div>
 
             <div class="form-floating mb-3">
-                <input class="form-control" aria-required="true" placeholder="Author" id="itemauthor" />
-                <label class="form-label">Author</label>
+                <input class="form-control" aria-required="true" placeholder="Speaker" id="itemauthor" />
+                <label class="form-label">Speaker</label>
                 <span class="text-danger"></span>
             </div>
 
             <div class="form-floating mb-3">
-                <input class="form-control" aria-required="true" placeholder="Video Url" id="itemvideourl" />
-                <label class="form-label">Video Url</label>
+                <input class="form-control" aria-required="true" placeholder="Video" id="itemvideourl" />
+                <label class="form-label">Video</label>
                 <span class="text-danger"></span>
             </div>
 
             <div class="form-floating mb-3">
-                <input class="form-control" aria-required="true" placeholder="Audio Url" id="itemaudiourl" />
-                <label class="form-label">Audio Url</label>
+                <input class="form-control" aria-required="true" placeholder="Audio" id="itemaudiourl" />
+                <label class="form-label">Audio</label>
                 <span class="text-danger"></span>
             </div>
 
             <div class="form-floating mb-3">
-                <input class="form-control" aria-required="true" placeholder="Pdf Url" id="itempdfurl" />
-                <label class="form-label">Pdf Url</label>
+                <input class="form-control" aria-required="true" placeholder="Pdf" id="itempdfurl" />
+                <label class="form-label">Pdf</label>
+                <span class="text-danger"></span>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input class="form-control" aria-required="true" placeholder="Sing Along" id="itemsingalongurl" />
+                <label class="form-label">Sing Along</label>
                 <span class="text-danger"></span>
             </div>
 
@@ -66,7 +73,7 @@
 
             <div>
                 <button id="submit" type="submit" class="w-100 btn btn-lg btn-primary" onclick="save();">Save</button>
-                <input type="hidden" id="itemid" value="@Model.Id" />
+                <input type="hidden" id="itemid" value="" />
             </div>
         </div>
 
