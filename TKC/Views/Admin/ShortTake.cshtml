@@ -14,7 +14,7 @@
                 <span>Admin - Short Takes</span>
             </div>
             <div class="sermons_btns">
-                <a id="allitemslink" class="all_btns_sermon" asp-controller="Admin" asp-action="ShortTake">All ShortTakes</a>
+                <a id="allitemslink" class="all_btns_sermon" asp-controller="Admin" asp-action="ShortTakeList">All ShortTakes</a>
                 <a class="all_btns_sermon" asp-controller="Admin" asp-action="Index">Admin Home</a>
             </div>
         </div>
@@ -24,8 +24,13 @@
 <section class="sermons_video_section">
 
     <h3>Edit Short Take</h3>
+    <br />
+    <br />
 
     <div class="container">
+
+        <h4>Details</h4>
+
         <div class="form-floating mb-3">
             <input class="form-control" aria-required="true" placeholder="Title" id="itemtitle" value="@Model.Title" />
             <label class="form-label">Title</label>
@@ -45,15 +50,31 @@
         </div>
 
         <div class="form-floating mb-3">
-            <label class="form-label" style="padding: 0.1rem .75rem;">Update Audio file (optional)</label>
-            <input type="file" class="form-control" aria-required="true" id="itemfile" placeholder="File" />
+            <input class="form-control" aria-required="true" placeholder="Video Url" id="itemvideourl" value="@Model.VideoUrl" />
+            <label class="form-label">Video Url (optional)</label>
+            <span class="text-danger"></span>
+        </div>
+
+        <h4>Files</h4>
+
+        <div class="form-floating mb-3">
+            <input type="file" class="form-control" aria-required="true" id="itemaudio" placeholder="Audio File" />
+            <label class="form-label">Update Audio (optional)</label>
+            <span class="text-danger"></span>
+        </div>
+
+        <div class="form-floating mb-3">
+            <input type="file" class="form-control" aria-required="true" id="itempdf" placeholder="Pdf File" />
+            <label class="form-label">Update Pdf (optional)</label>
+            <span class="text-danger"></span>
         </div>
 
         <div>
             <button id="submit" type="submit" class="w-100 btn btn-lg btn-primary" onclick="save(); return false;">Save</button>
             <input type="hidden" id="itemid" value="@Model.Id" />
-            <input type="hidden" id="itemurl" value="@Model.AudioUrl" />
-            <button type="button" class="btn btn-delete" onclick="deleteItem(@Model.Id, '@Model.Title');">Delete</button>
+            <input type="hidden" id="itemaudiourl" value="@Model.AudioUrl" />
+            <input type="hidden" id="itempdfurl" value="@Model.PdfUrl" />
+            <button type="button" class="btn btn-delete" onclick="deleteItem(@Model.Id);">Delete</button>
         </div>
 
         <br />
@@ -69,28 +90,68 @@
             </div>
         </div>
 
+        <br />
+        <br />
+
     </div>
 </section>
 
-
-
 @section Scripts {
 
-    <script type="text/javascript">function save() {
+    <script type="text/javascript">
+
+        function doSave() {
+
+            var itemId = parseInt($("#itemid").val());
+
+            var inputAudio = $('#itemaudio')[0].files[0];
+            var inputPdf = $('#itempdf')[0].files[0];
+
+            const title = $("#itemtitle").val().trim();
+            const author = $("#itemspeaker").val().trim();
+            const videoUrl = $("#itemvideourl").val().trim();
+            const dateCreated = $("#itemdate").val().trim();
+
+            var formData = new FormData();
+
+            if (inputAudio) {
+                formData.append('audio', inputAudio);
+            }
+
+            if (inputPdf) {
+                formData.append('pdf', inputPdf);
+            }
+
+            formData.append('title', title);
+            formData.append('author', author);
+            formData.append('videoUrl', videoUrl);
+            formData.append('dateCreated', dateCreated);
+
+            $.ajax({
+                url: '/api/shorttake/' + itemId,
+                type: 'PATCH',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    handleResults();
+                },
+                error: function (error) {
+                    alert("Unable to save, please check your internet connection.");
+                }
+            });
+        }
+
+        function save() {
 
             const isValid = validateForm();
             console.log(isValid);
+
             if (!isValid) {
                 return;
             }
 
-            var inputFile = $('#itemfile')[0].files[0];
-
-            if (inputFile) {
-                uploadFile(inputFile);
-            } else {
-                runSave();
-            }
+            doSave();
         }
 
         function validateForm() {
@@ -124,76 +185,14 @@
             return isValid;
         }
 
-        function runSave() {
-
-            console.log("saving");
-
-            const itemId = $("#itemid").val();
-            const title = $("#itemtitle").val();
-            const speaker = $("#itemspeaker").val();
-            const url = $("#itemurl").val();
-            const dateCreated = $("#itemdate").val();
-
-            var jsonData = {
-                id: parseInt(itemId),
-                title: title,
-                author: speaker,
-                audioUrl: url,
-                dateCreated: dateCreated
-            };
-
-            var jsonString = JSON.stringify(jsonData);
-
-            console.log(jsonString);
-
-            $.ajax({
-                url: '/api/shorttake/',
-                type: 'PATCH',
-                contentType: 'application/json',
-                data: jsonString,
-                success: function (results) {
-                    console.log("saved");
-                    handleResults();
-
-                },
-                error: function (error) {
-                    console.error('Error saving:', error);
-                    alert("Error saving, please check your internet connection");
-                }
-            });
-        }
-
         function handleResults() {
             var url = $("#allitemslink").attr("href");
             window.location.href = url;
         }
 
-        function uploadFile(file) {
+        function deleteItem(itemId) {
 
-            var formData = new FormData();
-            formData.append('file', file);
-
-            $.ajax({
-                url: '/api/upload',
-                type: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function (response) {
-                    console.log(response);
-                    $("#itemurl").val(response.fileName);
-                    $('#itemfile').val('');
-                    runSave();
-                },
-                error: function (error) {
-                    console.error('Error uploading file:', error);
-                    alert("Error uploading media file, please check your internet connection.");
-                }
-            });
-        }
-
-        function deleteItem(itemId, title) {
-
+            const title = $("#itemtitle").val();
             const messageTitle = "Are you sure you want to delete " + title + "?";
             var isConfirmed = window.confirm(messageTitle);
             if (isConfirmed) {
