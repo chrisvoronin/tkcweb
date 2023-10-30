@@ -72,64 +72,6 @@ namespace TKC.Controllers
             }
         }
 
-        [Authorize]
-        [HttpPost]
-        public async Task<IActionResult> Create([FromBody] Music st)
-        {
-            if (st == null)
-            {
-                return BadRequest("The Music data is null.");
-            }
-
-            try
-            {
-                _context.Musics.Add(st);
-                await _context.SaveChangesAsync();
-
-                return Json(st);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, "Internal Server Error");
-            }
-        }
-
-        [Authorize]
-        [HttpPatch]
-        public async Task<IActionResult> Update([FromBody] Music st)
-        {
-            if (st == null)
-            {
-                return BadRequest("Music data is null.");
-            }
-
-            try
-            {
-                var existing = _context.Musics.Find(st.Id);
-
-                if (existing == null)
-                {
-                    return NotFound();
-                }
-
-                existing.Title = st.Title;
-                existing.SubTitle = st.SubTitle;
-                existing.Author = st.Author;
-                existing.VideoUrl = st.VideoUrl;
-                existing.PdfUrl = st.PdfUrl;
-                existing.AudioUrl = st.AudioUrl;
-                existing.DateCreated = st.DateCreated;
-
-                await _context.SaveChangesAsync();
-
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, "Internal Server Error");
-            }
-        }
-
         [HttpGet("page/{page}")]
         public async Task<IActionResult> Page(int page)
         {
@@ -179,6 +121,207 @@ namespace TKC.Controllers
                 return StatusCode(500, "Internal Server Error");
             }
         }
+
+        [Authorize]
+        [HttpPost()]
+        public async Task<IActionResult> Create([FromForm] IFormCollection formData)
+        {
+
+            var audio = formData.Files["audio"];
+            var pdf = formData.Files["pdf"];
+
+            if (audio == null)
+            {
+                return BadRequest("Audio file is required.");
+            }
+
+            string? title = null;
+            string? subTitle = null;
+            string? author = null;
+            string? videoUrl = null;
+            DateTime? dateCreated = null;
+
+            if (formData.ContainsKey("title"))
+            {
+                title = formData["title"].ToString();
+            }
+            else
+            {
+                return BadRequest("Title is required.");
+            }
+
+            if (formData.ContainsKey("subTitle"))
+            {
+                subTitle = formData["subTitle"].ToString();
+            }
+
+            if (formData.ContainsKey("author"))
+            {
+                author = formData["author"].ToString();
+            }
+            else
+            {
+                return BadRequest("Speaker is required.");
+            }
+            if (formData.ContainsKey("videoUrl"))
+            {
+                videoUrl = formData["videoUrl"].ToString();
+            }
+            if (formData.ContainsKey("dateCreated"))
+            {
+                var dateCreatedString = formData["dateCreated"];
+                if (DateTime.TryParse(dateCreatedString, out var parsedDate))
+                {
+                    dateCreated = parsedDate;
+                }
+                else
+                {
+                    return BadRequest("Created Date is required.");
+                }
+            }
+            else
+            {
+                return BadRequest("Created Date is required.");
+            }
+
+            // now build and save
+            string? audioFileName = null;
+            string? pdfFileName = null;
+
+            if (audio != null)
+            {
+                audioFileName = await FileUtility.SaveFile(audio);
+            }
+
+            if (pdf != null)
+            {
+                pdfFileName = await FileUtility.SaveFile(pdf);
+            }
+
+            try
+            {
+                var st = new Music();
+
+                st.Title = title;
+                st.SubTitle = subTitle;
+                st.Author = author;
+                st.VideoUrl = videoUrl;
+                st.DateCreated = dateCreated ?? DateTime.Now;
+
+                if (audioFileName != null)
+                {
+                    st.AudioUrl = audioFileName;
+                }
+
+                if (pdfFileName != null)
+                {
+                    st.PdfUrl = pdfFileName;
+                }
+
+                _context.Musics.Add(st);
+                await _context.SaveChangesAsync();
+
+                return Json(st);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Error: " + ex.Message);
+            }
+        }
+
+        [Authorize]
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> Update(long id, [FromForm] IFormCollection formData)
+        {
+
+            var audio = formData.Files["audio"];
+            var pdf = formData.Files["pdf"];
+
+            string? title = null;
+            string? subTitle = null;
+            string? author = null;
+            string? videoUrl = null;
+            DateTime? dateCreated = null;
+
+            if (formData.ContainsKey("title"))
+            {
+                title = formData["title"].ToString();
+            }
+            if (formData.ContainsKey("subTitle"))
+            {
+                subTitle = formData["subTitle"].ToString();
+            }
+            if (formData.ContainsKey("author"))
+            {
+                author = formData["author"].ToString();
+            }
+            if (formData.ContainsKey("videoUrl"))
+            {
+                videoUrl = formData["videoUrl"].ToString();
+            }
+            if (formData.ContainsKey("dateCreated"))
+            {
+                var dateCreatedString = formData["dateCreated"];
+                if (DateTime.TryParse(dateCreatedString, out var parsedDate))
+                {
+                    dateCreated = parsedDate;
+                }
+            }
+
+            // Now handle filling out form
+            string? audioFileName = null;
+            string? pdfFileName = null;
+
+            if (audio != null)
+            {
+                audioFileName = await FileUtility.SaveFile(audio);
+            }
+
+            if (pdf != null)
+            {
+                pdfFileName = await FileUtility.SaveFile(pdf);
+            }
+
+            try
+            {
+                var existing = _context.Musics.Find(id);
+
+                if (existing == null)
+                {
+                    return NotFound();
+                }
+
+                if (title != null)
+                    existing.Title = title;
+
+                if (subTitle != null)
+                    existing.SubTitle = subTitle;
+
+                if (author != null)
+                    existing.Author = author;
+
+                if (videoUrl != null)
+                    existing.VideoUrl = videoUrl;
+
+                if (audioFileName != null)
+                    existing.AudioUrl = audioFileName;
+
+                if (pdfFileName != null)
+                    existing.PdfUrl = pdfFileName;
+
+                if (dateCreated != null)
+                    existing.DateCreated = dateCreated.Value;
+
+                await _context.SaveChangesAsync();
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Error: " + ex.Message);
+            }
+        }
+
 
     }
 }

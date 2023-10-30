@@ -131,6 +131,7 @@ namespace TKC.Controllers
             }
 
             string? title = null;
+            string? subTitle = null;
             string? author = null;
             string? videoUrl = null;
             DateTime? dateCreated = null;
@@ -142,6 +143,12 @@ namespace TKC.Controllers
             {
                 return BadRequest("Title is required.");
             }
+
+            if (formData.ContainsKey("subTitle"))
+            {
+                subTitle = formData["subTitle"].ToString();
+            }
+
             if (formData.ContainsKey("author"))
             {
                 author = formData["author"].ToString();
@@ -174,12 +181,12 @@ namespace TKC.Controllers
 
             if (audio != null)
             {
-                audioFileName = await SaveFile(audio);
+                audioFileName = await FileUtility.SaveFile(audio);
             }
 
             if (pdf != null)
             {
-                pdfFileName = await SaveFile(pdf);
+                pdfFileName = await FileUtility.SaveFile(pdf);
             }
 
             try
@@ -187,6 +194,7 @@ namespace TKC.Controllers
                 var st = new ShortTake();
 
                 st.Title = title;
+                st.SubTitle = subTitle;
                 st.Author = author;
                 st.VideoUrl = videoUrl;
                 st.DateCreated = dateCreated ?? DateTime.Now;
@@ -221,6 +229,7 @@ namespace TKC.Controllers
             var pdf = formData.Files["pdf"];
 
             string? title = null;
+            string? subTitle = null;
             string? author = null;
             string? videoUrl = null;
             DateTime? dateCreated = null;
@@ -228,6 +237,10 @@ namespace TKC.Controllers
             if (formData.ContainsKey("title"))
             {
                 title = formData["title"].ToString();
+            }
+            if (formData.ContainsKey("subTitle"))
+            {
+                subTitle = formData["subTitle"].ToString();
             }
             if (formData.ContainsKey("author"))
             {
@@ -252,12 +265,12 @@ namespace TKC.Controllers
 
             if (audio != null)
             {
-                audioFileName = await SaveFile(audio);
+                audioFileName = await FileUtility.SaveFile(audio);
             }
 
             if (pdf != null)
             {
-                pdfFileName = await SaveFile(pdf);
+                pdfFileName = await FileUtility.SaveFile(pdf);
             }
 
             try
@@ -271,6 +284,9 @@ namespace TKC.Controllers
 
                 if (title != null)
                     existing.Title = title;
+
+                if (subTitle != null)
+                    existing.SubTitle = subTitle;
 
                 if (author != null)
                     existing.Author = author;
@@ -295,17 +311,6 @@ namespace TKC.Controllers
             {
                 return StatusCode(500, "Error: " + ex.Message);
             }
-        }
-
-        private async Task<string> SaveFile(IFormFile file)
-        {
-            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "Uploads", fileName);
-            using (var stream = new FileStream(filePath, FileMode.Create))
-            {
-                await file.CopyToAsync(stream);
-            }
-            return fileName;
         }
 
     }

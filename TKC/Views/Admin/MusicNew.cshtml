@@ -13,7 +13,7 @@
             </div>
             <div class="sermons_btns">
                 <a class="all_btns_sermon" asp-controller="Admin" asp-action="Index">Admin Home</a>
-                <a class="all_btns_sermon" asp-controller="Admin" asp-action="Music">All Music</a>
+                <a class="all_btns_sermon" asp-controller="Admin" asp-action="MusicList">All Music</a>
             </div>
         </div>
     </div>
@@ -22,107 +22,150 @@
 
 <section class="sermons_video_section">
     <div class="container">
-        <div id="inner">
-            <div class="form-floating mb-3">
-                <input class="form-control" aria-required="true" placeholder="Title" id="itemtitle" />
-                <label class="form-label">Title</label>
-                <span class="text-danger"></span>
-            </div>
 
-            <div class="form-floating mb-3">
-                <input class="form-control" aria-required="true" placeholder="SubTitle" id="itemsubtitle" />
-                <label class="form-label">SubTitle</label>
-                <span class="text-danger"></span>
-            </div>
+        <h4>Details</h4>
 
-            <div class="form-floating mb-3">
-                <input class="form-control" aria-required="true" placeholder="Speaker" id="itemauthor" />
-                <label class="form-label">Speaker</label>
-                <span class="text-danger"></span>
-            </div>
-
-            <div class="form-floating mb-3">
-                <input class="form-control" aria-required="true" placeholder="Video" id="itemvideourl" />
-                <label class="form-label">Video</label>
-                <span class="text-danger"></span>
-            </div>
-
-            <div class="form-floating mb-3">
-                <input class="form-control" aria-required="true" placeholder="Audio" id="itemaudiourl" />
-                <label class="form-label">Audio</label>
-                <span class="text-danger"></span>
-            </div>
-
-            <div class="form-floating mb-3">
-                <input class="form-control" aria-required="true" placeholder="Pdf" id="itempdfurl" />
-                <label class="form-label">Pdf</label>
-                <span class="text-danger"></span>
-            </div>
-
-            <div class="form-floating mb-3">
-                <input class="form-control" aria-required="true" placeholder="Sing Along" id="itemsingalongurl" />
-                <label class="form-label">Sing Along</label>
-                <span class="text-danger"></span>
-            </div>
-
-            <div class="form-floating mb-3">
-                <input class="form-control" aria-required="true" type="date" placeholder="Date Created" id="itemdate" />
-                <label class="form-label">Date Created</label>
-                <span class="text-danger"></span>
-            </div>
-
-            <div>
-                <button id="submit" type="submit" class="w-100 btn btn-lg btn-primary" onclick="save();">Save</button>
-                <br />
-                <br />
-                <input type="hidden" id="itemid" value="" />
-            </div>
+        <div class="form-floating mb-3">
+            <input class="form-control" aria-required="true" placeholder="Title" id="itemtitle" />
+            <label class="form-label">Title</label>
+            <span id="error_itemtitle" style="display:none;" class="text-danger">Title is required</span>
         </div>
+
+        <div class="form-floating mb-3">
+            <input class="form-control" aria-required="true" placeholder="Speaker" id="itemspeaker" />
+            <label class="form-label">Speaker</label>
+            <span id="error_itemspeaker" style="display:none;" class="text-danger">Speaker is required</span>
+        </div>
+
+        <div class="form-floating mb-3">
+            <input class="form-control" aria-required="true" type="date" placeholder="Date Created" id="itemdate" />
+            <label class="form-label">Date Created</label>
+            <span id="error_itemdate" style="display:none;" class="text-danger">Date is required</span>
+        </div>
+
+        <div class="form-floating mb-3">
+            <input class="form-control" aria-required="true" placeholder="Video Url" id="itemvideourl" />
+            <label class="form-label">Video Url (optional)</label>
+            <span class="text-danger"></span>
+        </div>
+
+        <h4>Files</h4>
+
+        <div class="form-floating mb-3">
+            <label class="form-label" style="padding: 0.1rem .75rem;">Audio file</label>
+            <input type="file" class="form-control" aria-required="true" id="itemaudio" placeholder="File" />
+            <span id="error_itemfile" style="display:none;" class="text-danger">File is required</span>
+        </div>
+
+        <div class="form-floating mb-3">
+            <input type="file" class="form-control" aria-required="true" id="itempdf" placeholder="Pdf File" />
+            <label class="form-label">Pdf (optional)</label>
+            <span class="text-danger"></span>
+        </div>
+
+        <div>
+            <button id="submit" type="submit" class="w-100 btn btn-lg btn-primary" onclick="save();">Save</button>
+        </div>
+        <br />
+        <br />
 
     </div>
 </section>
 
-<script type="text/javascript">
+<script type="text/javascript">function doSave() {
 
-    function save() {
+        var inputAudio = $('#itemaudio')[0].files[0];
+        var inputPdf = $('#itempdf')[0].files[0];
 
-        const itemId = $("#itemid").val();
-        const title = $("#itemtitle").val();
-        const subTitle = $("#itemsubtitle").val();
-        const author = $("#itemauthor").val();
+        const title = $("#itemtitle").val().trim();
+        const author = $("#itemspeaker").val().trim();
+        const videoUrl = $("#itemvideourl").val().trim();
+        const dateCreated = $("#itemdate").val().trim();
 
-        const videoUrl = $("#itemvideourl").val();
-        const audioUrl = $("#itemaudiourl").val();
-        const pdfUrl = $("#itempdfurl").val();
+        var formData = new FormData();
 
-        const dateCreated = $("#itemdate").val();
-
-        var item = {
-            id: itemId,
-            title: title,
-            subTitle: subTitle,
-            author: author,
-            videoUrl: videoUrl,
-            audioUrl: audioUrl,
-            pdfUrl: pdfUrl,
-            dateCreated: dateCreated
+        if (inputAudio) {
+            formData.append('audio', inputAudio);
         }
 
-        var jsonString = JSON.stringify(jsonData);
-        
-        $.ajax({
-            url: '/api/music/,
-            type: 'PATCH',
-            contentType: 'application/json',
-            data: jsonString,
-            success: function (results) {
-                alert("Saved");
+        if (inputPdf) {
+            formData.append('pdf', inputPdf);
+        }
 
+        formData.append('title', title);
+        formData.append('author', author);
+        formData.append('videoUrl', videoUrl);
+        formData.append('dateCreated', dateCreated);
+
+        $.ajax({
+            url: '/api/music/',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                handleResults();
             },
             error: function (error) {
-                alert("Unable to save, check your internet connection please.");
+                alert("Unable to save, please check your internet connection.");
             }
         });
     }
 
-</script>
+    function save() {
+
+        const isValid = validateForm();
+        console.log(isValid);
+        if (!isValid) {
+            return;
+        }
+
+        doSave();
+    }
+
+    function validateForm() {
+        const title = $("#itemtitle").val().trim();
+        const speaker = $("#itemspeaker").val().trim();
+        const dateCreated = $("#itemdate").val().trim();
+
+        var inputFile = $('#itemaudio')[0].files[0];
+
+        var isValid = true;
+
+        if (title.length == 0) {
+            isValid = false;
+            $("#error_itemtitle").show();
+        } else {
+            $("#error_itemtitle").hide();
+        }
+
+        if (speaker.length == 0 || dateCreated.length == 0) {
+            isValid = false;
+            $("#error_itemspeaker").show();
+        } else {
+            $("#error_itemspeaker").hide();
+        }
+
+        if (dateCreated.length == 0) {
+            isValid = false;
+            $("#error_itemdate").show();
+        } else {
+            $("#error_itemdate").hide();
+        }
+
+        if (inputFile) {
+            $("#error_itemfile").hide();
+        } else {
+            isValid = false;
+            $("#error_itemfile").show();
+        }
+
+        return isValid;
+    }
+
+    function handleResults(results) {
+        var url = $("#allitemslink").attr("href");
+        window.location.href = url;
+    }
+
+    </script>
