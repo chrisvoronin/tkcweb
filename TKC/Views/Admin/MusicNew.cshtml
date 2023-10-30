@@ -32,12 +32,6 @@
         </div>
 
         <div class="form-floating mb-3">
-            <input class="form-control" aria-required="true" placeholder="Speaker" id="itemspeaker" />
-            <label class="form-label">Speaker</label>
-            <span id="error_itemspeaker" style="display:none;" class="text-danger">Speaker is required</span>
-        </div>
-
-        <div class="form-floating mb-3">
             <input class="form-control" aria-required="true" type="date" placeholder="Date Created" id="itemdate" />
             <label class="form-label">Date Created</label>
             <span id="error_itemdate" style="display:none;" class="text-danger">Date is required</span>
@@ -78,7 +72,6 @@
         var inputPdf = $('#itempdf')[0].files[0];
 
         const title = $("#itemtitle").val().trim();
-        const author = $("#itemspeaker").val().trim();
         const videoUrl = $("#itemvideourl").val().trim();
         const dateCreated = $("#itemdate").val().trim();
 
@@ -93,7 +86,6 @@
         }
 
         formData.append('title', title);
-        formData.append('author', author);
         formData.append('videoUrl', videoUrl);
         formData.append('dateCreated', dateCreated);
 
@@ -125,7 +117,6 @@
 
     function validateForm() {
         const title = $("#itemtitle").val().trim();
-        const speaker = $("#itemspeaker").val().trim();
         const dateCreated = $("#itemdate").val().trim();
 
         var inputFile = $('#itemaudio')[0].files[0];
@@ -137,13 +128,6 @@
             $("#error_itemtitle").show();
         } else {
             $("#error_itemtitle").hide();
-        }
-
-        if (speaker.length == 0 || dateCreated.length == 0) {
-            isValid = false;
-            $("#error_itemspeaker").show();
-        } else {
-            $("#error_itemspeaker").hide();
         }
 
         if (dateCreated.length == 0) {

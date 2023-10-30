@@ -159,14 +159,12 @@ namespace TKC.Controllers
             {
                 author = formData["author"].ToString();
             }
-            else
-            {
-                return BadRequest("Speaker is required.");
-            }
+            
             if (formData.ContainsKey("videoUrl"))
             {
                 videoUrl = formData["videoUrl"].ToString();
             }
+
             if (formData.ContainsKey("dateCreated"))
             {
                 var dateCreatedString = formData["dateCreated"];
