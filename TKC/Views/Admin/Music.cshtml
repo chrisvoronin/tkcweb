@@ -50,6 +50,12 @@
             <span class="text-danger"></span>
         </div>
 
+        <div class="form-floating mb-3">
+            <input class="form-control" aria-required="true" placeholder="Video Url" id="itemsingalongurl" value="@Model.SingAlongUrl" />
+            <label class="form-label">Sing Along Url (optional)</label>
+            <span class="text-danger"></span>
+        </div>
+
         <h4>Files</h4>
 
         <div class="form-floating mb-3">
@@ -105,6 +111,7 @@
             const title = $("#itemtitle").val().trim();
             const videoUrl = $("#itemvideourl").val().trim();
             const dateCreated = $("#itemdate").val().trim();
+            const singAlongUrl = $("#itemsingalongurl").val().trim();
 
             var formData = new FormData();
 
@@ -118,6 +125,7 @@
 
             formData.append('title', title);
             formData.append('videoUrl', videoUrl);
+            formData.append('singAlongUrl', singAlongUrl);
             formData.append('dateCreated', dateCreated);
 
             $.ajax({

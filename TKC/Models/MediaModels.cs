@@ -122,6 +122,9 @@ namespace TKC.Models
         [JsonPropertyName("videoUrl")]
         public string? VideoUrl { get; set; }
 
+        [JsonPropertyName("singAlongUrl")]
+        public string? SingAlongUrl { get; set; }
+
         [JsonPropertyName("dateCreated")]
         public DateTime DateCreated { get; set; }
     }

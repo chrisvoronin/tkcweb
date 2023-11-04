@@ -139,6 +139,7 @@ namespace TKC.Controllers
             string? subTitle = null;
             string? author = null;
             string? videoUrl = null;
+            string? singAlongUrl = null;
             DateTime? dateCreated = null;
 
             if (formData.ContainsKey("title"))
@@ -159,7 +160,12 @@ namespace TKC.Controllers
             {
                 author = formData["author"].ToString();
             }
-            
+
+            if (formData.ContainsKey("singAlongUrl"))
+            {
+                singAlongUrl = formData["singAlongUrl"].ToString();
+            }
+
             if (formData.ContainsKey("videoUrl"))
             {
                 videoUrl = formData["videoUrl"].ToString();
@@ -204,6 +210,7 @@ namespace TKC.Controllers
                 st.SubTitle = subTitle;
                 st.Author = author;
                 st.VideoUrl = videoUrl;
+                st.SingAlongUrl = singAlongUrl;
                 st.DateCreated = dateCreated ?? DateTime.Now;
 
                 if (audioFileName != null)
@@ -240,6 +247,7 @@ namespace TKC.Controllers
             string? author = null;
             string? videoUrl = null;
             DateTime? dateCreated = null;
+            string? singAlongUrl = null;
 
             if (formData.ContainsKey("title"))
             {
@@ -252,6 +260,10 @@ namespace TKC.Controllers
             if (formData.ContainsKey("author"))
             {
                 author = formData["author"].ToString();
+            }
+            if (formData.ContainsKey("singAlongUrl"))
+            {
+                singAlongUrl = formData["singAlongUrl"].ToString();
             }
             if (formData.ContainsKey("videoUrl"))
             {
@@ -306,6 +318,9 @@ namespace TKC.Controllers
 
                 if (pdfFileName != null)
                     existing.PdfUrl = pdfFileName;
+
+                if (singAlongUrl != null)
+                    existing.SingAlongUrl = singAlongUrl;
 
                 if (dateCreated != null)
                     existing.DateCreated = dateCreated.Value;

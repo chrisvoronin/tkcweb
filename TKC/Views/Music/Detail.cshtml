@@ -39,8 +39,8 @@
                 @*<img src="/img/sermons_video_img.png" alt="">*@
                 <iframe width="100%" height="100%" src="@Model.VideoUrl" title="@Model.Title" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen id="video"></iframe>
                 @*<a href="" id="play-video">
-                    <img class="play_button" src="/img/play_button.svg" alt="" id="cover">
-                </a>*@
+                        <img class="play_button" src="/img/play_button.svg" alt="" id="cover">
+                    </a>*@
             </div>
         }
 
@@ -64,9 +64,19 @@
 
 @if (!string.IsNullOrEmpty(Model.PdfUrl))
 {
-<section style="background: #F7F4F2;">
-    <div class="download_section" style="padding-top: 10px; padding-bottom: 15px;">
-        <a class="downloadBtn" href="@Model.PdfUrl">Download PDF <img src="/img/downloadBtn.svg" alt=""></a>
-    </div>
-</section>
+    <section style="background: #F7F4F2;">
+        <div class="download_section" style="padding-top: 10px; padding-bottom: 15px;">
+            <a class="downloadBtn" href="@Model.PdfUrl">Download PDF <img src="/img/downloadBtn.svg" alt=""></a>
+        </div>
+    </section>
+}
+
+
+@if (!string.IsNullOrEmpty(Model.SingAlongUrl))
+{
+    <section style="background: #F7F4F2;">
+        <div class="download_section" style="padding-top: 10px; padding-bottom: 15px;">
+            <a class="downloadBtn" href="@Model.SingAlongUrl">Sing Along <img src="/img/phone-music.svg" alt=""></a>
+        </div>
+    </section>
 }

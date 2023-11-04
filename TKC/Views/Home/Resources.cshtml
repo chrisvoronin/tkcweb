@@ -55,24 +55,34 @@
                                 <h4>@m.Title</h4>
                             </a>
 
-                            @if (!string.IsNullOrWhiteSpace(m.PdfUrl))
-                            {
-                                <a class="nounderline sermons_values" asp-controller="Music" asp-action="Detail" asp-route-id="@m.Id">
-                                    <span>PDF</span>
-                                </a>
-                                <span class="dout">•</span>
-                            }
                             @if (!string.IsNullOrWhiteSpace(m.AudioUrl))
                             {
                                 <a class="nounderline sermons_values" asp-controller="Music" asp-action="Detail" asp-route-id="@m.Id">
                                     <span>MP3</span>
                                 </a>
-                                <span class="dout">•</span>
+
                             }
+                            @if (!string.IsNullOrWhiteSpace(m.PdfUrl))
+                            {
+                                <span class="dout">•</span>
+                                <a class="nounderline sermons_values" asp-controller="Music" asp-action="Detail" asp-route-id="@m.Id">
+                                    <span>PDF</span>
+                                </a>
+                            }
+
                             @if (!string.IsNullOrWhiteSpace(m.VideoUrl))
                             {
+                                <span class="dout">•</span>
                                 <a class="nounderline sermons_values" asp-controller="Music" asp-action="Detail" asp-route-id="@m.Id">
                                     <span>Video</span>
+                                </a>
+
+                            }
+                            @if (!string.IsNullOrWhiteSpace(m.SingAlongUrl))
+                            {
+                                <span class="dout">•</span>
+                                <a class="nounderline sermons_values" asp-controller="Music" asp-action="Detail" asp-route-id="@m.Id">
+                                    <span>Sing Along</span>
                                 </a>
                             }
 

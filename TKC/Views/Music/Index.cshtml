@@ -127,25 +127,28 @@
             var link = '/music/' + item.id;
 
             var text = "";
-            if (item.pdfUrl != null) {
-                if (text.length > 0) {
-                    text += "&nbsp; • &nbsp;";
-                }
-                text += "PDF";
-            }
+            
             if (item.audioUrl != null) {
                 if (text.length > 0) {
                     text += "&nbsp; • &nbsp;";
                 }
                 text += "MP3";
             }
+
+            if (item.pdfUrl != null) {
+                if (text.length > 0) {
+                    text += "&nbsp; • &nbsp;";
+                }
+                text += "PDF";
+            }
+
             if (item.videoUrl != null) {
                 if (text.length > 0) {
                     text += "&nbsp; • &nbsp;";
                 }
                 text += "VIDEO";
             }
-            if (item.pdfUrl != null) {
+            if (item.singAlongUrl != null) {
                 if (text.length > 0) {
                     text += "&nbsp; • &nbsp;";
                 }
@@ -158,7 +161,7 @@
                 .replace('{{pdf}}', item.pdfUrl)
                 .replace('{{mp3}}', item.audioUrl)
                 .replace('{{video}}', item.videoUrl)
-                .replace('{{singalong}}', item.pdfUrl)
+                .replace('{{singalong}}', item.singAlongUrl)
                 .replace('{{options}}', text)
                 .replace('{{date}}', formatDate(item.dateCreated));
 
