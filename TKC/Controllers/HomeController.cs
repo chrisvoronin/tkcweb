@@ -44,6 +44,29 @@ public class HomeController : Controller
         return View();
     }
 
+    public async Task<IActionResult> Staff()
+    {
+        var vm = new StaffViewModel()
+        {
+            Deacons = await _context.Employees
+                .Where(e => e.Group == "Deacon")
+                .OrderBy(e => e.Order)
+                .ToListAsync(),
+
+            Elders = await _context.Employees
+                .Where(e => e.Group == "Elder")
+                .OrderBy(e => e.Order)
+                .ToListAsync(),
+
+            Secretaries = await _context.Employees
+                .Where(e => e.Group == "Secretary")
+                .OrderBy(e => e.Order)
+                .ToListAsync()
+        };
+
+        return View(vm);
+    }
+
     [HttpPost]
     public IActionResult Contact(string name, string email, string message)
     {

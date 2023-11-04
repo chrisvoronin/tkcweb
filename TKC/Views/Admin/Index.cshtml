@@ -55,6 +55,21 @@
                     </div>
                 </div>
 
+                @*Staff*@
+                <div class="inner_valus_data">
+                    <div class="sermons_values">
+                        <a class="nounderline sermons_values" asp-controller="Admin" asp-action="Staff">
+                            <h4>Staff</h4>
+                            <span>(@Model.StaffCount)</span>
+                        </a>
+                    </div>
+                    <div class="sermons_date">
+                        <a class="nounderline sermons_values" asp-controller="Admin" asp-action="Staff"><span>Edit</span></a>
+                        <span>•</span>
+                        <a class="nounderline sermons_values" asp-controller="Admin" asp-action="StaffNew"><span>Add</span></a>
+                    </div>
+                </div>
+
             </div>
 
         </div>

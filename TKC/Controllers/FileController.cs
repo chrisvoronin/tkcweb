@@ -5,6 +5,20 @@ namespace TKC.Controllers
     [Route("[controller]")]
     public class FileController : Controller
     {
+        [HttpGet("Staff/{fileName}")]
+        public IActionResult GetStaffFile(string fileName)
+        {
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "Staff", fileName);
+
+            if (!System.IO.File.Exists(filePath))
+            {
+                return NotFound();
+            }
+
+            var fileContents = System.IO.File.ReadAllBytes(filePath);
+            return File(fileContents, "image/jpeg");
+        }
+
         [HttpGet("{fileName}")]
         public ActionResult GetFile(string fileName)
         {

@@ -14,6 +14,18 @@
     <None Remove="Views\Music\" />
     <None Remove="Views\ShortTakes\" />
     <None Remove="Views\Admin\" />
+    <None Remove="Staff\" />
+    <None Remove="Staff\Caleb_Forrey.jpg" />
+    <None Remove="Staff\Dan_Kircher.jpg" />
+    <None Remove="Staff\Geoff_Francian.jpg" />
+    <None Remove="Staff\Jeremiah_Schroeder.jpg" />
+    <None Remove="Staff\Josiah_Helsel.jpg" />
+    <None Remove="Staff\Travis_Pascoe.jpg" />
+    <None Remove="Staff\Alan_Burrow.jpg" />
+    <None Remove="Staff\Casey_Christopher.jpg" />
+    <None Remove="Staff\Israel_Waitman.jpg" />
+    <None Remove="Staff\John_Clausen.jpg" />
+    <None Remove="Staff\Madison_Kezar.jpg" />
   </ItemGroup>
   <ItemGroup>
     <None Update="app.db" CopyToOutputDirectory="PreserveNewest" ExcludeFromSingleFile="true" />
@@ -39,5 +51,49 @@
     <Folder Include="Views\Music\" />
     <Folder Include="Views\ShortTakes\" />
     <Folder Include="Views\Admin\" />
+    <Folder Include="Staff\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Staff\Caleb_Forrey.jpg">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Staff\Dan_Kircher.jpg">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Staff\Geoff_Francian.jpg" />
+    <Content Include="Staff\Jeremiah_Schroeder.jpg">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Staff\Josiah_Helsel.jpg">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Staff\Travis_Pascoe.jpg">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Staff\Alan_Burrow.jpg">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Staff\Casey_Christopher.jpg">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Staff\Israel_Waitman.jpg">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Staff\John_Clausen.jpg">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Staff\Madison_Kezar.jpg">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
   </ItemGroup>
 </Project>

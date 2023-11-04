@@ -47,6 +47,21 @@ namespace TKC.Models
         public List<ShortTake> Items { get; set; } = new List<ShortTake>();
     }
 
+    public class EmployeeResponse
+    {
+        [JsonPropertyName("totalResults")]
+        public int TotalResults { get; set; }
+
+        [JsonPropertyName("currentPage")]
+        public int CurrentPage { get; set; }
+
+        [JsonPropertyName("itemsPerPage")]
+        public int ItemsPerPage { get; set; }
+
+        [JsonPropertyName("items")]
+        public List<Staff> Items { get; set; } = new List<Staff>();
+    }
+
     public class SermonsResponse
     {
         [JsonPropertyName("totalResults")]

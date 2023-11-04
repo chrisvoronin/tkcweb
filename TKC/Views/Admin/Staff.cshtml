@@ -1,0 +1,208 @@
+﻿@{
+    ViewData["Title"] = "The Kings Congreation";
+    Layout = "_LayoutAdmin";
+}
+
+@model Staff
+
+<section class="sermon_video_btn">
+    <div class="container">
+        <div class="inner_video_sermons">
+
+            <div class="info_sermon_img">
+                <img src="/img/mic-2 1.svg" alt="">
+                <span>Admin - Staff</span>
+            </div>
+            <div class="sermons_btns">
+                <a id="allitemslink" class="all_btns_sermon" asp-controller="Admin" asp-action="StaffList">All Staff</a>
+                <a class="all_btns_sermon" asp-controller="Admin" asp-action="Index">Admin Home</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="sermons_video_section">
+
+    <h3>Edit Staff</h3>
+    <br />
+    <br />
+
+    <div class="container">
+
+        <h4>Details</h4>
+
+        <div class="form-floating mb-3">
+
+            <input class="form-control" aria-required="true" placeholder="Title" id="itemname" value="@Model.Name" />
+            <label class="form-label">Name</label>
+            <span id="error_itemname" style="display:none;" class="text-danger">Required</span>
+        </div>
+
+        <div class="form-floating mb-3">
+            <textarea name="message" rows="10" cols="30" style="height: 100px;" class="form-control" id="itemdescription" placeholder="Description">@Model.Description</textarea>
+            <label class="form-label">About</label>
+            <span id="error_itemdescription" style="display:none;" class="text-danger">Required</span>
+        </div>
+
+        <div class="form-floating mb-3">
+
+            <select class="form-control" aria-required="true" placeholder="Title" id="itemgroup" value="@Model.Group">
+                <option value="Elder">Elder</option>
+                <option value="Deacon">Deacon</option>
+                <option value="Secretary">Secretary</option>
+            </select>
+            <label class="form-label">Title</label>
+            <span id="error_itemgroup" style="display:none;" class="text-danger">Required</span>
+        </div>
+
+        <div class="form-floating mb-3">
+            <input class="form-control" aria-required="true" placeholder="Order" id="itemorder" value="@Model.Order" />
+            <label class="form-label">Sort order on page</label>
+            <span id="error_itemorder" style="display:none;" class="text-danger">Required</span>
+        </div>
+
+        <h4>Files</h4>
+
+        <div class="form-floating mb-3">
+            <input type="file" class="form-control" aria-required="true" id="itemphoto" placeholder="Photo File" />
+            <label class="form-label">Update Photo (optional)</label>
+            <span class="text-danger"></span>
+        </div>
+
+        <br />
+        <br />
+
+        <div>
+            <button id="submit" type="submit" class="w-100 btn btn-lg btn-primary" onclick="save(); return false;">Save</button>
+            <input type="hidden" id="itemid" value="@Model.Id" />
+            <button type="button" class="btn btn-delete" onclick="deleteItem(@Model.Id);">Delete</button>
+        </div>
+
+        <br />
+        <br />
+
+        <br />
+        <br />
+
+
+    </div>
+</section>
+
+@section Scripts {
+
+    <script type="text/javascript">
+
+        function doSave() {
+
+            var itemId = parseInt($("#itemid").val());
+
+            var file = $('#itemphoto')[0].files[0];
+
+            const name = $("#itemname").val().trim();
+            const description = $("#itemdescription").val().trim();
+            const group = $("#itemgroup").val().trim();
+            const order = parseInt($("#itemorder").val().trim());
+
+            var formData = new FormData();
+
+            if (file) {
+                formData.append('photo', file);
+            }
+
+            formData.append('name', name);
+            formData.append('description', description);
+            formData.append('group', group);
+            formData.append('order', order);
+
+            $.ajax({
+                url: '/api/staff/' + itemId,
+                type: 'PATCH',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    handleResults();
+                },
+                error: function (error) {
+                    alert("Unable to save, please check your internet connection.");
+                }
+            });
+        }
+
+        function save() {
+
+            const isValid = validateForm();
+            console.log(isValid);
+
+            if (!isValid) {
+                return;
+            }
+
+            doSave();
+        }
+
+        function validateForm() {
+            const name = $("#itemname").val().trim();
+            const description = $("#itemdescription").val().trim();
+            const order = $("#itemorder").val().trim();
+
+            var isValid = true;
+
+            if (name.length == 0) {
+                isValid = false;
+                $("#error_itemname").show();
+            } else {
+                $("#error_itemname").hide();
+            }
+
+            if (description.length == 0) {
+                isValid = false;
+                $("#error_itemdescription").show();
+            } else {
+                $("#error_itemdescription").hide();
+            }
+
+            if (order.length == 0) {
+                isValid = false;
+                $("#error_itemorder").show();
+            } else {
+                $("#error_itemorder").hide();
+            }
+
+            return isValid;
+        }
+
+        function handleResults() {
+            var url = $("#allitemslink").attr("href");
+            window.location.href = url;
+        }
+
+        function deleteItem(itemId) {
+
+            const title = $("#itemname").val();
+            const messageTitle = "Are you sure you want to delete " + title + "?";
+            var isConfirmed = window.confirm(messageTitle);
+            if (isConfirmed) {
+                runDelete(itemId);
+            }
+        }
+
+        function runDelete(itemId) {
+
+            const url = '/api/staff/' + itemId;
+            $.ajax({
+                url: url,
+                type: 'DELETE',
+                dataType: 'json',
+                success: function (results) {
+                    handleResults();
+
+                },
+                error: function (error) {
+                    alert("Could not delete, please check your internet connection");
+                }
+            });
+        }
+
+    </script>
+}
