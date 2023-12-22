@@ -93,9 +93,9 @@ public class HomeController : Controller
     {
         ResourcesViewModel vm = new ResourcesViewModel()
         {
-            Music = await _context.Musics.Take(3).ToListAsync(),
-            Sermons = await _context.Sermons.Take(6).ToListAsync(),
-            Shorts = await _context.ShortTakes.Take(3).ToListAsync()
+            Music = await _context.Musics.OrderByDescending(i => i.DateCreated).Take(3).ToListAsync(),
+            Sermons = await _context.Sermons.OrderByDescending(i => i.DateCreated).Take(6).ToListAsync(),
+            Shorts = await _context.ShortTakes.OrderByDescending(i => i.DateCreated).Take(3).ToListAsync()
         };
 
         //var apiResponse = await _api.GetPlaylistVideos(_cache, _api.PlayListIdSermons, sermonsPerPage);

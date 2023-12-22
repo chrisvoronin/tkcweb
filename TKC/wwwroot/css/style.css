@@ -1463,7 +1463,7 @@ ul {
             height: 640px;
         }
 
-    .sermons_video_section a::before {
+/*    .sermons_video_section a::before {
         background: transparent;
         width: 100%;
         height: 100%;
@@ -1474,7 +1474,7 @@ ul {
         right: 0;
         bottom: 0;
         margin: auto;
-    }
+    }*/
 
     .sermons_video_section .play_button {
         position: absolute;

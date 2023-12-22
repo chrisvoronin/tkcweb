@@ -28,11 +28,10 @@
                                 <h4>@s.Title</h4>
                                 <span>@s.Author</span>
                                 <span class="dout">•</span>
-                                <span>@s.DateCreated</span>
+                                <span>@s.DateCreated.ToString("yyyy-MM-dd")</span>
                             </a>
                         </div>
                     </div>
-
                 }
 
             </div>
@@ -109,7 +108,7 @@
                                 <h4>@m.Title</h4>
                                 <span>@m.Author</span>
                                 <span class="dout">•</span>
-                                <span>@m.DateCreated.ToShortDateString()</span>
+                                <span>@m.DateCreated.ToString("yyyy-MM-dd")</span>
                             </a>
                         </div>
                     </div>
