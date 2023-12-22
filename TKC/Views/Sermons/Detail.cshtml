@@ -28,18 +28,22 @@
                 <span>@Model.Author</span><span>•</span><span>@Model.DateCreated</span>
             </div>
         </div>
+
+        @if (!string.IsNullOrWhiteSpace(Model.VideoUrl))
+        {
         <div class="sermons_video_img">
             <iframe width="100%" height="100%" src="@Model.VideoUrl" title="@Model.Title" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen id="video"></iframe>
         </div>
+        }
 
         <div class="audio_section">
             <span>Audio Transcript</span>
             <div class="audio_img flex-column">
 
-                @if (!string.IsNullOrEmpty(Model.AudioUrl))
+                @if (!string.IsNullOrEmpty(Model.AUrl))
                 {
                     <audio controls="controls">
-                        <source src="/File/@Model.AudioUrl" type="audio/mpeg">
+                        <source src="@Model.AUrl" type="audio/mpeg">
                         Your browser does not support the audio element.
                     </audio>
                 }
@@ -49,11 +53,11 @@
     </div>
 </section>
 
-@if (!string.IsNullOrEmpty(Model.PdfUrl))
+@if (!string.IsNullOrEmpty(Model.PUrl))
 {
     <section style="background: #F7F4F2;">
         <div class="download_section" style="padding-top: 10px; padding-bottom: 15px;">
-            <a class="downloadBtn" href="/File/@Model.PdfUrl">Download PDF <img src="/img/downloadBtn.svg" alt=""></a>
+            <a class="downloadBtn" href="@Model.PUrl">Download PDF <img src="/img/downloadBtn.svg" alt=""></a>
         </div>
     </section>
 }

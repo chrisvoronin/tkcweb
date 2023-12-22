@@ -182,12 +182,57 @@ namespace TKC.Models
         [JsonPropertyName("dateCreated")]
         public DateTime DateCreated { get; set; }
 
+        [JsonPropertyName("pUrl")]
+        public string PUrl
+        {
+            get
+            {
+                if (PdfUrl == null)
+                {
+                    return "";
+                }
+
+                if (PdfUrl.StartsWith("http"))
+                {
+                    return PdfUrl;
+                }
+                return "/File/" + PdfUrl;
+            }
+        }
+
+        [JsonPropertyName("aUrl")]
+        public string AUrl
+        {
+            get
+            {
+                if (AudioUrl == null)
+                {
+                    return "";
+                }
+
+                if (AudioUrl.StartsWith("http"))
+                {
+                    return AudioUrl;
+                }
+                return "/File/" + AudioUrl;
+            }
+        }
+
         [JsonPropertyName("url")]
         public string Url
         {
             get
             {
-                return "https://www.youtube.com/embed/" + VideoUrl ?? "";
+                if (VideoUrl == null)
+                {
+                    return "";
+                }
+
+                if (VideoUrl.StartsWith("http"))
+                {
+                    return VideoUrl;
+                }
+                return "https://www.youtube.com/embed/" + VideoUrl;
             }
         }
     }
