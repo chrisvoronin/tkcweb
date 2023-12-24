@@ -20,7 +20,7 @@ namespace TKC.Controllers
         private readonly CacheService _cache;
         private readonly ApplicationDbContext _context;
         private readonly YoutubeAPI _api;
-        private readonly int pageSize = 2;
+        private readonly int pageSize = 10;
 
         public ApiMusicController(CacheService cache, YoutubeAPI api, ApplicationDbContext context)
         {
@@ -87,7 +87,7 @@ namespace TKC.Controllers
                 CurrentPage = page,
                 ItemsPerPage = pageSize,
                 TotalResults = await _context.Musics.CountAsync(),
-                Items = await _context.Musics.Skip(skip).Take(pageSize).ToListAsync()
+                Items = await _context.Musics.OrderByDescending(i => i.Id).Skip(skip).Take(pageSize).ToListAsync()
             };
 
             return Json(resp);

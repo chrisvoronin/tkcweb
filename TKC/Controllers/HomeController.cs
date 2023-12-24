@@ -93,7 +93,7 @@ public class HomeController : Controller
     {
         ResourcesViewModel vm = new ResourcesViewModel()
         {
-            Music = await _context.Musics.OrderByDescending(i => i.DateCreated).Take(3).ToListAsync(),
+            Music = await _context.Musics.OrderByDescending(i => i.Id).Take(3).ToListAsync(),
             Sermons = await _context.Sermons.OrderByDescending(i => i.DateCreated).Take(6).ToListAsync(),
             Shorts = await _context.ShortTakes.OrderByDescending(i => i.DateCreated).Take(3).ToListAsync()
         };
