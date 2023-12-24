@@ -82,7 +82,7 @@ namespace TKC.Controllers
                 CurrentPage = page,
                 ItemsPerPage = pageSize,
                 TotalResults = await _context.ShortTakes.CountAsync(),
-                Items = await _context.ShortTakes.OrderByDescending(i => i.DateCreated)
+                Items = await _context.ShortTakes.OrderByDescending(i => i.Id)
                 .Skip(skip).Take(pageSize).ToListAsync()
             };
 

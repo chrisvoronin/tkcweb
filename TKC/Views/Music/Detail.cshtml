@@ -48,10 +48,10 @@
             <span>Audio Transcript</span>
             <div class="audio_img flex-column">
 
-                @if (!string.IsNullOrEmpty(Model.AudioUrl))
+                @if (!string.IsNullOrEmpty(Model.AUrl))
                 {
                     <audio controls="controls">
-                        <source src="/File/@Model.AudioUrl" type="audio/mpeg">
+                        <source src="@Model.AUrl" type="audio/mpeg">
                         Your browser does not support the audio element.
                     </audio>
                 }

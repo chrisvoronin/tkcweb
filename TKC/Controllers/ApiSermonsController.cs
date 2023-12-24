@@ -89,7 +89,7 @@ namespace TKC.Controllers
                 ItemsPerPage = pageSize,
                 TotalResults = await _context.Sermons.CountAsync(),
                 Items = await _context.Sermons
-                .OrderByDescending(i => i.DateCreated)
+                .OrderByDescending(i => i.Id)
                 .Skip(skip).Take(pageSize).ToListAsync()
             };
 

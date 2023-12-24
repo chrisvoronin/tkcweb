@@ -127,6 +127,24 @@ namespace TKC.Models
 
         [JsonPropertyName("dateCreated")]
         public DateTime DateCreated { get; set; }
+
+        [JsonPropertyName("aUrl")]
+        public string AUrl
+        {
+            get
+            {
+                if (AudioUrl == null)
+                {
+                    return "";
+                }
+
+                if (AudioUrl.StartsWith("http"))
+                {
+                    return AudioUrl;
+                }
+                return "/File/" + AudioUrl;
+            }
+        }
     }
 
 	public class ShortTake
@@ -154,6 +172,24 @@ namespace TKC.Models
 
         [JsonPropertyName("dateCreated")]
         public DateTime DateCreated { get; set; }
+
+        [JsonPropertyName("aUrl")]
+        public string AUrl
+        {
+            get
+            {
+                if (AudioUrl == null)
+                {
+                    return "";
+                }
+
+                if (AudioUrl.StartsWith("http"))
+                {
+                    return AudioUrl;
+                }
+                return "/File/" + AudioUrl;
+            }
+        }
     }
 
     public class Sermon
