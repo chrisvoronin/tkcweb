@@ -29,43 +29,6 @@ public class HomeController : Controller
         return View();
     }
 
-    private void FixSermons()
-    {
-        var sermons = _context.Sermons;
-
-        foreach(var s in sermons)
-        {
-            bool changed = false;
-            if (!string.IsNullOrWhiteSpace(s.AudioUrl) && s.AudioUrl.Contains("https://audio.thekingscongregation.com"))
-            {
-                changed = true;
-                int year = s.DateCreated.Year;
-                int month = s.DateCreated.Month;
-                int day = s.DateCreated.Day;
-                string monthPart = month < 10 ? $"0{month}" : $"{month}";
-                string dayPart = day < 10 ? $"0{day}" : $"{day}";
-                s.AudioUrl = $"https://audio.thekingscongregation.com/sermons/{year}.{monthPart}.{dayPart}.Sermon.mp3";
-            }
-
-            if (!string.IsNullOrWhiteSpace(s.PdfUrl) && s.PdfUrl.Contains("https://audio.thekingscongregation.com"))
-            {
-                changed = true;
-                int year = s.DateCreated.Year;
-                int month = s.DateCreated.Month;
-                int day = s.DateCreated.Day;
-                string monthPart = month < 10 ? $"0{month}" : $"{month}";
-                string dayPart = day < 10 ? $"0{day}" : $"{day}";
-                s.PdfUrl = $"https://audio.thekingscongregation.com/sermons/{year}.{monthPart}.{dayPart}.SermonNotes.pdf";
-            }
-            if (changed)
-            {
-                _context.SaveChanges();
-            }
-        }
-        Console.WriteLine("Done");
-
-    }
-
     public IActionResult Privacy()
     {
         return View();

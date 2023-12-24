@@ -127,28 +127,28 @@
             var link = '/music/' + item.id;
 
             var text = "";
-            
-            if (item.audioUrl != null) {
+
+            if (item.audioUrl != null && item.audioUrl.length > 5) {
                 if (text.length > 0) {
                     text += "&nbsp; • &nbsp;";
                 }
                 text += "MP3";
             }
 
-            if (item.pdfUrl != null) {
+            if (item.pdfUrl != null && item.pdfUrl.length > 5) {
                 if (text.length > 0) {
                     text += "&nbsp; • &nbsp;";
                 }
                 text += "PDF";
             }
 
-            if (item.videoUrl != null) {
+            if (item.videoUrl != null && item.videoUrl.length > 5) {
                 if (text.length > 0) {
                     text += "&nbsp; • &nbsp;";
                 }
                 text += "VIDEO";
             }
-            if (item.singAlongUrl != null) {
+            if (item.singAlongUrl != null && item.singAlongUrl.length > 5) {
                 if (text.length > 0) {
                     text += "&nbsp; • &nbsp;";
                 }
