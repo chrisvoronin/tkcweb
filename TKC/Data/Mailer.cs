@@ -6,18 +6,15 @@ namespace TKC.Data
 {
 	public class Mailer
 	{
-		public bool SendEmail(string from, string to, string subject, string body)
+		public bool SendEmail(string to, string subject, string body, string from, string password, string host, int port)
 		{
             try
             {
-                // Set up the SMTP client
-                using (var client = new SmtpClient("smtp.your-email-provider.com"))
+                using (var client = new SmtpClient(host, port))
                 {
-                    // Specify your SMTP credentials
-                    client.Credentials = new NetworkCredential(from, "your-email-password");
+                    client.Credentials = new NetworkCredential(from, password);
                     client.EnableSsl = true;
 
-                    // Construct the email message
                     var mailMessage = new MailMessage
                     {
                         From = new MailAddress(from),
@@ -25,17 +22,16 @@ namespace TKC.Data
                         Body = body
                     };
 
-                    // Set the recipient email address
                     mailMessage.To.Add(to);
 
-                    // Send the email
                     client.Send(mailMessage);
                 }
 
                 return true;
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 return false;
             }
         }

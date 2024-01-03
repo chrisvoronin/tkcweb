@@ -16,6 +16,9 @@ namespace TKC.Models
 
         [JsonProperty("staffCount")]
         public int StaffCount { get; set; }
+
+        [JsonProperty("settings")]
+        public int Settings { get; set; }
 	}
 
     public class StaffViewModel

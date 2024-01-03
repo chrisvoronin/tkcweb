@@ -11,13 +11,21 @@
                 </div>
             </div>
             <div class="col-md-6 p-0">
-                <div class="content_contact">
+                <div class="content_contact" id="contactform">
                     <h1>Get in Touch</h1>
                     <input class="form-control" type="text" name="name" id="name" placeholder="Name">
                     <input class="form-control" type="text" name="email" id="email" placeholder="Email">
                     <textarea class="form-control" id="message" name="message" rows="3"
                               placeholder="Your Message"></textarea>
-                    <a class="contact_btn_sub" onclick="submitEmailForm(); return false;">Submit</a>
+                    <a class="contact_btn_sub" onclick="submitEmailForm(); return false;" style="cursor: pointer;">Submit</a>
+                </div>
+                <div id="sending" class="content_contact" style="display:none;">
+                    <h2>Sending your message</h2>
+                    <p>Hang on just a bit while we send your message.</p>
+                </div>
+                <div id="sent" class="content_contact" style="display:none;">
+                    <h2>Your message has been received.</h2>
+                    <p>Thank you</p>
                 </div>
             </div>
         </div>
@@ -43,22 +51,71 @@
     </div>
 </section>
 <script type="text/javascript">
+
+    function validateForm() {
+
+        var isValid = true;
+
+        var name = $("#name").val().trim();
+        var email = $("#email").val().trim();
+        var message = $("#message").val().trim();
+
+        if (name.length == 0) {
+            $("#name").addClass("error");
+            isValid = false;
+        } else {
+            $("#name").removeClass("error");
+        }
+
+        if (email.length == 0) {
+            $("#email").addClass("error");
+            isValid = false;
+        } else {
+            $("#email").removeClass("error");
+        }
+
+        if (message.length == 0) {
+            $("#message").addClass("error");
+            isValid = false;
+        } else {
+            $("#message").removeClass("error");
+        }
+
+        return isValid;
+    }
+
     function submitEmailForm() {
+
+        var isValid = validateForm();
+        if (!isValid) {
+            return;
+        }
+
         var formData = {
-            name: $("#name").val(),
-            email: $("#email").val(),
-            message: $("#message").val()
+            name: $("#name").val().trim(),
+            email: $("#email").val().trim(),
+            message: $("#message").val().trim()
         };
-        //post, show alert as thank you.
+
+        $("#contactform").hide();
+        $("#sending").show();
+
         $.ajax({
             type: "POST",
             url: "/Contact",
             data: formData,
             success: function (response) {
-                alert("Message Sent");
+                
+                $("#sending").hide();
+                $("#sent").show();
+
             },
             error: function (error) {
-                alert("Unable to send message. Please check your internet connection.");
+
+                $("#sending").hide();
+                $("#contactform").show();
+                alert("Unable to send message.");
+
             }
         });
     }

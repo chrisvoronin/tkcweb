@@ -45,6 +45,7 @@ public class ApplicationDbContext : IdentityDbContext
         modelBuilder.Entity<AppSettingModel>(entity =>
         {
             entity.ToTable("AppSettings");
+            entity.HasKey(e => new { e.Key });
         });
     }
 

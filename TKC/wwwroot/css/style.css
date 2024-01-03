@@ -1111,6 +1111,10 @@ ul {
     height: 72px;
 }
 
+.contact_section .form-control.error {
+    border-color: red;
+}
+
 .contact_section textarea.form-control {
     height: 160px;
 }

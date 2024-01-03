@@ -1,0 +1,63 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "_LayoutAdmin";
+}
+@model List<AppSettingModel>
+
+<section class="Sermons_section">
+    <div class="container">
+        <div class="Sermons_content">
+            <h2>Dashboard</h2>
+            <div id="inner">
+
+            @foreach (var item in Model)
+            {
+                    <div class="inner_valus_data">
+                        <div class="sermons_values">
+                            <span class="nounderline sermons_values">
+                                @item.Key
+                            </span>
+                        </div>
+                        <div class="sermons_date">
+                            <input type="text" id="@item.Key" value="@item.Value" />
+                            <input type="button" value="Save" onclick="save('@item.Key');" />
+                        </div>
+                    </div>
+            }
+                
+            </div>
+        </div>
+    </div>
+</section>
+
+<script type="text/javascript">
+
+    function save(key) {
+
+        var value = $("#" + key).val().trim();
+
+        if (value.length == 0) {
+            alert("value can't be blank");
+            return;
+        }
+
+        var formData = new FormData();
+        formData.append('value', value);
+
+        $.ajax({
+            url: '/api/settings/' + key,
+            type: 'PATCH',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                alert("Saved");
+            },
+            error: function (error) {
+                alert("Unable to save, please check your internet connection.");
+            }
+        });
+
+    }
+
+</script>

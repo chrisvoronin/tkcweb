@@ -71,13 +71,16 @@ public class HomeController : Controller
     public IActionResult Contact(string name, string email, string message)
     {
         List<AppSettingModel> settings = _context.AppSettings.ToList();
-        string emailTo = settings.First(f => f.Key == "EmailTo").Value;
-        string emailFrom = settings.First(f => f.Key == "EmailFrom").Value;
-        string emailSubject = settings.First(f => f.Key == "EmailSubject").Value;
+        string to = settings.First(f => f.Key == "EmailTo").Value;
+        string subject = settings.First(f => f.Key == "EmailSubject").Value;
+        string body = $"Name: {name}, Email: {email}, Message: {message}";
+        string from = settings.First(f => f.Key == "EmailFrom").Value;
+        string password = settings.First(f => f.Key == "EmailPassword").Value;
+        string host = settings.First(f => f.Key == "EmailHost").Value;
+        int port = Convert.ToInt32(settings.First(f => f.Key == "EmailPort").Value); ;
 
         var m = new Mailer();
-        string text = $"Name: {name}, Email: {email}, Message: {message}";
-        bool success = m.SendEmail(emailFrom, emailTo, emailSubject, text);
+        bool success = m.SendEmail(to, subject, body, from, password, host, port);
         if (success)
             return StatusCode(200);
         else

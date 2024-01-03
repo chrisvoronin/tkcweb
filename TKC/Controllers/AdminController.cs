@@ -37,7 +37,8 @@ namespace TKC.Controllers
                 MusicCount = await _context.Musics.CountAsync(),
                 ShortTakeCount = await _context.ShortTakes.CountAsync(),
                 SermonsCount = await _context.Sermons.CountAsync(),
-                StaffCount = await _context.Employees.CountAsync()
+                StaffCount = await _context.Employees.CountAsync(),
+                Settings = await _context.AppSettings.CountAsync()
             };
 
             return View(sum);
@@ -153,6 +154,14 @@ namespace TKC.Controllers
         {
             return View();
         }
+
+        [HttpGet("Settings")]
+        public IActionResult Settings()
+        {
+            List<AppSettingModel> settings = _context.AppSettings.OrderBy(i => i.Key).ToList();
+            return View(settings);
+        }
+
 
     }
 }

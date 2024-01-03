@@ -7,10 +7,10 @@ namespace TKC.Models
 {
     public class AppSettingModel
     {
-        public long Id { get; set; }
         public required string Key { get; set; }
         public required string Value { get; set; }
     }
+
     public class MusicViewModel
     {
         public int TotalCount { get; set; }
