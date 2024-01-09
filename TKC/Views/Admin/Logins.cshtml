@@ -1,13 +1,13 @@
 ﻿@{
-    ViewData["Title"] = "Admin - Settings";
+    ViewData["Title"] = "Admin - Logins";
     Layout = "_LayoutAdmin";
 }
-@model List<AppSettingModel>
+@model List<UserDisplay>
 
 <section class="Sermons_section">
     <div class="container">
         <div class="Sermons_content">
-            <h2>Admin - Settings</h2>
+            <h2>Admin - Logins</h2>
             <div id="inner">
 
             @foreach (var item in Model)
@@ -15,12 +15,17 @@
                     <div class="inner_valus_data">
                         <div class="sermons_values">
                             <span class="nounderline sermons_values">
-                                @item.Key
+                                @item.Username
+                                @if (item.LockOutDate != null)
+                                {
+                                    <span> (Locked out until @item.LockOutDate)</span>
+                                }
                             </span>
                         </div>
                         <div class="sermons_date">
-                            <input type="text" id="@item.Key" value="@item.Value" />
-                            <input type="button" value="Save" onclick="save('@item.Key');" />
+                            <input type="checkbox" id="@item.Id" name="@item.Id"  @(item.IsActive ? "checked" : "") />
+                            <label for="@item.Id">Is Enabled</label>
+                            <input type="button" value="Save" onclick="save('@item.Id');" />
                         </div>
                     </div>
             }
@@ -34,20 +39,11 @@
 
     function save(key) {
 
-        var value = $("#" + key).val().trim();
-
-        if (value.length == 0) {
-            alert("value can't be blank");
-            return;
-        }
-
-        var formData = new FormData();
-        formData.append('value', value);
+        var isChecked = $("#" + key).is(":checked");
 
         $.ajax({
-            url: '/api/settings/' + key,
+            url: '/api/settings/logins/' + key + '/' + isChecked,
             type: 'PATCH',
-            data: formData,
             processData: false,
             contentType: false,
             success: function (response) {

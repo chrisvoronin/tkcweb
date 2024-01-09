@@ -5,6 +5,14 @@ using TKC.Data;
 
 namespace TKC.Models
 {
+    public class UserDisplay
+    {
+        public string Id { get; set; }
+        public string Username { get; set; }
+        public bool IsActive { get; set; }
+        public DateTime? LockOutDate { get; set; }
+    }
+
     public class AppSettingModel
     {
         public required string Key { get; set; }

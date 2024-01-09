@@ -38,7 +38,8 @@ namespace TKC.Controllers
                 ShortTakeCount = await _context.ShortTakes.CountAsync(),
                 SermonsCount = await _context.Sermons.CountAsync(),
                 StaffCount = await _context.Employees.CountAsync(),
-                Settings = await _context.AppSettings.CountAsync()
+                Settings = await _context.AppSettings.CountAsync(),
+                Logins = await _context.Users.CountAsync()
             };
 
             return View(sum);
@@ -158,10 +159,32 @@ namespace TKC.Controllers
         [HttpGet("Settings")]
         public IActionResult Settings()
         {
-            List<AppSettingModel> settings = _context.AppSettings.OrderBy(i => i.Key).ToList();
-            return View(settings);
+            List<AppSettingModel> items = _context.AppSettings.OrderBy(i => i.Key).ToList();
+            return View(items);
         }
 
+        [HttpGet("Logins")]
+        public IActionResult Logins()
+        {
+            var users = _context.Users.OrderBy(i => i.UserName).ToList();
+            List<UserDisplay> res = new();
+            foreach(var u in users)
+            {
+                var user = new UserDisplay()
+                {
+                    Id = u.Id,
+                    Username = u.Email ?? "NoEmail",
+                    IsActive = u.EmailConfirmed,
+                    LockOutDate = u.LockoutEnd?.DateTime
+
+                };
+                res.Add(user);
+            }
+            
+            return View(res);
+        }
+
+        
 
     }
 }
