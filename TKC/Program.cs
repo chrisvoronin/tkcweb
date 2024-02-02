@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using TKC.Data;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,15 +19,11 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 {
     options.SignIn.RequireConfirmedAccount = true;
-}).AddEntityFrameworkStores<ApplicationDbContext>();
+})
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>();
 
-//builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-//    .AddCookie(options =>
-//    {
-//        options.ExpireTimeSpan = TimeSpan.FromMinutes(120);
-//        options.SlidingExpiration = true;
-//        options.AccessDeniedPath = "/Error";
-//    });
+
 
 builder.Services.AddScoped<YoutubeAPI>();
 builder.Services.AddSingleton<CacheService>();
@@ -61,12 +56,11 @@ app.UseRouting();
 
 app.UseAuthorization();
 
-app.UseMiddleware<HttpMethodOverrideMiddleware>(); // Add this line
+app.UseMiddleware<HttpMethodOverrideMiddleware>();
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-
 
 
 app.MapRazorPages();

@@ -1,0 +1,79 @@
+﻿@page
+@model TKC.Areas.Identity.Pages.Account.AssignRolesModel
+@{
+    ViewData["Title"] = "Assign Roles";
+}
+
+
+
+<section class="sermons_video_section">
+
+    <h3>@ViewData["Title"]</h3>
+    <br />
+    <br />
+
+    <div class="container">
+
+        <fieldset>
+            <legend>Legend</legend>
+            @foreach (var role in Model.RoleNames)
+            {
+                <div class="row">
+                    <div class="col-md-4">
+                        <li>@role.Name</li>
+                    </div>
+                </div>
+
+            }
+        </fieldset>
+
+        <hr />
+
+        <h2>Current Roles</h2>
+        @foreach (var role in Model.RoleNames)
+        {
+            <div class="row">
+                <div class="col-md-4">
+                    <li>@role.Name</li>
+                </div>
+            </div>
+        }
+
+        <h2>Current User Emails</h2>
+        @foreach (var user in Model.Users)
+        {
+            <div class="row">
+                <div class="col-md-4">
+                    <li>@user.Email</li>
+                </div>
+            </div>
+        }
+        <hr />
+
+        <h1>Create New Role</h1>
+        <div class="row">
+            <div class="col-md-4">
+                <form asp-page-handler="Confirmation" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+                    <div class="form-floating mb-3">
+                        <input asp-for="SelectedRoleName" class="form-control" aria-required="true" placeholder="Role Name" />
+                        <label asp-for="SelectedRoleName" class="form-label"></label>
+                        <span asp-validation-for="SelectedRoleName" class="text-danger"></span>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input asp-for="SelectedUserEmail" class="form-control" aria-required="true" placeholder="Role Name" />
+                        <label asp-for="SelectedUserEmail" class="form-label"></label>
+                        <span asp-validation-for="SelectedUserEmail" class="text-danger"></span>
+                    </div>
+                    <button type="submit" class="w-100 btn btn-lg btn-primary">Assign Role</button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

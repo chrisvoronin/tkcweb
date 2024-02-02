@@ -1,0 +1,65 @@
+﻿@page
+
+@model TKC.Areas.Identity.Pages.Account.ManageRolesModel
+@{
+    ViewData["Title"] = "Manage Roles";
+}
+
+<section class="sermons_video_section">
+
+    <h3>@ViewData["Title"]</h3>
+    <br />
+    <br />
+
+    <div class="container">
+
+        <fieldset>
+            <legend>Legend</legend>
+            @foreach (var role in Model.RoleNames)
+            {
+                <div class="row">
+                    <div class="col-md-4">
+                        <li>@role.Name</li>
+                    </div>
+                </div>
+
+            }
+        </fieldset>
+
+        <hr />
+
+        <h2>Current Roles</h2>
+        @foreach (var role in Model.RoleNames)
+        {
+            <div class="row">
+                <div class="col-md-4">
+                    <li>@role.Name</li>
+                </div>
+            </div>
+
+        }
+
+        <hr />
+
+        <h1>Create New Role</h1>
+        <div class="row">
+            <div class="col-md-4">
+                <form asp-page-handler="Confirmation" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+                    <div class="form-floating mb-3">
+                        <input asp-for="NewRoleName" class="form-control" aria-required="true" placeholder="Role Name" />
+                        <label asp-for="NewRoleName" class="form-label">Password</label>
+                        <span asp-validation-for="NewRoleName" class="text-danger"></span>
+                    </div>
+                    <button type="submit" class="w-100 btn btn-lg btn-primary">Create Role</button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

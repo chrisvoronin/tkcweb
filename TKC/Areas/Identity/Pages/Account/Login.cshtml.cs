@@ -21,11 +21,13 @@ namespace TKC.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
+        private readonly IServiceProvider _serviceProvider;
 
-        public LoginModel(SignInManager<IdentityUser> signInManager, ILogger<LoginModel> logger)
+        public LoginModel(SignInManager<IdentityUser> signInManager, ILogger<LoginModel> logger, IServiceProvider serviceProvider)
         {
             _signInManager = signInManager;
             _logger = logger;
+            _serviceProvider = serviceProvider;
         }
 
         /// <summary>
