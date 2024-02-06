@@ -70,6 +70,19 @@
                     </div>
                 </div>
 
+                @*HTML Content*@
+                <div class="inner_valus_data">
+                    <div class="sermons_values">
+                        <a class="nounderline sermons_values" asp-controller="Admin" asp-action="HtmlContent">
+                            <h4>HTML Content</h4>
+                            <span>(@Model.HtmlContent)</span>
+                        </a>
+                    </div>
+                    <div class="sermons_date">
+                        <a class="nounderline sermons_values" asp-controller="Admin" asp-action="HtmlContent"><span>Edit</span></a>
+                    </div>
+                </div>
+
                 @*Site Settings*@
                 <div class="inner_valus_data">
                     <div class="sermons_values">

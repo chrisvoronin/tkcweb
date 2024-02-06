@@ -44,27 +44,9 @@ public class HomeController : Controller
         return View();
     }
 
-    public async Task<IActionResult> Staff()
+    public IActionResult LordsDayWorship()
     {
-        var vm = new StaffViewModel()
-        {
-            Deacons = await _context.Employees
-                .Where(e => e.Group == "Deacon")
-                .OrderBy(e => e.Order)
-                .ToListAsync(),
-
-            Elders = await _context.Employees
-                .Where(e => e.Group == "Elder")
-                .OrderBy(e => e.Order)
-                .ToListAsync(),
-
-            Secretaries = await _context.Employees
-                .Where(e => e.Group == "Secretary")
-                .OrderBy(e => e.Order)
-                .ToListAsync()
-        };
-
-        return View(vm);
+        return View();
     }
 
     [HttpPost]
@@ -87,12 +69,46 @@ public class HomeController : Controller
             return StatusCode(400);
     }
 
-    public IActionResult Liturgy()
+    public async Task<IActionResult> Liturgy()
     {
-        return View();
+        var m = _cache.Get<HTMLContent>("Liturgy");
+        if (m == null)
+        {
+            m = await _context.HTMLContents.FirstAsync(m => m.Name == "Liturgy");
+            _cache.Set("Liturgy", m);
+        }
+        return View(m);
     }
 
-    public async Task<IActionResult> Resources()
+    public async Task<IActionResult> WhoWeAre()
+    {
+        var vm = new StaffViewModel()
+        {
+            Deacons = await _context.Employees
+                .Where(e => e.Group == "Deacon")
+                .OrderBy(e => e.Order)
+                .ToListAsync(),
+
+            Elders = await _context.Employees
+                .Where(e => e.Group == "Elder")
+                .OrderBy(e => e.Order)
+                .ToListAsync(),
+
+            Pastoral = await _context.Employees
+                .Where(e => e.Group == "Pastoral")
+                .OrderBy(e => e.Order)
+                .ToListAsync(),
+
+            Secretaries = await _context.Employees
+                .Where(e => e.Group == "Secretary")
+                .OrderBy(e => e.Order)
+                .ToListAsync()
+        };
+
+        return View(vm);
+    }
+
+    public async Task<IActionResult> Media()
     {
         ResourcesViewModel vm = new ResourcesViewModel()
         {

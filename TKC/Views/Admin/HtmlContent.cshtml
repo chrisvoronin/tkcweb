@@ -1,0 +1,32 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "_LayoutAdminWithEditor";
+}
+@model List<HTMLContent>
+
+<section class="Sermons_section">
+    <div class="container">
+        <div class="Sermons_content">
+            <h2>HTML Content</h2>
+
+            <div id="inner">
+
+                @foreach (var item in Model)
+{
+                   <div class="inner_valus_data">
+                       <div class="sermons_values">
+                           <a class="nounderline sermons_values" asp-controller="Admin" asp-action="HTMLContent" asp-route-id="@item.Id">
+                               <h4>@item.Name</h4>
+                           </a>
+                       </div>
+                       <div class="sermons_date">
+                           <a class="nounderline sermons_values" asp-controller="Admin" asp-action="HTMLContent" asp-route-id="@item.Id"><span>Edit</span></a>
+                       </div>
+                   </div>
+}
+
+            </div>
+
+        </div>
+    </div>
+</section>

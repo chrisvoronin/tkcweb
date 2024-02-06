@@ -10,6 +10,7 @@ public class ApplicationDbContext : IdentityDbContext
     public DbSet<Sermon> Sermons { get; set; }
     public DbSet<ShortTake> ShortTakes { get; set; }
     public DbSet<AppSettingModel> AppSettings { get; set; }
+    public DbSet<HTMLContent> HTMLContents { get; set; }
     public DbSet<Staff> Employees { get; set; }
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
@@ -40,6 +41,11 @@ public class ApplicationDbContext : IdentityDbContext
         modelBuilder.Entity<Staff>(entity =>
         {
             entity.ToTable("Staff");
+        });
+
+        modelBuilder.Entity<HTMLContent>(entity =>
+        {
+            entity.ToTable("HTMLContent");
         });
 
         modelBuilder.Entity<AppSettingModel>(entity =>

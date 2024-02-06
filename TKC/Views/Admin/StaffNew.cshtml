@@ -44,6 +44,7 @@
             <select class="form-control" aria-required="true" placeholder="Title" id="itemgroup">
                 <option value="Elder">Elder</option>
                 <option value="Deacon">Deacon</option>
+                <option value="Deacon">Pastoral</option>
                 <option value="Secretary">Secretary</option>
             </select>
             <label class="form-label">Title</label>
@@ -138,13 +139,6 @@
             $("#error_itemname").show();
         } else {
             $("#error_itemname").hide();
-        }
-
-        if (description.length == 0) {
-            isValid = false;
-            $("#error_itemdescription").show();
-        } else {
-            $("#error_itemdescription").hide();
         }
 
         if (order.length == 0) {

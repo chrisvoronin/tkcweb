@@ -1,0 +1,156 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "_LayoutAdminWithEditor";
+}
+@model HTMLContent
+
+<section class="sermon_video_btn">
+    <div class="container">
+        <div class="inner_video_sermons">
+
+            <div class="info_sermon_img">
+                <img src="/img/mic-2 1.svg" alt="">
+                <span>Admin - HTML Content</span>
+            </div>
+            <div class="sermons_btns">
+                <a id="allitemslink" class="all_btns_sermon" asp-controller="Admin" asp-action="ShortTakeList">All Html Content</a>
+                <a class="all_btns_sermon" asp-controller="Admin" asp-action="Index">Admin Home</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="sermons_video_section">
+
+    <h3>Edit HTML</h3>
+    <br />
+    <br />
+
+    <div class="container">
+
+        <h4 id="titleheader">@Model.Name</h4>
+
+        <blockquote id="resulterror" class="blockquote" style="color: white; background-color: red; display: none;">Unable to save</blockquote>
+        <blockquote id="resultok" class="blockquote" style="color: white; background-color: green; display: none;">Saved</blockquote>
+
+        <div class="form-floating mb-3">
+            <input class="form-control" aria-required="true" placeholder="Title" id="itemtitle" value="@Model.Name" />
+            <label class="form-label">Title</label>
+            <span id="error_itemtitle" style="display:none;" class="text-danger">Title is required</span>
+        </div>
+
+        <div class="form-floating mb-3">
+            <div id="summernote"></div>
+        </div>
+
+        <div>
+            <button id="submit" type="submit" class="w-100 btn btn-lg btn-primary" onclick="save(); return false;">Save</button>
+            <input type="hidden" id="itemid" value="@Model.Id" />
+
+            @* GET = var markupStr = $('#summernote').summernote('code');*@
+            @* SET = var markupStr = "test"; $('#summernote').summernote('code', markupStr);*@
+        </div>
+
+        <br />
+        <br />
+
+        <div id="val" style="display: none;">
+            @Model.Value
+            <br />
+            <br />
+        </div>
+
+    </div>
+</section>
+
+@section Scripts {
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            StartSummerNote();
+            var markupStr = $("#val").text();
+            $('#summernote').summernote('code', markupStr);
+            $('#summernote').summernote('codeview.toggle');
+
+        });
+
+        function StartSummerNote() {
+            $('#summernote').summernote({
+                placeholder: 'HTML Content Here',
+                tabsize: 2,
+                height: 300,
+                maxHeight: 500,
+                styleTags: [
+                    'p', 'blockquote', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'
+                ],
+                toolbar: [
+                    ['style', ['style']],
+                    ['style', ['bold', 'italic', 'underline', 'clear']],
+                    ['font', ['strikethrough', 'superscript', 'subscript']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['insert', ['link']],
+                    ['view', ['fullscreen', 'codeview', 'help', 'undo', 'redo']]
+                ]
+            });
+
+
+        }
+
+        function save() {
+
+            const title = $("#itemtitle").val().trim();
+
+            if ($('#summernote').summernote('isEmpty')) {
+                alert('HTML content is empty');
+                return;
+            }
+
+            if (title.length == 0) {
+                isValid = false;
+                $("#error_itemtitle").show();
+            } else {
+                $("#error_itemtitle").hide();
+            }
+
+            var itemId = parseInt($("#itemid").val());
+
+            var formData = new FormData();
+            var markupStr = $('#summernote').summernote('code');
+            formData.append('html', markupStr);
+            formData.append('title', title);
+
+            $.ajax({
+                url: '/api/htmlcontent/' + itemId,
+                type: 'PATCH',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    savedSuccess();
+                },
+                error: function (error) {
+                    savedError();
+                }
+            });
+        }
+
+        function savedError() {
+
+            $("#resulterror").show();
+            $("#resultok").hide();
+        }
+
+        function savedSuccess() {
+
+            var title = $("#itemtitle").val();
+            $("#titleheader").val(title);
+
+            $("#resulterror").hide();
+            $("#resultok").show();
+            
+        }
+
+    </script>
+}

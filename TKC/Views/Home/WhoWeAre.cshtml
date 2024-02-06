@@ -1,0 +1,150 @@
+﻿@{
+    ViewData["Title"] = "The Kings Congreation";
+}
+@model StaffViewModel
+
+
+@{
+    int itemsPerGroup = 2;
+    var GroupedElders = Enumerable.Range(0, (int)Math.Ceiling(Model.Elders.Count / (double)itemsPerGroup))
+                                 .Select(i => Model.Elders.Skip(i * itemsPerGroup)
+                                                  .Take(itemsPerGroup));
+    var GroupedDeacons = Enumerable.Range(0, (int)Math.Ceiling(Model.Deacons.Count / (double)itemsPerGroup))
+                                 .Select(i => Model.Deacons.Skip(i * itemsPerGroup)
+                                                  .Take(itemsPerGroup));
+    var GroupPastoral = Enumerable.Range(0, (int)Math.Ceiling(Model.Pastoral.Count / (double)itemsPerGroup))
+                                 .Select(i => Model.Pastoral.Skip(i * itemsPerGroup)
+                                                  .Take(itemsPerGroup));
+    var GroupedSecretaries = Enumerable.Range(0, (int)Math.Ceiling(Model.Secretaries.Count / (double)itemsPerGroup))
+                         .Select(i => Model.Secretaries.Skip(i * itemsPerGroup)
+                                          .Take(itemsPerGroup));
+}
+
+<!-- about_back_img section end -->
+<!-- beleive_section start -->
+<section class="beleive_section">
+    <div class="container">
+
+        <h1 style="padding-bottom: 50px;">Meet our Staff</h1>
+
+        <h2 class="whoweare_section_title">Elders</h2>
+
+        @foreach (var g in GroupedElders)
+        {
+            <div class="row g-7">
+                @foreach (var m in g)
+                {
+                    <div class="col-sm-6 col-md-6" style="background-color: white; border-radius: 10px; width: 45%; margin: 10px;">
+                        <div class="">
+                            <div class="position-relative mb-7" style="text-align: center;">
+                                <img src="/File/Staff/@m.PhotoUrl" alt="wide" class="img-fluid" style="border-radius: 50%; max-width: 70%; margin-top: 20px; margin-bottom: 20px;">
+                            </div>
+                        </div>
+                        <div class="px-lg-4">
+                            <h2 class="mb-3 h3">@m.Name</h2>
+                            <p class="mb-5">
+                                @m.Description
+                            </p>
+
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+
+        <h2 class="whoweare_section_title">Deacons</h2>
+
+        @foreach (var g in GroupedDeacons)
+        {
+            <div class="row g-7">
+                @foreach (var m in g)
+                {
+                    <div class="col-sm-6 col-md-6" style="background-color: white; border-radius: 10px; width: 45%; margin: 10px;">
+                        <div class="">
+                            <div class="position-relative mb-7" style="text-align: center;">
+                                <img src="/File/Staff/@m.PhotoUrl" alt="wide" class="img-fluid" style="border-radius: 50%; max-width: 70%; margin-top: 20px; margin-bottom: 20px; ">
+                            </div>
+                        </div>
+                        <div class="px-lg-4">
+                            <h2 class="mb-3 h3">@m.Name</h2>
+                            <p class="mb-5">
+                                @m.Description
+                            </p>
+
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+
+        <h2 class="whoweare_section_title">Pastoral Assistant</h2>
+
+        @foreach (var g in GroupPastoral)
+        {
+            <div class="row g-7">
+                @foreach (var m in g)
+                {
+                    <div class="col-sm-6 col-md-6" style="background-color: white; border-radius: 10px; width: 45%; margin: 10px;">
+                        <div class="">
+                            <div class="position-relative mb-7" style="text-align: center;">
+                                <img src="/File/Staff/@m.PhotoUrl" alt="wide" class="img-fluid" style="border-radius: 50%; max-width: 70%; margin-top: 20px; margin-bottom: 20px;">
+                            </div>
+                        </div>
+                        <div class="px-lg-4">
+                            <h2 class="mb-3 h3">@m.Name</h2>
+                            <p class="mb-5">
+                                @m.Description
+                            </p>
+
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+
+
+        <h2 class="whoweare_section_title">Administrative Assistant</h2>
+
+        @foreach (var g in GroupedSecretaries)
+        {
+            <div class="row g-7">
+                @foreach (var m in g)
+                {
+                    <div class="col-sm-6 col-md-6" style="background-color: white; border-radius: 10px; width: 45%; margin: 10px;">
+                        <div class="">
+                            <div class="position-relative mb-7" style="text-align: center;">
+                                <img src="/File/Staff/@m.PhotoUrl" alt="wide" class="img-fluid" style="border-radius: 50%; max-width: 70%; margin-top: 20px; margin-bottom: 20px;">
+                            </div>
+                        </div>
+                        <div class="px-lg-4">
+                            <h2 class="mb-3 h3">@m.Name</h2>
+                            <p class="mb-5">
+                                @m.Description
+                            </p>
+
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        <br />
+        <br />
+        <br />
+        <br />
+    </div>
+</section>
+<!-- beleive_section end -->
+<!-- Learn More Section start -->
+<section class="learnmore">
+    <div class="container">
+        <div class="inner_learn">
+            <div class="learn_contenet">
+                <h2>Want to Learn More?</h2>
+            </div>
+            <div class="learn_btn">
+                <a class="contact_learn_btn" href=""> Contact</a>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Learn More Section End -->

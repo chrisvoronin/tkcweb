@@ -39,7 +39,8 @@ namespace TKC.Controllers
                 SermonsCount = await _context.Sermons.CountAsync(),
                 StaffCount = await _context.Employees.CountAsync(),
                 Settings = await _context.AppSettings.CountAsync(),
-                Logins = await _context.Users.CountAsync()
+                Logins = await _context.Users.CountAsync(),
+                HtmlContent = await _context.HTMLContents.CountAsync()
             };
 
             return View(sum);
@@ -184,7 +185,25 @@ namespace TKC.Controllers
             return View(res);
         }
 
-        
+        /// HTML CONTENT
+        ///
+        [HttpGet("htmlcontent")]
+        public IActionResult HtmlContent()
+        {
+            List<HTMLContent> items = _context.HTMLContents.OrderBy(i => i.Name).ToList();
+            return View(items);
+        }
+
+        [HttpGet("htmlcontent/{id}")]
+        public async Task<IActionResult> HtmlContent(int id)
+        {
+            var m = await _context.HTMLContents.FirstOrDefaultAsync(m => m.Id == id);
+            if (m == null)
+            {
+                return NotFound();
+            }
+            return View("HtmlContentDetail", m);
+        }
 
     }
 }

@@ -145,10 +145,7 @@ namespace TKC.Controllers
             {
                 description = formData["description"].ToString();
             }
-            else
-            {
-                return BadRequest("Description is required");
-            }
+            
 
             if (formData.ContainsKey("group"))
             {

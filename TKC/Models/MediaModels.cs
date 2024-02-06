@@ -40,6 +40,18 @@ namespace TKC.Models
         public int CurrentPage { get; set; } = 1;
     }
 
+    public class HTMLContent
+    {
+        [JsonPropertyName("id")]
+        public int Id { get; set; }
+
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
+
+        [JsonPropertyName("value")]
+        public string Value { get; set; }
+    }
+
     public class ShortTakeResponse
     {
         [JsonPropertyName("totalResults")]

@@ -22,12 +22,16 @@ namespace TKC.Models
 
         [JsonProperty("logins")]
         public int Logins { get; set; }
+
+        [JsonProperty("html")]
+        public int HtmlContent { get; set; }
     }
 
     public class StaffViewModel
     {
         public List<Staff> Deacons { get; set; }
         public List<Staff> Elders { get; set; }
+        public List<Staff> Pastoral { get; set; }
         public List<Staff> Secretaries { get; set; }
     }
 

@@ -38,6 +38,20 @@ ul {
     list-style: none;
 }
 
+.blockquote {
+    background-color: var(--bs-gray-100);
+    border-radius: 12px;
+    color: var(--bs-gray-500);
+    margin: 20px auto;
+    padding: 24px 24px 24px 56px;
+    position: relative;
+}
+
+.blockquote {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+}
+
 .fontHeading {
     font-family: 'DM Serif Text' !important;
 }
@@ -90,6 +104,18 @@ ul {
     background: #e8e6e5;
 }
 
+.whoweare_section_title {
+    margin-top: 50px;
+    margin-bottom: 20px;
+    color: #07162D;
+    font-size: 56px;
+    font-style: normal;
+    font-weight: 400;
+    font-family: DM Serif Text;
+    line-height: 100%;
+    letter-spacing: -1.12px;
+}
+
 .header_section {
     padding: 40px 0px;
     border-bottom: 1px solid rgba(0, 0, 0, 0.08);
@@ -100,7 +126,7 @@ ul {
     }
 
     .header_section .navbar-nav {
-        max-width: 174px;
+        max-width: 300px;
         width: 100%;
         display: -webkit-box;
         display: -ms-flexbox;
@@ -898,7 +924,7 @@ ul {
 
 @media (max-width: 1370px) {
     .container {
-        max-width: 1175px;
+        max-width: 1250px;
     }
 
     .liturgy_section .inner_liurgy {
@@ -936,7 +962,7 @@ ul {
     }
 
     .about_section1 .Confession_btn {
-        margin-bottom: 80px;
+        margin-bottom: 120px;
     }
 
     .about_back_img {
@@ -1183,8 +1209,8 @@ ul {
     justify-content: space-between;
     -ms-flex-wrap: wrap;
     flex-wrap: wrap;
-    margin-top: 199px;
-    margin-bottom: 168px;
+    margin-top: 50px;
+    margin-bottom: 150px;
 }
 
 .services_section h2 {
