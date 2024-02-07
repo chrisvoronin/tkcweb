@@ -64,6 +64,7 @@
                         </a>
                     </div>
                     <div class="sermons_date">
+                        <span>Sort: {{sort}}</span>
                         <a class="nounderline sermons_values" href="{{link}}"><span>Edit</span></a>
                         <span>•</span>
                         <input type="hidden" id="title_{{id}}" value="{{title}}" />
@@ -168,6 +169,7 @@
             var resultHtml = itemTemplateHTML
                 .replace(/{{link}}/g, link)
                 .replace(/{{title}}/g, item.name)
+                .replace(/{{sort}}/g, item.order)
                 .replace(/{{id}}/g, item.id)
                 .replace(/{{group}}/g, item.group);
 
