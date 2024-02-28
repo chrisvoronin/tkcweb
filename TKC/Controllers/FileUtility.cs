@@ -17,6 +17,10 @@ namespace TKC.Controllers
         {
             // build file name by default with just its existing name
             var fileName = file.FileName;
+
+            //replace empty spaces
+            fileName = fileName.Replace(" ", "_");
+
             var filePath = Path.Combine(Directory.GetCurrentDirectory(), DIRECTORY, fileName);
 
             // if it exists, lets add a guid to not override, otherwise use filename as is.

@@ -256,6 +256,23 @@ namespace TKC.Models
             }
         }
 
+        public string ContentType
+        {
+            get
+            {
+                if (AudioUrl == null)
+                {
+                    return "audio/mpeg";
+                } else if (AudioUrl.EndsWith("wav"))
+                {
+                    return "audio/wav";
+                } else
+                {
+                    return "audio/mpeg";
+                }
+            }
+        }
+
         [JsonPropertyName("aUrl")]
         public string AUrl
         {

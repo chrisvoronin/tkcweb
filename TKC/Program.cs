@@ -56,7 +56,7 @@ app.UseRouting();
 
 app.UseAuthorization();
 
-app.UseMiddleware<HttpMethodOverrideMiddleware>();
+//app.UseMiddleware<HttpMethodOverrideMiddleware>();
 
 app.MapControllerRoute(
     name: "default",

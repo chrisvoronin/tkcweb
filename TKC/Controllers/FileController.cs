@@ -43,6 +43,10 @@ namespace TKC.Controllers
                 {
                     contentType = "application/pdf";
                 }
+                else if (fileName.EndsWith(".wav", StringComparison.OrdinalIgnoreCase))
+                {
+                    contentType = "audio/wav";
+                }
                 else
                 {
                     // Handle other file types if needed
