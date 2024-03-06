@@ -44,6 +44,22 @@ public class HomeController : Controller
         return View();
     }
 
+    public IActionResult Resources()
+    {
+        ResourcesPageModel model = new ResourcesPageModel();
+        model.policies.Add(new KeyValuePair<string, string>("Music Policy", "/TKC-Policy-Music-Ministry.pdf"));
+        model.policies.Add(new KeyValuePair<string, string>("Adult Children Membership Policy", "/Children-of-Members-Protocol.pdf"));
+
+        model.governingDocs.Add(new KeyValuePair<string, string>("TKC Constitution", "/KINGS-CONSTITUTION.pdf"));
+        model.governingDocs.Add(new KeyValuePair<string, string>("TKC Covenant", "/KINGS-COVENANT.pdf"));
+        model.governingDocs.Add(new KeyValuePair<string, string>("TKC Confession", "/KINGS-CONFESSION-OF-FAITH-2022.pdf"));
+        model.governingDocs.Add(new KeyValuePair<string, string>("TKC CREC Governing Documents", "https://crechurches.org/documents/governance/CREC_Governance_Comprehensive_2017R.pdf"));
+
+
+
+        return View(model);
+    }
+
     public IActionResult LordsDayWorship()
     {
         return View();

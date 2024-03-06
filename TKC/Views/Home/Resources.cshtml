@@ -1,0 +1,74 @@
+﻿@{
+    ViewData["Title"] = "The Kings Congreation";
+}
+@model ResourcesPageModel
+
+<section class="resources_sections">
+    <div class="container">
+        <h2>Resources</h2>
+        <div class="inner_resources" style="align-items: start;">
+            <div class="sermons_section">
+                <div class="resources_content">
+                    <h5>Governing Documents</h5>
+                </div>
+
+                @foreach (var s in Model.governingDocs)
+                {
+                    <div class="resources_values">
+                        <div class="box_info">
+                            <img src="/img/downloadBtn2.svg" alt="">
+                        </div>
+                        <div class="resources_data">
+                            <a class="nounderline sermons_values" href="@s.Value">
+                                <h4>@s.Key</h4>                               
+                            </a>
+                        </div>
+                    </div>
+                }
+
+            </div>
+            <div class="music_section">
+                <div class="resources_content">
+                    <h5>Policies</h5>
+                </div>
+                @foreach (var m in Model.policies)
+                {
+                    <div class="resources_values">
+                        <div class="box_info">
+                            <img src="/img/downloadBtn2.svg" alt="">
+                        </div>
+                        <div class="resources_data">
+
+                            <a class="nounderline sermons_values" href="@m.Value">
+                                <h4>@m.Key</h4>
+                            </a>
+                        </div>
+                    </div>
+                }
+
+                
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="liturgy_section">
+    <div class="container">
+        <div class="inner_liurgy">
+            <div class="Liturgy_content">
+                <h1>Liturgy</h1>
+                <p>See the structure of our worship service.</p>
+                <a class="view_liturgy_btn" asp-controller="Home" asp-action="Liturgy">View Liturgy</a>
+            </div>
+            <div class="Liturgy_content">
+                <h1>Livestream</h1>
+                <p>
+                    If you would like information about attending our Sunday worship service online, please contact the church
+                    office for connection information.
+                </p>
+                <a class="view_liturgy_btn live" href="https://www.youtube.com/@@thekingscongregation5213/streams">Youtube <img src="/img/share-26 1.svg" alt=""></a>
+            </div>
+        </div>
+    </div>
+</section>
+

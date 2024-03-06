@@ -13,6 +13,12 @@ namespace TKC.Models
         public DateTime? LockOutDate { get; set; }
     }
 
+    public class ResourcesPageModel
+    {
+        public List<KeyValuePair<string, string>> policies = new();
+        public List<KeyValuePair<string, string>> governingDocs = new();
+    }
+
     public class AppSettingModel
     {
         public required string Key { get; set; }
