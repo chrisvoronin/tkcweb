@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TKC.Data;
@@ -13,25 +15,24 @@ namespace TKC.Controllers
         private readonly CacheService _cache;
         private readonly ApplicationDbContext _context;
         private readonly YoutubeAPI _api;
+        private readonly UserManager<IdentityUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public AdminController(CacheService cache, YoutubeAPI api, ApplicationDbContext context)
+        public AdminController(CacheService cache, YoutubeAPI api
+            , ApplicationDbContext context
+            , UserManager<IdentityUser> userManager
+            , RoleManager<IdentityRole> roleManager)
         {
             _cache = cache;
             _context = context;
             _api = api;
+            _roleManager = roleManager;
+            _userManager = userManager;
         }
 
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            //int sermonCount = 0;
-            //var apiResponse = await _api.GetPlaylistVideos(_cache, _api.PlayListIdSermons, 1);
-            //if (apiResponse != null)
-            //{
-            //    var resp = SermonConverter.Convert(apiResponse);
-            //    sermonCount = resp.TotalResults;
-            //}
-
             AdminSummary sum = new AdminSummary()
             {
                 MusicCount = await _context.Musics.CountAsync(),
@@ -44,6 +45,15 @@ namespace TKC.Controllers
             };
 
             return View(sum);
+        }
+
+        private async Task Stuffstuff()
+        {
+            IdentityRole role = new IdentityRole("Admin");
+            await _roleManager.CreateAsync(role);
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var user = await _userManager.FindByIdAsync(userId);
+            await _userManager.AddToRoleAsync(user, "Admin");
         }
 
         // SHORT TAKES SHORT TAKES SHORT TAKES SHORT TAKES SHORT TAKES SHORT TAKES SHORT TAKES SHORT TAKES SHORT TAKES SHORT TAKES SHORT TAKES 
@@ -165,19 +175,23 @@ namespace TKC.Controllers
         }
 
         [HttpGet("Logins")]
-        public IActionResult Logins()
+        public async Task<IActionResult> Logins()
         {
             var users = _context.Users.OrderBy(i => i.UserName).ToList();
             List<UserDisplay> res = new();
             foreach(var u in users)
             {
+                string email = u.Email ?? "";
+                var identityUser = await _userManager.FindByEmailAsync(email);
+                bool userHasRole = await _userManager.IsInRoleAsync(identityUser, "Admin");
+
                 var user = new UserDisplay()
                 {
                     Id = u.Id,
                     Username = u.Email ?? "NoEmail",
                     IsActive = u.EmailConfirmed,
+                    IsAdmin = userHasRole,
                     LockOutDate = u.LockoutEnd?.DateTime
-
                 };
                 res.Add(user);
             }

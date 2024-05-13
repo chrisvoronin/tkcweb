@@ -5,19 +5,8 @@
 <!-- Hero Section Start -->
 <section class="hero_section">
     <div class="container">
-        <div class="inner_hero">
-            <div class="hero_content">
-                <h1>Come and <br> Worship</h1>
-                <p>Sundays, 8:30 Ambrose School</p>
-                <div class="hero_section_btns">
-                    <a class="join_us_btn" asp-controller="Home" asp-action="LordsDayWorship">Join us</a>
-                    <a class="resources_btn" asp-controller="Home" asp-action="Media">Media</a>
-                    <a class="join_us_btn" style="background: #B8945C;" href="https://www.youtube.com/@@thekingscongregation5213/streams">Youtube</a>
-                </div>
-            </div>
-            <div class="hero_section_img">
-                <img src="/img/tkc-sanctuary.jpg" alt=""> <!-- image23.png -->
-            </div>
+        <div class="inner_hero editor" contentid="13">
+            @await Component.InvokeAsync("HtmlContent", new { contentid = 13 })
         </div>
     </div>
 </section>
@@ -25,17 +14,8 @@
 <!-- About Section Start -->
 <section class="about_section">
     <div class="container">
-        <div class="content_about">
-            <h4>About</h4>
-            <h2 class="fontHeading">A Congregation Committed to Our King</h2>
-            <p>
-                If you are looking for a Church family with a deep desire for faithfulness to Scripture in its preaching,
-                worship, and discipleship, we encourage you to join us in Sunday worship or to contact us with your questions.
-            </p>
-            <div class="about_btn">
-                <a class="learn_more" asp-controller="Home" asp-action="About">Learn More</a>
-                <a class="contact_btn" asp-controller="Home" asp-action="Contact">Contact</a>
-            </div>
+        <div class="content_about editor" contentid="11">
+            @await Component.InvokeAsync("HtmlContent", new { contentid = 11 })
         </div>
     </div>
 </section>
@@ -43,19 +23,8 @@
 <!-- Resources Section Start -->
 <section class="resources_section">
     <div class="container">
-        <div class="inner_resources align-items-lg-center">
-            <div class="resources_img">
-                <img src="/img/tkc-alan2.jpg" alt=""> <!-- image26.png -->
-            </div>
-            <div class="resources_content">
-                <h5>Resources</h5>
-                <h2 class="fontHeading">Equipping You for Spiritual Growth</h2>
-                <p>
-                    Explore our collection of sermons and exhortations to strengthen your faith and deepen your understanding
-                    of God’s Word.
-                </p>
-                <a class="resourece_btn" asp-controller="Home" asp-action="Media">All Resources</a>
-            </div>
+        <div class="inner_resources align-items-lg-center editor" contentid="12">
+            @await Component.InvokeAsync("HtmlContent", new { contentid = 12 })
         </div>
     </div>
 </section>

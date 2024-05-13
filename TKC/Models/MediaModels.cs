@@ -11,6 +11,7 @@ namespace TKC.Models
         public string Username { get; set; }
         public bool IsActive { get; set; }
         public DateTime? LockOutDate { get; set; }
+        public bool IsAdmin { get; set; }
     }
 
     public class ResourcesPageModel
@@ -19,6 +20,7 @@ namespace TKC.Models
         public List<KeyValuePair<string, string>> governingDocs = new();
     }
 
+    
     public class AppSettingModel
     {
         public required string Key { get; set; }
@@ -199,6 +201,12 @@ namespace TKC.Models
         [JsonPropertyName("dateCreated")]
         public DateTime DateCreated { get; set; }
 
+        [JsonPropertyName("audioFileSize")]
+        public long? AudioFileSize { get; set; }
+
+        [JsonPropertyName("audioDuration")]
+        public double? AudioDuration { get; set; }
+
         [JsonPropertyName("aUrl")]
         public string AUrl
         {
@@ -243,6 +251,12 @@ namespace TKC.Models
 
         [JsonPropertyName("dateCreated")]
         public DateTime DateCreated { get; set; }
+
+        [JsonPropertyName("audioFileSize")]
+        public long? AudioFileSize { get; set; }
+
+        [JsonPropertyName("audioDuration")]
+        public double? AudioDuration { get; set; }
 
         [JsonPropertyName("pUrl")]
         public string PUrl

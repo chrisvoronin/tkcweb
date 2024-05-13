@@ -42,25 +42,26 @@ namespace TKC.Controllers
             }
         }
 
-        
+        [Authorize]
+        [HttpPost]
+        public async Task<string> UploadImage([FromForm] IFormFile file)
+        {
+            string fileName = await FileUtility.SaveFile(file);
+            return "/Uploads/" + fileName;
+        }
 
         [Authorize]
         [HttpPatch("{id}")]
-        public async Task<IActionResult> Update(long id, [FromForm] IFormCollection formData)
+        public async Task<IActionResult> Update(int id, [FromForm] IFormCollection formData)
         {
-            string? title = null;
             string? html = null;
 
-            if (formData.ContainsKey("title"))
-            {
-                title = formData["title"].ToString();
-            }
             if (formData.ContainsKey("html"))
             {
                 html = formData["html"].ToString();
             }
 
-            if (string.IsNullOrWhiteSpace(title) || string.IsNullOrWhiteSpace(html))
+            if (string.IsNullOrWhiteSpace(html))
             {
                 return StatusCode(400, "Title and HTML cannot be blank.");
             }
@@ -79,12 +80,17 @@ namespace TKC.Controllers
                     return NotFound();
                 }
 
-                existing.Name = title;
+                if (formData.ContainsKey("title"))
+                {
+                    existing.Name = formData["title"].ToString();
+                }
+
                 existing.Value = html;
 
-                _cache.Remove("Liturgy");
-
                 await _context.SaveChangesAsync();
+
+                _cache.Remove(existing.Name);
+                _cache.Set(existing.Name, existing.Value);
 
                 return Ok();
             }
@@ -95,21 +101,7 @@ namespace TKC.Controllers
         }
 
         private static bool IsHtmlSafe(string htmlContent)
-        {
-            // Check for external links
-            if (ContainsUnsafeLink(htmlContent, "<a[^>]+?href\\s*=\\s*(['\"])(.*?)\\1"))
-            {
-                Console.WriteLine("Unsafe: Contains external links");
-                return false;
-            }
-
-            // Check for external images
-            if (ContainsUnsafeTag(htmlContent, "<img[^>]+?src\\s*=\\s*(['\"])(.*?)\\1"))
-            {
-                Console.WriteLine("Unsafe: Contains external images");
-                return false;
-            }
-
+        {            
             // Check for script tags
             if (ContainsUnsafeTag(htmlContent, "<script[^>]*>.*?</script>"))
             {
@@ -121,35 +113,13 @@ namespace TKC.Controllers
             return true;
         }
 
-        private static bool ContainsUnsafeLink(string htmlContent, string pattern)
-        {
-            Regex regex = new Regex(pattern, RegexOptions.IgnoreCase);
-            MatchCollection matches = regex.Matches(htmlContent);
-            foreach (Match match in matches)
-            {
-                string url = match.Groups[2].Value;
-                if (!IsLocalUrl(url))
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
         private static bool ContainsUnsafeTag(string htmlContent, string pattern)
         {
             Regex regex = new Regex(pattern, RegexOptions.IgnoreCase);
             return regex.IsMatch(htmlContent);
         }
 
-        private static bool IsLocalUrl(string url)
-        {
-            if (Uri.TryCreate(url, UriKind.Absolute, out Uri? uri))
-            {
-                return uri.Host.Contains("thekingscongregation.com", StringComparison.OrdinalIgnoreCase);
-            }
-            return false;
-        }
+        
     }
 }
 

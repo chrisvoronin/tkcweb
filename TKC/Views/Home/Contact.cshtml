@@ -1,6 +1,7 @@
 ﻿@{
     ViewData["Title"] = "The Kings Congregation";
 }
+
 <style type="text/css">
     .services_section span {
         text-align: left;
@@ -8,50 +9,15 @@
     }
 </style>
 <section class="contact_section">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-6 p-0">
-                <div class="contact_img">
-                    <!-- <img src="assets/img/contact.png" alt=""> -->
-                </div>
-            </div>
-            <div class="col-md-6 p-0">
-                <div class="content_contact" id="contactform">
-                    <h1>Get in Touch</h1>
-                    <input class="form-control" type="text" name="name" id="name" placeholder="Name">
-                    <input class="form-control" type="text" name="email" id="email" placeholder="Email">
-                    <textarea class="form-control" id="message" name="message" rows="3"
-                              placeholder="Your Message"></textarea>
-                    <a class="contact_btn_sub" onclick="submitEmailForm(); return false;" style="cursor: pointer;">Submit</a>
-                </div>
-                <div id="sending" class="content_contact" style="display:none;">
-                    <h2>Sending your message</h2>
-                    <p>Hang on just a bit while we send your message.</p>
-                </div>
-                <div id="sent" class="content_contact" style="display:none;">
-                    <h2>Your message has been received.</h2>
-                    <p>Thank you</p>
-                </div>
-            </div>
-        </div>
+    <div class="container editor" contentid="8">
+        @await Component.InvokeAsync("HtmlContent", new { contentid = 8 })
     </div>
 </section>
 
 <section class="services_section">
     <div class="container">
-        <div class="inner_services">
-            <div class="content_services">
-                <h2>Sunday Service</h2>
-                <span>Sunday Worship Service, 8:30 AM</span>
-                <br>
-                <span>
-                    Ambrose School Great Hall 6100 North Locust Grove RoadMeridian, Idaho 83646
-                </span>
-            </div>
-            <div class="content_services email">
-                <h2>Email</h2>
-                <span><a href="office@thekingscongregation.com">office@TheKingsCongregation.com</a></span>
-            </div>
+        <div class="inner_services editor" contentid="7">
+            @await Component.InvokeAsync("HtmlContent", new { contentid = 7 })
         </div>
     </div>
 </section>

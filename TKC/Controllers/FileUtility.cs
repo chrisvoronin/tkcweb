@@ -1,8 +1,28 @@
 ﻿using System;
+using System.IO;
+using System.Xml;
+
 namespace TKC.Controllers
 {
 	public static class FileUtility
 	{
+
+        public static async Task<string> SavePodcastXml(XmlDocument file)
+        {
+            string fileName = "podcast.xml";
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "Uploads", fileName);
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            using (var writer = new StreamWriter(stream))
+            {
+                await writer.WriteAsync(file.InnerXml);
+            }
+            return fileName;
+        }
+
         public static async Task<string> SaveFile(IFormFile file)
         {
             return await SaveFile(file, "Uploads");

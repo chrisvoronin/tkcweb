@@ -109,8 +109,48 @@
                     </div>
                 </div>
 
+                @*Podcast File*@
+                <div class="inner_valus_data">
+                    <div class="sermons_values">
+                        <div class="nounderline sermons_values">
+                            <h4>Apple Podcast XML</h4>
+                        </div>
+                    </div>
+                    <div class="sermons_date">
+                        <a class="nounderline sermons_values" href="/podcasts/sermons"><span>View</span></a>
+                        <span>•</span>
+                        <a class="nounderline sermons_values" onclick="generatePodcast(this); return false;"><span>Update</span></a>
+                        <span id="loadergen" style="display:none;" class="loader"></span>
+                    </div>
+                </div>
+
             </div>
 
         </div>
     </div>
 </section>
+
+<script type="text/javascript">
+
+    function generatePodcast(element) {
+
+        $(element).hide();
+        $("#loadergen").show();
+
+        var url = "/podcasts/generate";
+        $.ajax({
+            url: url,
+            type: 'GET',
+            success: function (response) {
+                alert("Podcast Created");
+                $(element).show();
+                $("#loadergen").hide();
+            },
+            error: function (error) {
+                alert("Unable to create Podcast File");
+                $(element).show();
+                $("#loadergen").hide();
+            }
+        });
+    }
+</script>

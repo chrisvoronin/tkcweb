@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using TKC.Data;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.HttpOverrides;
+using TKC.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +28,7 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 
 builder.Services.AddScoped<YoutubeAPI>();
 builder.Services.AddSingleton<CacheService>();
+builder.Services.AddScoped<HtmlContentViewComponent>();
 
 builder.Services.AddControllersWithViews();
 

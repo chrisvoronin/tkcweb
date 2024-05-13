@@ -23,9 +23,20 @@
                             </span>
                         </div>
                         <div class="sermons_date">
-                            <input type="checkbox" id="@item.Id" name="@item.Id"  @(item.IsActive ? "checked" : "") />
-                            <label for="@item.Id">Is Enabled</label>
-                            <input type="button" value="Save" onclick="save('@item.Id');" />
+                            @if (item.IsAdmin)
+                            {
+                                <button onclick="admin('@item.Id', false);">Remove Admin</button>
+                            }
+                            else
+                            {
+                                <button onclick="admin('@item.Id', true);">Make Admin</button>
+                            }
+
+                            @if (!item.IsActive)
+                            {
+                                <button onclick="save('@item.Id', this);">Enable Login</button>
+                            }
+
                         </div>
                     </div>
             }
@@ -37,17 +48,32 @@
 
 <script type="text/javascript">
 
-    function save(key) {
-
-        var isChecked = $("#" + key).is(":checked");
+    function admin(key, isadmin) {
 
         $.ajax({
-            url: '/api/settings/logins/' + key + '/' + isChecked,
+            url: '/api/settings/admins/' + key + '/' + isadmin,
+            type: 'POST',
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                location.reload();
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                var errorMessage = jqXHR.responseText;
+                alert(errorMessage);
+            }
+        });
+    }
+
+    function save(key, button) {
+
+        $.ajax({
+            url: '/api/settings/logins/' + key + '/' + true,
             type: 'PATCH',
             processData: false,
             contentType: false,
             success: function (response) {
-                alert("Saved");
+                $(button).hide();
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 var errorMessage = jqXHR.responseText;

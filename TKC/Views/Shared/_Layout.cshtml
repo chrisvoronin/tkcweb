@@ -8,6 +8,12 @@
           integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
     <link rel="stylesheet" href="/css/style.css?v=2.01">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    @if (User.IsInRole("Admin"))
+    {
+        <script src="/tinymce/tinymce.min.js" referrerpolicy="origin"></script>
+        <script src="/tinymce/tinymce-jquery.min.js"></script>
+    }
 </head>
 <body>
 
@@ -18,7 +24,6 @@
         <img src="/img/scrool.svg" alt="">
     </button>
     <!-- end scroll button -->
-
     <!-- Header section Start -->
     <header class="header_section">
         <div class="container">
@@ -56,11 +61,9 @@
         </div>
     </header>
     <!-- Header section End -->
-
     <!-- Body Section Start -->
     @RenderBody()
     <!-- Body Section End -->
-
     <!-- footer section start -->
     <footer class="footer_section">
         <div class="container">
@@ -102,6 +105,13 @@
             crossorigin="anonymous"></script>
     <script src="/js/main.js?v=1.1"></script>
     @await RenderSectionAsync("Scripts", required: false)
+
+    @if (User.IsInRole("Admin"))
+    {
+        <script src="/js/content.js?v=1.1"></script>
+        
+    }
+
 </body>
 </html>
 

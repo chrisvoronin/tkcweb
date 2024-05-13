@@ -123,6 +123,8 @@ namespace TKC.Controllers
         public async Task<IActionResult> Create([FromForm] IFormCollection formData)
         {
 
+            long audioFileSize = 0;
+            double audioDuration = 0;
             var audio = formData.Files["audio"];
             var pdf = formData.Files["pdf"];
 
@@ -131,6 +133,7 @@ namespace TKC.Controllers
                 return BadRequest("Audio file is required.");
             }
 
+            
             string? title = null;
             string? subTitle = null;
             string? author = null;
@@ -183,6 +186,9 @@ namespace TKC.Controllers
             if (audio != null)
             {
                 audioFileName = await FileUtility.SaveFile(audio);
+                audioDuration = MP3Parser.CalculateDurationInSeconds(audioFileName);
+                audioFileSize = audio.Length;
+
             }
 
             if (pdf != null)
@@ -203,6 +209,8 @@ namespace TKC.Controllers
                 if (audioFileName != null)
                 {
                     st.AudioUrl = audioFileName;
+                    st.AudioDuration = audioDuration;
+                    st.AudioFileSize = audioFileSize;
                 }
 
                 if (pdfFileName != null)
@@ -225,7 +233,8 @@ namespace TKC.Controllers
         [HttpPatch("{id}")]
         public async Task<IActionResult> Update(long id, [FromForm] IFormCollection formData)
         {
-            
+            long audioFileSize = 0;
+            double audioDuration = 0;
             var audio = formData.Files["audio"];
             var pdf = formData.Files["pdf"];
 
@@ -267,6 +276,9 @@ namespace TKC.Controllers
             if (audio != null)
             {
                 audioFileName = await FileUtility.SaveFile(audio);
+                audioDuration = MP3Parser.CalculateDurationInSeconds(audioFileName);
+                audioFileSize = audio.Length;
+
             }
 
             if (pdf != null)
@@ -296,7 +308,11 @@ namespace TKC.Controllers
                     existing.VideoUrl = videoUrl;
 
                 if (audioFileName != null)
+                {
                     existing.AudioUrl = audioFileName;
+                    existing.AudioDuration = audioDuration;
+                    existing.AudioFileSize = audioFileSize;
+                }
 
                 if (pdfFileName != null)
                     existing.PdfUrl = pdfFileName;

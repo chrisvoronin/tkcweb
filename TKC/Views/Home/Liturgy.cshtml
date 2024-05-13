@@ -3,7 +3,6 @@
 }
 
 @model HTMLContent
-
 <!-- Liburgy_main_section start -->
 <section class="Liburgy_main_section">
     <div class="container">
@@ -12,13 +11,10 @@
     </div>
 </section>
 
-<!-- Liburgy_main_section end -->
-<!-- Liburgy_main_content start -->
 <section class="Liburgy_main_content">
     <div class="container">
-        <div class="Liburgy_main_value">
+        <div class="Liburgy_main_value editor" contentid="@Model.Id">
             @Html.Raw(@Model.Value)
         </div>
     </div>
 </section>
-<!-- Liburgy_main_content start -->
