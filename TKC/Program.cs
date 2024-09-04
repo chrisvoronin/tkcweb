@@ -9,6 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+var planningCenterApiKey = builder.Configuration["ApiKeys:PlanningCenter"] ?? "";
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseSqlite(connectionString);
@@ -28,6 +30,12 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 
 builder.Services.AddScoped<YoutubeAPI>();
 builder.Services.AddSingleton<CacheService>();
+
+builder.Services.AddScoped<PlanningCenterService>(provider =>
+{
+    return new PlanningCenterService(planningCenterApiKey);
+});
+
 builder.Services.AddScoped<HtmlContentViewComponent>();
 
 builder.Services.AddControllersWithViews();
