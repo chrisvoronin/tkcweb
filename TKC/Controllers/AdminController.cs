@@ -41,7 +41,8 @@ namespace TKC.Controllers
                 StaffCount = await _context.Employees.CountAsync(),
                 Settings = await _context.AppSettings.CountAsync(),
                 Logins = await _context.Users.CountAsync(),
-                HtmlContent = await _context.HTMLContents.CountAsync()
+                HtmlContent = await _context.HTMLContents.CountAsync(),
+                Resources = await _context.Resources.CountAsync()
             };
 
             return View(sum);
@@ -217,6 +218,45 @@ namespace TKC.Controllers
                 return NotFound();
             }
             return View("HtmlContentDetail", m);
+        }
+
+        [HttpGet("Resources")]
+        public IActionResult ResourceList()
+        {
+            ResourcePageModel model = new ResourcePageModel();
+            var allGroups = _context.ResourceGroups
+                    .Include(group => group.Items) // Eager loading Items navigation property
+                    .ToList();
+
+            model.LeftSide = allGroups.Where(f => f.Side == 0).ToList();
+            model.RightSide = allGroups.Where(f => f.Side == 1).ToList();
+
+            return View(model);
+        }
+
+        // View Single
+        [HttpGet("Resources/{id}")]
+        public async Task<IActionResult> Resource(int id)
+        {
+            var m = await _context.Resources.FirstOrDefaultAsync(m => m.Id == id);
+            if (m == null)
+            {
+                return NotFound();
+            }
+            var allGroups = _context.ResourceGroups.ToList();
+
+            ResourceDetailPageModel pageModel = new ResourceDetailPageModel();
+            pageModel.Item = m;
+            pageModel.Groups = allGroups;
+
+            return View(pageModel);
+        }
+
+        [HttpGet("Resources/new")]
+        public IActionResult ResourceNew()
+        {
+            var allGroups = _context.ResourceGroups.ToList();
+            return View(allGroups);
         }
 
     }

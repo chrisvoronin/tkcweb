@@ -33,6 +33,11 @@ namespace TKC.Controllers
             return await SaveFile(file, "Staff");
         }
 
+        public static async Task<string> SaveDocument(IFormFile file)
+        {
+            return await SaveFile(file, "Documents");
+        }
+
         private static async Task<string> SaveFile(IFormFile file, string DIRECTORY)
         {
             // build file name by default with just its existing name

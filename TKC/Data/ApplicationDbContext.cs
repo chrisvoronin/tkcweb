@@ -12,6 +12,8 @@ public class ApplicationDbContext : IdentityDbContext
     public DbSet<AppSettingModel> AppSettings { get; set; }
     public DbSet<HTMLContent> HTMLContents { get; set; }
     public DbSet<Staff> Employees { get; set; }
+    public DbSet<ResourceGroup> ResourceGroups { get; set; }
+    public DbSet<ResourceItem> Resources { get; set; }
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
@@ -22,6 +24,19 @@ public class ApplicationDbContext : IdentityDbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<ResourceGroup>(entity =>
+        {
+            entity.ToTable("ResourceGroups");
+            entity.HasKey(e => e.Id);
+        });
+
+        modelBuilder.Entity<ResourceItem>()
+            .ToTable("Resources")
+            .HasOne(ri => ri.ResourceGroup)
+            .WithMany(rg => rg.Items)
+            .HasForeignKey(ri => ri.GroupId);
+
 
         modelBuilder.Entity<Music>(entity =>
         {

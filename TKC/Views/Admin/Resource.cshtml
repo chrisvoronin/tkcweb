@@ -1,0 +1,162 @@
+﻿@{
+    ViewData["Title"] = "The Kings Congregation";
+    Layout = "_LayoutAdmin";
+}
+
+@model ResourceDetailPageModel
+
+<section class="sermon_video_btn">
+    <div class="container">
+        <div class="inner_video_sermons">
+
+            <div class="info_sermon_img">
+                <img src="/img/mic-2 1.svg" alt="">
+                <span>Resource</span>
+            </div>
+            <div class="sermons_btns">
+                <a id="allitemslink" class="all_btns_sermon" asp-controller="Admin" asp-action="Resources">All Resource Links</a>
+                <a class="all_btns_sermon" asp-controller="Admin" asp-action="Index">Admin Home</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section class="sermons_video_section">
+    <div class="container">
+
+
+        <h4>Details</h4>
+
+        <div class="form-floating mb-3">
+            @Html.DropDownListFor(
+                model => model.Item.GroupId,
+                new SelectList(Model.Groups, "Id", "Title"),
+                new { @class = "form-control", id = "itemgroup" }
+            )
+            <label class="form-label">Group</label>
+            <span id="error_itemgroup" style="display:none;" class="text-danger">Required</span>
+        </div>
+
+        <div class="form-floating mb-3">
+            <input class="form-control" aria-required="true" placeholder="Title" id="itemname" value="@Model.Item.Text" />
+            <label class="form-label">Display Name</label>
+            <span id="error_itemname" style="display:none;" class="text-danger">Required</span>
+        </div>
+
+        <h4>File or Url</h4>
+
+        <div class="form-floating mb-3">
+            <select class="form-control" placeholder="Title" onchange="handleSelectChange(this)">
+                <option value="0">Upload a New File</option>
+                <option value="1">Link to existing File on Internet</option>
+            </select>
+            <label class="form-label">Choose One:</label>
+        </div>
+
+        <div class="form-floating mb-3" id="section_file">
+            <input type="file" class="form-control" id="itemfile" placeholder="File" />
+            <span id="error_file" style="display:none;" class="text-danger">Required</span>
+        </div>
+
+        <div class="form-floating mb-3" style="display:none;" id="section_url">
+            <input class="form-control" placeholder="http://" id="itemurl" />
+            <label class="form-label">Url to file on internet (http://...)</label>
+            <span id="error_url" style="display:none;" class="text-danger">Required</span>
+        </div>
+
+        <br />
+        <br />
+
+        <div>
+            <button id="submit" type="submit" class="w-100 btn btn-lg btn-primary" onclick="save();">Save</button>
+            <input type="hidden" id="itemid" value="@Model.Item.Id" />
+        </div>
+        <br />
+        <br />
+
+    </div>
+</section>
+
+<script type="text/javascript">
+
+    function handleSelectChange(element) {
+        var selectedValue = element.value;
+        if (selectedValue == "0") {
+            $("#section_file").show();
+            $("#section_url").hide();
+            $("#itemurl").val("");
+            $('#itemfile').focus();
+        } else {
+            $("#section_file").hide();
+            $("#section_url").show();
+            $("#itemfile").val("");
+            $('#itemurl').focus();
+        }
+    }
+
+    function doSave() {
+
+        var file = $('#itemfile')[0].files[0];
+        const url = $("#itemurl").val().trim();
+        const itemId = $("#itemid").val().trim();
+        const name = $("#itemname").val().trim();
+        const group = $("#itemgroup").val().trim();
+
+        var formData = new FormData();
+
+        if (file) {
+            formData.append('file', file);
+        }
+
+        formData.append('name', name);
+        formData.append('group', group);
+        formData.append('url', url);
+
+        $.ajax({
+            url: '/api/resources/' + itemId,
+            type: 'PATCH',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                handleResults();
+            },
+            error: function (error) {
+                alert("Unable to save, please check your internet connection.");
+            }
+        });
+    }
+
+    function save() {
+
+        const isValid = validateForm();
+        console.log(isValid);
+        if (!isValid) {
+            return;
+        }
+
+        doSave();
+    }
+
+    function validateForm() {
+        const name = $("#itemname").val().trim();
+
+        var isValid = true;
+
+        if (name.length == 0) {
+            isValid = false;
+            $("#error_itemname").show();
+        } else {
+            $("#error_itemname").hide();
+        }
+
+        return isValid;
+    }
+
+    function handleResults(results) {
+        var url = $("#allitemslink").attr("href");
+        window.location.href = url;
+    }
+
+</script>

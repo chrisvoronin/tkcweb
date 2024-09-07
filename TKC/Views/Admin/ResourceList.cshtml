@@ -1,0 +1,110 @@
+﻿@{
+    ViewData["Title"] = "Admin - Resources";
+    Layout = "_LayoutAdmin";
+}
+@model ResourcePageModel
+
+<section class="sermon_video_btn">
+    <div class="container">
+        <div class="inner_video_sermons">
+
+            <div class="info_sermon_img">
+                <img src="/img/mic-2 1.svg" alt="">
+                <span>Resources</span>
+            </div>
+            <div class="sermons_btns">
+                <a class="all_btns_sermon" asp-controller="Admin" asp-action="Index">Admin Home</a>
+                <a class="all_btns_sermon_highlight" asp-controller="Admin" asp-action="ResourceNew">Add New</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="Sermons_section">
+    <div class="container">
+        <div class="Sermons_content">
+            <h2>Resources</h2>
+
+            @foreach (var group in Model.LeftSide)
+            {
+                <h1 style="padding-bottom: 40px; font-weight: bold; color: #B8945C;">@group.Title</h1>
+                <div id="inner">
+                    @foreach (var item in group.Items)
+                    {
+                        <div class="inner_valus_data" id="item_@item.Id">
+                            <div class="sermons_values">
+                                <a class="nounderline sermons_values" href="/Admin/Resources/@item.Id">
+                                    <h4>@item.Text</h4>
+                                </a>
+                            </div>
+                            <div class="sermons_date">
+                                <a class="nounderline sermons_values" href="/Admin/Resources/@item.Id"><span>Edit</span></a>
+                                <span>•</span>
+                                <a class="nounderline sermons_values" href="#" onclick="deleteItem(@item.Id); return false;"><span>Delete</span></a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+
+            @foreach (var group in Model.RightSide)
+            {
+                <h1 style="margin-top: 100px; padding-bottom: 40px; font-weight: bold; color: #B8945C;">@group.Title</h1>
+                <div id="inner">
+                    @foreach (var item in group.Items)
+                    {
+                        <div class="inner_valus_data" id="item_@item.Id">
+                            <div class="sermons_values">
+                                <a class="nounderline sermons_values" href="/Admin/Resources/@item.Id">
+                                    <h4>@item.Text</h4>
+                                </a>
+                            </div>
+                            <div class="sermons_date">
+                                <a class="nounderline sermons_values" href="/Admin/Resources/@item.Id"><span>Edit</span></a>
+                                <span>•</span>
+                                <a class="nounderline sermons_values" href="#" onclick="deleteItem(@item.Id); return false;"><span>Delete</span></a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+
+            
+
+        </div>
+
+    </div>
+</section>
+
+
+
+<script type="text/javascript">function deleteItem(itemId) {
+
+        const selector = "#title_" + itemId;
+        const title = $(selector).val();
+        const messageTitle = "Are you sure you want to delete " + title + "?";
+
+        var isConfirmed = window.confirm(messageTitle);
+        if (isConfirmed) {
+            runDelete(itemId);
+        }
+    }
+
+    function runDelete(itemId) {
+
+        const url = '/api/resources/' + itemId;
+        const selector = "#item_" + itemId;
+
+        $.ajax({
+            url: url,
+            type: 'DELETE',
+            dataType: 'json',
+            success: function (results) {
+                $(selector).remove();
+            },
+            error: function (error) {
+                alert("Delete didn't work,please check your internet connection");
+            }
+        });
+    }</script>
+

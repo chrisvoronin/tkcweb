@@ -5,6 +5,37 @@ namespace TKC.Controllers
     [Route("[controller]")]
     public class FileController : Controller
     {
+        [HttpGet("Documents/{fileName}")]
+        public IActionResult GetDocumentFile(string fileName)
+        {
+
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "Documents", fileName);
+
+            if (!System.IO.File.Exists(filePath))
+            {
+                return NotFound();
+            }
+
+            string contentType = GetContentType(fileName);
+            FileStream fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+
+            FileStreamResult fileResult;
+            if (contentType == "application/octet-stream")
+            {
+                fileResult = new FileStreamResult(fileStream, contentType)
+                {
+                    FileDownloadName = fileName
+                };
+            }
+            else
+            {
+                fileResult = new FileStreamResult(fileStream, contentType);
+            }
+
+            return fileResult;
+        }
+
+
         [HttpGet("Staff/{fileName}")]
         public IActionResult GetStaffFile(string fileName)
         {

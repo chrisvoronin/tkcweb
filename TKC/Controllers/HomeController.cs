@@ -45,21 +45,64 @@ public class HomeController : Controller
         return View();
     }
 
+    public IActionResult Groups()
+    {
+        return View();
+    }
+
     public IActionResult Resources()
     {
-        ResourcesPageModel model = new ResourcesPageModel();
-        model.policies.Add(new KeyValuePair<string, string>("Music Policy", "/TKC-Policy-Music-Ministry.pdf"));
-        model.policies.Add(new KeyValuePair<string, string>("Adult Children Membership Policy", "/Children-of-Members-Protocol.pdf"));
 
-        model.governingDocs.Add(new KeyValuePair<string, string>("TKC Constitution", "/KINGS-CONSTITUTION.pdf"));
-        model.governingDocs.Add(new KeyValuePair<string, string>("TKC Covenant", "/KINGS-COVENANT.pdf"));
-        model.governingDocs.Add(new KeyValuePair<string, string>("TKC Confession", "/KINGS-CONFESSION-OF-FAITH-2022.pdf"));
-        model.governingDocs.Add(new KeyValuePair<string, string>("TKC CREC Governing Documents", "https://crechurches.org/documents/governance/CREC_Governance_Comprehensive_2017R.pdf"));
+        ResourcePageModel model = new ResourcePageModel();
+        var allGroups = _context.ResourceGroups
+                .Include(group => group.Items)
+                .ToList();
 
+        var governingDocs = allGroups.Where(f => f.Side == 0).ToList();
+        var policies = allGroups.Where(f => f.Side == 1).ToList();
 
+        //return View(model);
 
-        return View(model);
+        ResourcesPageModel m = new ResourcesPageModel();
+        foreach(var item in governingDocs)
+        {
+            foreach (var i in item.Items)
+            {
+                KeyValuePair<string, string> b = new KeyValuePair<string, string>(i.Text, buildUrl(i));
+                m.governingDocs.Add(b);
+            }
+        }
+        foreach(var item in policies)
+        {
+            foreach (var i in item.Items)
+            {
+                KeyValuePair<string, string> b = new KeyValuePair<string, string>(i.Text, buildUrl(i));
+                m.policies.Add(b);
+            }
+        }
+        //model.policies.Add(new KeyValuePair<string, string>("Music Policy", "/TKC-Policy-Music-Ministry.pdf"));
+        //model.policies.Add(new KeyValuePair<string, string>("Adult Children Membership Policy", "/Children-of-Members-Protocol.pdf"));
+
+        //model.governingDocs.Add(new KeyValuePair<string, string>("TKC Constitution", "/KINGS-CONSTITUTION.pdf"));
+        //model.governingDocs.Add(new KeyValuePair<string, string>("TKC Covenant", "/KINGS-COVENANT.pdf"));
+        //model.governingDocs.Add(new KeyValuePair<string, string>("TKC Confession", "/KINGS-CONFESSION-OF-FAITH-2022.pdf"));
+        //model.governingDocs.Add(new KeyValuePair<string, string>("TKC CREC Governing Documents", "https://crechurches.org/documents/governance/CREC_Governance_Comprehensive_2017R.pdf"));
+
+        return View(m);
     }
+
+    private string buildUrl(ResourceItem item)
+    {
+        if (item.FileName.StartsWith("http"))
+        {
+            return item.FileName;
+        }
+        else
+        {
+            return "/File/Documents/" + item.FileName;
+        }
+    }
+
 
     public IActionResult LordsDayWorship()
     {
