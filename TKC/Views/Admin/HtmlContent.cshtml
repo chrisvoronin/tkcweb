@@ -4,6 +4,22 @@
 }
 @model List<HTMLContent>
 
+<section class="sermon_video_btn">
+    <div class="container">
+        <div class="inner_video_sermons">
+
+            <div class="info_sermon_img">
+                <img src="/img/mic-2 1.svg" alt="">
+                <span>Short Takes</span>
+            </div>
+            <div class="sermons_btns">
+                <a class="all_btns_sermon" asp-controller="Admin" asp-action="Index">Admin Home</a>
+                <a class="all_btns_sermon_highlight" asp-controller="Admin" asp-action="HtmlContentNew">Add New</a>
+            </div>
+        </div>
+    </div>
+</section>
+
 <section class="Sermons_section">
     <div class="container">
         <div class="Sermons_content">
@@ -12,18 +28,18 @@
             <div id="inner">
 
                 @foreach (var item in Model)
-{
-                   <div class="inner_valus_data">
-                       <div class="sermons_values">
-                           <a class="nounderline sermons_values" asp-controller="Admin" asp-action="HTMLContent" asp-route-id="@item.Id">
-                               <h4>@item.Name</h4>
-                           </a>
-                       </div>
-                       <div class="sermons_date">
-                           <a class="nounderline sermons_values" asp-controller="Admin" asp-action="HTMLContent" asp-route-id="@item.Id"><span>Edit</span></a>
-                       </div>
-                   </div>
-}
+                {
+                    <div class="inner_valus_data">
+                        <div class="sermons_values">
+                            <a class="nounderline sermons_values" asp-controller="Admin" asp-action="HTMLContent" asp-route-id="@item.Id">
+                                <h4>@item.Name</h4>
+                            </a>
+                        </div>
+                        <div class="sermons_date">
+                            <a class="nounderline sermons_values" asp-controller="Admin" asp-action="HTMLContent" asp-route-id="@item.Id"><span>Edit</span></a>
+                        </div>
+                    </div>
+                }
 
             </div>
 

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TKC.Data;
+using TKC.Models;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -41,6 +42,41 @@ namespace TKC.Controllers
                 return StatusCode(500, "Internal Server Error");
             }
         }
+
+        [Authorize]
+        [HttpPost("new")]
+        public async Task<IActionResult> Create([FromForm] IFormCollection formData)
+        {
+            string? html = formData["html"];
+            string? title = formData["title"];
+
+            if (string.IsNullOrEmpty(title))
+            {
+                return BadRequest("Name is required");
+            }
+
+            if (string.IsNullOrEmpty(html))
+            {
+                return BadRequest("HTML content is required");
+            }
+
+            try
+            {
+                HTMLContent content = new HTMLContent();
+                content.Name = title;
+                content.Value = html;
+
+                _context.HTMLContents.Add(content);
+                await _context.SaveChangesAsync();
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Error: " + ex.Message);
+            }
+        }
+
 
         [Authorize]
         [HttpPost]

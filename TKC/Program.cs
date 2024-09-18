@@ -10,8 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-var planningCenterApiKey = builder.Configuration["ApiKeys:PlanningCenter"] ?? "";
-
+var planningCenterSecret = builder.Configuration["ApiKeys:PlanningCenterSecret"] ?? "";
+var planningCenterClientId = builder.Configuration["ApiKeys:PlanningCenterClientId"] ?? "";
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseSqlite(connectionString);
@@ -27,22 +27,27 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options =>
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+builder.Services.AddAuthentication(options =>
+{
+    //options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    //options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme; //this line breaks it
+    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+})
     .AddCookie(options =>
     {
-        options.Cookie.Name = "AWESOME_COOKIE_NAME"; //THIS ONE
-        options.Cookie.HttpOnly = true;
-        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-        options.Cookie.SameSite = SameSiteMode.Strict;
+        options.LoginPath = "/Identity/Account/Login"; // Change this to your desired login page
+        options.LogoutPath = "/Identity/Account/Logout";
+        options.AccessDeniedPath = "/Identity/Account/AccessDenied"; // Change this to your desired access denied page
+        options.SlidingExpiration = true;
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(600 * 60); // Adjust session timeout as needed
     });
-
 
 builder.Services.AddScoped<YoutubeAPI>();
 builder.Services.AddSingleton<CacheService>();
 
 builder.Services.AddScoped<PlanningCenterService>(provider =>
 {
-    return new PlanningCenterService(planningCenterApiKey);
+    return new PlanningCenterService(planningCenterClientId, planningCenterSecret);
 });
 
 builder.Services.AddScoped<HtmlContentViewComponent>();

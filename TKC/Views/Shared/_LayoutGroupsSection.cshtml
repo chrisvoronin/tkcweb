@@ -1,0 +1,23 @@
+﻿@model Tuple<string, List<TKC.Models.PlanningCenter.GroupWithEnrollment>>
+
+<section class="container my-5">
+    <h2 class="text-center mb-4">@Model.Item1</h2>
+    <div class="row">
+        @foreach (var group in Model.Item2)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">@group.group.attributes.name</h5>
+                        <p class="card-text">@group.group.attributes.schedule</p>
+                        @if (!string.IsNullOrEmpty(group.group.attributes.public_church_center_web_url))
+                        {
+                            <p class="card-text"><a href="@group.group.attributes.public_church_center_web_url">Join</a></p>
+                        }
+                        <p class="card-text">@Html.Raw(@group.group.attributes.description)</p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</section>

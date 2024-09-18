@@ -1,9 +1,12 @@
 ﻿using System.Diagnostics;
 using System.IO;
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TKC.Data;
 using TKC.Models;
+using TKC.Models.PlanningCenter;
+using System.Linq;
 
 namespace TKC.Controllers;
 
@@ -15,13 +18,15 @@ public class HomeController : Controller
 
     private readonly CacheService _cache;
     private readonly YoutubeAPI _api;
+    private readonly PlanningCenterService _planningService;
 
-    public HomeController(ILogger<HomeController> logger, ApplicationDbContext context, CacheService cache, YoutubeAPI api)
+    public HomeController(ILogger<HomeController> logger, ApplicationDbContext context, CacheService cache, YoutubeAPI api, PlanningCenterService planningService)
     {
         _logger = logger;
         _context = context;
         _cache = cache;
         _api = api;
+        _planningService = planningService;
     }
 
     [Route("~/")]
@@ -45,9 +50,48 @@ public class HomeController : Controller
         return View();
     }
 
-    public IActionResult Groups()
+    public async Task<IActionResult> Groups()
     {
-        return View();
+        //todo: filter only open, not closed
+        var groups = await _planningService.GetGroupsResponseAsync();
+        //filter groups
+        groups = groups ?? new Models.PlanningCenter.GroupsResponse();
+        //has to have schedule
+        groups.data = groups.data.Where(g => g.attributes.schedule != null && g.attributes.description != null).ToList();
+
+        var enrollmentAll = groups.included ?? new List<EnrollmentData>();
+        var groupsAll = groups.data;
+
+        // Combine groups and enrollments
+        var groupWithEnrollments = new List<GroupWithEnrollment>();
+        foreach (var group in groupsAll)
+        {
+            foreach (var enrollment in enrollmentAll)
+            {
+                if (group.id == enrollment.id)
+                {
+                    groupWithEnrollments.Add(new GroupWithEnrollment
+                    {
+                        group = group,
+                        enrollment = enrollment.attributes
+                    });
+                }
+            }
+        }
+
+        var activeGroups = groupWithEnrollments.Where(g => g.enrollment.status != "closed").ToList();
+        
+        var parishData = activeGroups.Where(g => g.group.attributes.name.Contains("Parish")).ToList();
+        var otherData = activeGroups.Where(g => !g.group.attributes.name.Contains("Parish")).ToList();
+
+        //now lets put them into buckets
+        Tuple<string, List<GroupWithEnrollment>> parish = new Tuple<string, List<GroupWithEnrollment>>("Parish Groups", parishData);
+        Tuple<string, List<GroupWithEnrollment>> other = new Tuple<string, List<GroupWithEnrollment>>("Other Groups", otherData);
+        List<Tuple<string, List<GroupWithEnrollment>>> list = new List<Tuple<string, List<GroupWithEnrollment>>>();
+        list.Add(parish);
+        if (otherData.Count > 0)
+            list.Add(other);
+        return View(list);
     }
 
     public IActionResult Resources()

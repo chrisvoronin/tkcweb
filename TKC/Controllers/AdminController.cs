@@ -209,6 +209,12 @@ namespace TKC.Controllers
             return View(items);
         }
 
+        [HttpGet("htmlcontent/new")]
+        public IActionResult HtmlContentNew()
+        {
+            return View();
+        }
+
         [HttpGet("htmlcontent/{id}")]
         public async Task<IActionResult> HtmlContent(int id)
         {

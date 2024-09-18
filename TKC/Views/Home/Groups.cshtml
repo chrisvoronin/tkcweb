@@ -1,34 +1,129 @@
 ﻿@{
-    ViewData["Title"] = "The Kings Congregation";
+    ViewData["Title"] = "The Kings Congregation - Life Groups";
 }
 
-<!-- Hero Section Start -->
-<section class="hero_section">
+@model List<Tuple<string, List<TKC.Models.PlanningCenter.GroupWithEnrollment>>>
+
+<style>
+    .card-img-container {
+        position: relative;
+    }
+
+        .card-img-container img {
+            height: 200px;
+        }
+
+        .card-img-container .icon {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 5px;
+            font-size: 14px;
+            color: #333;
+        }
+
+    .card-img-top {
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+</style>
+<style type="text/css">
+
+    .FAQ {
+        margin-top: 10px;
+        margin-bottom: 10px;
+        padding-top: 50px;
+        padding-bottom: 50px;
+    }
+
+        .FAQ h4 {
+            color: #07162D;
+            font-size: 24px;
+            font-style: normal;
+            font-weight: 700;
+            line-height: 1.8;
+            letter-spacing: -0.48px;
+            margin-top: 34px;
+        }
+
+        .FAQ p {
+            margin-bottom: 10px;
+        }
+
+        .FAQ ul {
+            list-style: circle;
+            padding: 30px;
+            margin: 10px;
+        }
+
+        .FAQ span {
+            color: #07162D;
+            font-size: 16px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: 1.0;
+            letter-spacing: -0.32px;
+        }
+
+        .FAQ h1 {
+            margin-bottom: 50px;
+        }
+</style>
+
+<section class="resources_sections">
+    <div class="container editor" contentid="9">
+        <h2>Fellowship Opportunities</h2>
+    </div>
+</section>
+
+<section class="beleive_section FAQ">
     <div class="container">
-        <div class="inner_hero editor" contentid="13">
-            @await Component.InvokeAsync("HtmlContent", new { contentid = 13 })
+        <p>
+            The vision of our parish groups is to embody the practices of the early church that led to growth and blessing while also spurring on a larger culture of hospitality within the body at Kings.
+        </p>
+        <p>
+            The practices the early church saw as foundational were devotion to the apostles teaching, fellowship, breaking of bread, and prayer (Acts 2:42-47). Thus, the essential elements of our parish groups involve:
+        </p>
+        <ul>
+            <li>The study of Scripture and theology</li>
+            <li>Fellowship and feasting</li>
+            <li>Singing Psalms and hymns</li>
+            <li>Prayer</li>
+        </ul>
+        <p>
+            We also want our parish groups to be places where new friendships and relationships are formed that spill out into everyday life together that Scripture assumes. Our desire for The Kings Congregation body is to be a church where members share their lives in feasting, singing, service and covenantal life together.
+        </p>
+        <p>
+            Parish Groups meet monthly at set times and in specific host homes spread across the Treasure Valley. Below is a list of parish groups along with a designated leader. Please reach out to the listed contact with any interest.
+        </p>
+        @*<div class="about_section1">
+                <a class="Confession_btn" href="#">View Groups</a>
+            </div>*@
+    </div>
+</section>
+
+@foreach (var titledGroup in Model)
+{
+    @await Html.PartialAsync("_LayoutGroupsSection", titledGroup);
+}
+
+<!-- CREC_Section start -->
+<section class="CREC_Section">
+    <div class="container">
+        <div class="CREC_Content">
+            <h2>
+                The King's Congregation has been affiliated with the Communion of Reformed Evangelical Churches (CREC) since
+                2001.
+            </h2>
+            <div class="CREC_Logo">
+                <img src="/img/CREC.png" alt="">
+            </div>
         </div>
     </div>
 </section>
-<!-- Hero Section End -->
-<!-- About Section Start -->
-<section class="about_section">
-    <div class="container">
-        <div class="content_about editor" contentid="11">
-            @await Component.InvokeAsync("HtmlContent", new { contentid = 11 })
-        </div>
-    </div>
-</section>
-<!-- About Section End -->
-<!-- Resources Section Start -->
-<section class="resources_section">
-    <div class="container">
-        <div class="inner_resources align-items-lg-center editor" contentid="12">
-            @await Component.InvokeAsync("HtmlContent", new { contentid = 12 })
-        </div>
-    </div>
-</section>
-<!-- Resources Section End -->
+<!-- CREC_Section end -->
 <!-- Learn More Section start -->
 <section class="learnmore">
     <div class="container">
@@ -37,7 +132,7 @@
                 <h2>Want to Learn More?</h2>
             </div>
             <div class="learn_btn">
-                <a class="contact_learn_btn" asp-controller="Home" asp-action="Contact"> Contact</a>
+                <a class="contact_learn_btn" href=""> Contact</a>
             </div>
         </div>
     </div>
