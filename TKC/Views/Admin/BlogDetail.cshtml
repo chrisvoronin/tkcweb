@@ -1,0 +1,491 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "_LayoutAdminWithEditor";
+}
+@model List<BlogCategory>
+
+<section class="sermon_video_btn">
+    <div class="container">
+        <div class="inner_video_sermons">
+
+            <div class="info_sermon_img">
+                <img src="/img/book.svg" alt="" class="me-3">
+                <span>Edit Blog</span>
+            </div>
+            <div class="sermons_btns">
+                <a class="all_btns_sermon" href="/Admin/Blog">Blog List</a>
+                <a class="all_btns_sermon_highlight" href="/Admin/Blog/New">Add New</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="sermons_video_section pb-5 pt-5">
+
+    <div id="loading-placeholder" class="container mb-5">
+        <!-- Placeholder for Title Field -->
+        <div class="form-floating mb-3 placeholder-glow">
+            <p class="placeholder col-12"></p>
+        </div>
+
+        <!-- Placeholder for Category Dropdown -->
+        <div class="form-floating mb-3 placeholder-glow">
+            <p class="placeholder col-12"></p>
+        </div>
+
+        <!-- Placeholder for Header Image -->
+        <div class="form-floating mb-3 placeholder-glow">
+            <p class="placeholder col-12"></p>
+        </div>
+
+        <!-- Placeholder for Rich Text Editor -->
+        <div class="form-floating mb-3 placeholder-glow">
+            <p class="placeholder col-12"></p>
+            <p class="placeholder col-10"></p>
+            <p class="placeholder col-8"></p>
+        </div>
+
+        <!-- Placeholder for Submit Button -->
+        <div class="placeholder-glow">
+            <span class="placeholder col-6"></span>
+        </div>
+    </div>
+
+    <div id="main_container" class="container mb-5" style="display:none;">
+
+        <!-- Error and Success Messages -->
+
+        <div class="row mb-3">
+            <div class="col">
+                <!-- Left-aligned message -->
+                <div id="oktoast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            Your blog has been saved successfully!
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                </div>
+                <div id="notoktoast" class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            Unable to save your blog!
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right-aligned buttons -->
+            <div class="col-auto">
+                <button id="btn_save" type="button" class="btn btn-lg btn-primary" onclick="save(); return false;">Save</button>
+                <button id="btn_publish" type="button" class="btn btn-lg btn-success" onclick="askToPublish(); return false;">Publish</button>
+                <button id="btn_unpublish" type="button" class="btn btn-lg btn-warning" onclick="askToUnpublish(); return false;">Unpublish</button>
+                <button id="btn_delete" type="button" class="btn btn-lg btn-danger" onclick="askToDelete(); return false;">Delete</button>
+            </div>
+        </div>
+
+        <!-- Title and Category in Two Columns -->
+        <div class="row mb-3">
+            <!-- Image Preview Column (Left) -->
+            <div class="col-md-2 d-flex justify-content-center align-items-top">
+                <div id="imagePreviewContainer" class="cursor-pointer" onclick="triggerFileInput()">
+                    <img id="imagePreview" src="/img/150x150.png" alt="Preview" class="img-thumbnail" style="width: 150px; height: 150px; object-fit: cover;">
+                    <input type="file" id="itemphoto" name="itemphoto" style="display:none;" />
+                </div>
+            </div>
+
+            <!-- Title and Category Column (Right) -->
+            <div class="col-md-10">
+                <!-- Title Field -->
+                <div class="form-floating mb-3">
+                    <input class="form-control" id="itemtitle" aria-required="true" placeholder="Loading title..." />
+                    <label class="form-label" for="itemtitle">Title</label>
+                    <span id="error_itemtitle" class="text-danger" style="display:none;">Title is required</span>
+                </div>
+
+                <!-- Category Dropdown -->
+                <div class="form-floating mb-3">
+                    @Html.DropDownList(
+                    "category",
+                    new SelectList(Model, "id", "name").Prepend(new SelectListItem { Text = "Select a category", Value = "0" }),
+                    null,
+                    new { @class = "form-control", id = "itemcategory" }
+                    )
+                    <label class="form-label" for="itemcategory">Category</label>
+
+                </div>
+
+                <!-- Status Field -->
+                <div class="mb-3">
+                    <div id="itemstatus" class="fw-bold p-3 text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-3">
+                        DRAFT
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rich Text Editor Placeholder -->
+        <div class="form-floating mb-3">
+            <div id="summernote">
+            </div>
+        </div>
+
+    </div>
+</section>
+
+@section Scripts {
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            connectImageLoad();
+            const itemId = getItemId();
+            if (itemId > 0) {
+                getBlog(itemId);
+            } else {
+                loadEmptyUI();
+            }
+        });
+
+        function getItemId() {
+            const url = window.location.href;
+            const idString = url.split('/').pop().split('?')[0];
+            var id = parseInt(idString, 10);
+
+            if (isNaN(id)) {
+                id = 0;
+            }
+            return id;
+        }
+
+        function triggerFileInput() {
+            document.getElementById('itemphoto').click();
+        }
+
+        function connectImageLoad() {
+            $('#itemphoto').on('change', function (event) {
+                const file = event.target.files[0];
+                if (file) {
+                    uploadHeaderImage(file);
+                    //const reader = new FileReader();
+                    //reader.onload = function (e) {
+                    //    $('#imagePreview').attr('src', e.target.result); // Update image preview
+                    //};
+                    //reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        function uploadHeaderImage(file) {
+            console.log("uploading image");
+
+            var formData = new FormData();
+            formData.append('file', file);
+
+            $.ajax({
+                url: '/api/blog/image',  // Your server endpoint to handle the upload
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    var imageUrl = response;
+                    alert(imageUrl);
+                    console.log(imageUrl);
+                    $('#imagePreview').attr('src', imageUrl);
+                },
+                error: function () {
+                    alert('Image upload failed!');
+                }
+            });
+        }
+
+        function loadEmptyUI() {
+            StartSummerNote();
+            $("#loading-placeholder").hide();
+            $("#main_container").show();
+        }
+
+        function getBlog(blogId) {
+            $.ajax({
+                url: '/api/blog/' + blogId, // Endpoint URL
+                type: 'GET', // HTTP method
+                dataType: 'json', // Expected response type
+                success: function (response) {
+                    const blogPost = new BlogPost(response);
+
+                    console.log(blogPost);
+                    StartSummerNote();
+                    $('#itemtitle').val(blogPost.title);
+                    $('#itemcategory').val(blogPost.categoryId);
+
+                    updateUIForStatus(blogPost.status);
+                    if (blogPost.headerImage) {
+                        $('#imagePreview').attr('src', '/File/' + blogPost.headerImage).show();
+                    }
+                    $('#summernote').summernote('code', blogPost.html);
+
+                    $("#loading-placeholder").hide();
+                    $("#main_container").show();
+                },
+                error: function (xhr, status, error) {
+                    // Handle errors
+                    console.error('Error fetching categories:', error);
+                }
+            });
+        }
+
+        function getStatusTextFromStatus(status) {
+            if (status == 0) return "DRAFT";
+            if (status == 1) return "PUBLISHED";
+            if(status == 2) return "DELETED";
+            return "UNKNOWN";
+        }
+
+        function StartSummerNote() {
+            $('#summernote').summernote({
+                placeholder: 'HTML Content Here',
+                tabsize: 2,
+                height: 300,
+                maxHeight: 500,
+                styleTags: [
+                    'p', 'blockquote', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'
+                ],
+                toolbar: [
+                    ['style', ['style']],
+                    ['style', ['bold', 'italic', 'underline', 'clear']],
+                    ['font', ['strikethrough', 'superscript', 'subscript']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['insert', ['link', 'picture']],
+                    ['view', ['fullscreen', 'codeview', 'help', 'undo', 'redo']]
+                ],
+                callbacks: {
+                    onImageUpload: function (files) {
+                        // This is where you handle image upload. We will call a custom function.
+                        uploadImage(files[0]);
+                    }
+                }
+            });
+        }
+
+        function uploadImage(file) {
+            var formData = new FormData();
+            formData.append('file', file);
+
+            $.ajax({
+                url: '/api/blog/image',  // Your server endpoint to handle the upload
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    // Assuming the server returns the URL of the uploaded image
+                    var imageUrl = response;  // Modify according to your server response structure
+                    // Insert the image into the Summernote editor
+                    $('#summernote').summernote('insertImage', imageUrl);
+                },
+                error: function () {
+                    alert('Image upload failed!');
+                }
+            });
+        }
+
+
+        function moveHtmlIntoBoxes() {
+            StartSummerNote();
+            var markupStr = $("#val").text();
+            $('#summernote').summernote('code', markupStr);
+            $('#summernote').summernote('codeview.toggle');
+        }
+
+        function save() {
+
+            const title = $("#itemtitle").val().trim();
+
+            if ($('#summernote').summernote('isEmpty')) {
+                alert('HTML content is empty');
+                return;
+            }
+
+            var isValid = true;
+
+            if (title.length == 0) {
+                isValid = false;
+                $("#error_itemtitle").show();
+            } else {
+                $("#error_itemtitle").hide();
+            }
+
+            if (isValid == false)
+                return;
+
+            var itemId = getItemId();
+            var markupStr = $('#summernote').summernote('code');
+            const category = $("#itemcategory").val();
+            var headerImage = $('#imagePreview').attr('src');
+            if (headerImage && headerImage.startsWith('/img')) {
+                headerImage = null;
+            }
+
+            var formData = new FormData();
+
+            formData.append('html', markupStr);
+            formData.append('title', title);
+            formData.append('category', category);
+            if (headerImage != null)
+                formData.append('headerImage', headerImage);
+
+            const isNew = itemId == 0;
+            const url = isNew ? '/api/blog/' : '/api/blog/' + itemId;
+            const method = isNew ? 'POST' : 'PATCH';
+
+
+            $.ajax({
+                url: url,
+                type: method,
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    savedSuccess(isNew, response);
+                },
+                error: function (error) {
+                    savedError();
+                }
+            });
+        }
+
+        function askToDelete() {
+
+            const messageTitle = "Are you sure you want to delete this blog?";
+            var isConfirmed = window.confirm(messageTitle);
+            if (isConfirmed) {
+                runDelete(itemId);
+            }
+        }
+
+        function askToPublish() {
+
+            const messageTitle = "Are you sure you want to PUBLISH this blog?";
+            var isConfirmed = window.confirm(messageTitle);
+            if (isConfirmed) {
+                runPublish();
+            }
+        }
+
+        function askToUnpublish() {
+            const messageTitle = "Are you sure you want to UNPUBLISH this blog?";
+            var isConfirmed = window.confirm(messageTitle);
+            if (isConfirmed) {
+                runUnPublish();
+            }
+        }
+
+        function runDelete() {
+
+            var itemId = getItemId();
+
+            $.ajax({
+                url: '/api/blog/' + itemId,
+                type: 'DELETE',
+                dataType: 'json',
+                success: function (response) {
+                    const redirectUri = '/Admin/Blog/';
+                    window.location.href = redirectUri;
+                },
+                error: function (error) {
+                    savedError();
+                }
+            });
+        }
+
+        function runPublish() {
+
+            var itemId = getItemId();
+
+            $.ajax({
+                url: '/api/blog/' + itemId + '/publish',
+                type: 'PUT',
+                dataType: 'json',
+                success: function (response) {
+                    updateUIForStatus(response);
+                },
+                error: function (error) {
+                    savedError();
+                }
+            });
+        }
+
+        function runUnPublish() {
+
+            var itemId = getItemId();
+
+            $.ajax({
+                url: '/api/blog/' + itemId + '/unpublish',
+                type: 'PUT',
+                dataType: 'json',
+                success: function (response) {
+                    updateUIForStatus(response);
+                },
+                error: function (error) {
+                    savedError();
+                }
+            });
+        }
+
+        function updateUIForStatus(status) {
+            var statusText = getStatusTextFromStatus(status);
+            $("#itemstatus").text(statusText);
+            $("#btn_save").show();
+            $("#btn_publish").hide();
+            $("#btn_unpublish").hide();
+            $("#btn_delete").hide();
+
+            if (status == 0) { //draft
+                $("#btn_publish").show();
+                $("#btn_delete").show();
+            } else if (status == 1) { // published
+                $("#btn_unpublish").show();
+                $("#btn_delete").show();
+            } else if (status == 2) {
+                $("#btn_unpublish").hide(); //make draft
+            }
+        }
+
+        function savedError() {
+
+            const toastEl = document.getElementById('notoktoast');
+            const toast = new bootstrap.Toast(toastEl);
+            toast.show();
+        }
+
+        function savedSuccess(isNew, response) {
+
+            if (isNew) {
+                const redirectUri = '/Admin/Blog/' + response;
+                window.location.href = redirectUri;
+                return;
+            }
+            var title = $("#itemtitle").val();
+            $("#titleheader").val(title);
+
+            const toastEl = document.getElementById('oktoast');
+            const toast = new bootstrap.Toast(toastEl);
+            toast.show();
+
+        }
+
+        class BlogPost {
+            constructor(data) {
+                this.id = data.id || 0;
+                this.status = data.status || 0;
+                this.categoryId = data.categoryId || 0;
+                this.headerImage = data.headerImage || null;
+                this.title = data.title || null;
+                this.html = data.html || null;
+                this.dateCreated = data.dateCreated ? new Date(data.dateCreated) : null;
+                this.createdBy = data.createdBy || 0;
+            }
+        }</script>
+}

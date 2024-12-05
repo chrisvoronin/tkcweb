@@ -1,0 +1,296 @@
+﻿@{
+    ViewData["Title"] = Model.title;
+}
+
+@model BlogPost
+
+<style type="text/css">
+    .custom-subscribe-btn {
+        background-color: #B8945C;
+        color: white;
+        border-radius: 0;
+        border: none; /* Optional: Removes border if needed */
+    }
+</style>
+
+<style>
+    /* Styles for blog content only */
+    .blog-content {
+        font-family: 'Arial', sans-serif;
+        line-height: 1.6;
+        background-color: #f8f9fa;
+        color: #333;
+        padding: 20px;
+    }
+
+        /* Header styles for blog content */
+        .blog-content h1,
+        .blog-content h2,
+        .blog-content h3,
+        .blog-content h4,
+        .blog-content h5,
+        .blog-content h6 {
+            color: #333;
+            margin-top: 30px;
+            margin-bottom: 10px;
+        }
+
+        /* Main blog title */
+        .blog-content h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        /* Subheading styles */
+        .blog-content h2 {
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+
+        .blog-content h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        /* Paragraph styling */
+        .blog-content p {
+            font-size: 1rem;
+            margin-bottom: 15px;
+            padding: 0 15px;
+        }
+
+        /* For any text that needs to be right aligned */
+        .blog-content .text-end {
+            text-align: right;
+        }
+
+        /* Blockquote styling */
+        .blog-content blockquote {
+            font-size: 1.25rem;
+            padding: 15px;
+            margin: 20px 0;
+            border-left: 5px solid #B8945C;
+            background-color: #f7f7f7;
+            color: #555;
+            font-style: italic;
+            position: relative;
+        }
+
+            .blog-content blockquote::before {
+                content: "“";
+                font-size: 2rem;
+                color: #B8945C;
+                position: absolute;
+                top: -10px;
+                left: 10px;
+            }
+
+            .blog-content blockquote p {
+                margin: 0;
+            }
+
+            .blog-content blockquote a {
+                color: #B8945C;
+                text-decoration: none;
+            }
+
+                .blog-content blockquote a:hover {
+                    text-decoration: underline;
+                }
+
+        /* Code styling for inline code blocks */
+        .blog-content code {
+            background-color: #f8f9fa;
+            padding: 0 4px;
+            font-family: 'Courier New', monospace;
+            border-radius: 3px;
+        }
+
+        /* Image Styling */
+        .blog-content img {
+            max-width: 100%;
+            height: auto;
+            margin: 20px 0;
+        }
+
+        /* Margin for larger sections to give spacing between blocks */
+        .blog-content .mb-4 {
+            margin-bottom: 30px;
+        }
+
+        .blog-content .mt-4 {
+            margin-top: 30px;
+        }
+
+        .blog-content .text-center {
+            text-align: center;
+        }
+
+        /* Lists (unordered/ordered) */
+        .blog-content ul,
+        .blog-content ol {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        .blog-content li {
+            margin-bottom: 8px;
+        }
+
+        /* Styling for images and text side by side */
+        .blog-content .media {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+            .blog-content .media img {
+                max-width: 200px;
+                margin-right: 20px;
+            }
+
+        .blog-content .media-body {
+            flex-grow: 1;
+        }
+
+        /* Styling for the sidebar subscribe form */
+        .blog-content .card {
+            margin-bottom: 20px;
+            border: none;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .blog-content .card-body {
+            padding: 15px;
+        }
+
+            .blog-content .card-body input {
+                width: 100%;
+                padding: 10px;
+                margin-bottom: 10px;
+                border-radius: 5px;
+                border: 1px solid #ddd;
+            }
+
+            .blog-content .card-body button {
+                background-color: #B8945C;
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                font-size: 1rem;
+                cursor: pointer;
+                border-radius: 0;
+            }
+
+                .blog-content .card-body button:hover {
+                    background-color: #a07b4b;
+                }
+</style>
+
+
+
+<div class="container mt-5 mb-5">
+    <!-- Breadcrumbs -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item"><a href="/Blog">Blog</a></li>
+            <li class="breadcrumb-item active" aria-current="page"><a href="/Blog/1/title">Blog Title</a></li>
+        </ol>
+    </nav>
+
+    <!-- Blog Title -->
+    <h1 class="mb-4 display-4">Blog Title</h1>
+
+    <div class="row">
+        <!-- Left Column: List of Blogs -->
+        <div class="col-md-8 blog-content">
+
+            <!-- Blog Featured Image -->
+            <div class="mb-4">
+                <img src="https://via.placeholder.com/800x400" alt="Blog Post Image" class="img-fluid rounded">
+            </div>
+
+            <!-- Introductory Paragraph -->
+            <p class="text-start">
+                Earthly wisdom is often mistaken for true wisdom. Many individuals believe that wisdom is found in knowledge or in experience, but the Bible teaches that true wisdom has its foundation in God. Let us explore the source, character, and fruit of true wisdom as described in the Scriptures.
+            </p>
+
+            <!-- Section 1: The Source of Wisdom -->
+            <h3>The Source of Wisdom</h3>
+            <p>True wisdom, according to Scripture, does not come from the world. It is not a product of human understanding, but a gift from God. James 1:5 reminds us, "If any of you lacks wisdom, let him ask of God, who gives to all liberally and without reproach, and it will be given to him."</p>
+
+            <p class="text-end">As we seek wisdom, we must acknowledge that it can only be found through our relationship with God. It is in Him that all wisdom is found.</p>
+
+            <!-- Section 2: The Character of Wisdom -->
+            <h3>The Character of Wisdom</h3>
+            <p>Wisdom is not merely theoretical; it has a practical application in our daily lives. The Bible tells us that true wisdom is characterized by humility and purity. In James 3:17, we read, "But the wisdom from above is first pure, then peaceable, gentle, open to reason, full of mercy and good fruits, impartial and sincere."</p>
+
+            <p>True wisdom leads to a life of peace, humility, and a commitment to doing good. It is not self-serving but seeks the welfare of others and the glory of God.</p>
+
+            <!-- Image in between sections -->
+            <div class="text-center mb-4">
+                <img src="https://via.placeholder.com/800x400" alt="Wisdom Image" class="img-fluid rounded">
+            </div>
+
+            <!-- Section 3: The Fruit of Wisdom -->
+            <h3>The Fruit of Wisdom</h3>
+            <p>The fruit of wisdom is evident in the lives of those who walk in it. As Proverbs 3:18 says, "She is a tree of life to those who lay hold of her; those who hold her fast are called blessed." The wise person bears good fruit in their relationships, work, and witness for Christ.</p>
+
+            <p class="text-end">When we allow God's wisdom to guide our lives, it produces peace, joy, and righteousness, transforming not only ourselves but also the world around us.</p>
+
+            <!-- Section 4: A Call to Action -->
+            <h3>A Call to Action</h3>
+            <p>Are you seeking wisdom? It is available to all who ask of God. Take time today to pray and seek the wisdom that only comes from above. Allow it to guide your steps and shape your life as you walk in obedience to the Lord.</p>
+
+            <p>Remember, true wisdom is not something we can attain on our own. We need the Holy Spirit to illuminate our hearts and minds, helping us to understand and live according to God's will.</p>
+
+            <p class="text-center">
+                <a href="https://example.com/prayer" class="btn btn-link">Join us in prayer for wisdom</a>
+            </p>
+
+        </div>
+
+        <!-- Right Column: Email Signup and Blog Topics -->
+        <div class="col-md-4">
+            <!-- Email Signup -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Stay Updated</h5>
+                    <p class="card-text">Sign up to receive updates directly in your inbox.</p>
+                    <form>
+                        <div class="form-group mb-2 mt-2">
+                            <input type="email" class="form-control" id="email" placeholder="Enter your email">
+                        </div>
+                        <button type="submit" class="btn custom-subscribe-btn">Subscribe</button>
+                        @*<button type="submit" class="btn btn-primary">Subscribe</button>*@
+                    </form>
+                </div>
+            </div>
+
+            <!-- Recent Posts -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Recent Posts</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#">Blog Post Title 1</a></li>
+                        <li><a href="#">Blog Post Title 2</a></li>
+                        <li><a href="#">Blog Post Title 3</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Blog Topics -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Blog Topics</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#">Faith</a></li>
+                        <li><a href="#">Bible Study</a></li>
+                        <li><a href="#">Christian Living</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

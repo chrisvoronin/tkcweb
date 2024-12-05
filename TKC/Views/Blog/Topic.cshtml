@@ -1,0 +1,292 @@
+﻿@model TopicsPageModel
+
+<style type="text/css">
+    .custom-subscribe-btn {
+        background-color: #B8945C;
+        color: white;
+        border-radius: 0;
+        border: none; /* Optional: Removes border if needed */
+    }
+        /* On mouseover (hover) */
+        .custom-subscribe-btn:hover {
+            background-color: #B8945C; /* Keeps the same color on hover */
+        }
+
+        /* On click (active state) */
+        .custom-subscribe-btn:active {
+            background-color: #B8945C; /* Keeps the same color on click */
+        }
+</style>
+
+<div class="container mt-5 mb-5">
+    <!-- Breadcrumbs -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page"><a href="/Blog">Blog</a></li>
+        </ol>
+    </nav>
+
+    <!-- Blog Title -->
+    <h1 class="mb-4">Topic: @Model.result.name</h1>
+
+    <div class="row">
+        <!-- Left Column: List of Blogs -->
+        <div class="col-md-8 placeholder-glow">
+
+            <div id="bloglistcontainer">
+                @for (int i = 0; i < 5; i++)
+                {
+                    <div class="d-flex mb-4">
+
+                        <div class="placeholder rounded me-3" style="width: 150px; height: 150px;"></div>
+                        <div class="flex-grow-1 ms-3 me-3">
+                            <span class="placeholder col-6"></span>
+                            <span class="placeholder w-75"></span>
+                            <span class="placeholder" style="width: 25%;"></span>
+                            <span class="placeholder col-7"></span>
+                            <span class="placeholder col-4"></span>
+                            <span class="placeholder col-4"></span>
+                            <span class="placeholder col-6"></span>
+                            <span class="placeholder col-8"></span>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <div id="pagination">
+                <!-- Pagination -->
+                <nav aria-label="Blog pagination">
+                    <ul class="pagination pagination-md justify-content-center mt-4" id="pagination_list">
+                        <!-- Previous Page -->
+                        <li class="page-item disabled">
+                            <a class="page-link" href="?page=1" aria-label="Previous">
+                                <span aria-hidden="true">Previous</span>
+                            </a>
+                        </li>
+
+                        <!-- Individual Pages -->
+                        <li class="page-item active"><a class="page-link" href="?page=1">1</a></li>
+                        <li class="page-item"><a class="page-link" href="?page=2">2</a></li>
+                        <li class="page-item"><a class="page-link" href="?page=3">3</a></li>
+
+                        <!-- Next Page -->
+                        <li class="page-item">
+                            <a class="page-link" href="?page=2" aria-label="Next">
+                                <span aria-hidden="true">Next</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+
+        </div>
+
+        <!-- Right Column -->
+        <aside class="col-md-4">
+            <!-- Email Signup -->
+            @await Html.PartialAsync("_BlogEmailSignUp")
+
+            <!-- Recent Posts -->
+            @await Html.PartialAsync("_BlogRecentPosts")
+
+            <!-- Blog Topics -->
+            @await Html.PartialAsync("_BlogCategories")
+        </aside>
+    </div>
+
+    <div style="display:none;">
+        <select class="form-select" id="topicFilter">
+            <option value="">All Topics</option>
+            @foreach (var item in Model.allTopics)
+            {
+                <option value="@item.id">@item.name</option>
+            }
+        </select>
+    </div>
+
+</div>
+
+<input type="hidden" id="topicid" value="@Model.result.id" />
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        // Perform the GET request
+        var topic = $("#topicid").val();
+        var pageNumber = getPageNumber();
+        $("#pagination").hide();
+        getBlogPreviewPosts(pageNumber, topic);
+    });
+
+    function getBlogPreviewPosts(page, topic) {
+        $.ajax({
+            url: '/blog/pagetopic/' + page + '/' + topic, // Endpoint URL
+            type: 'GET', // HTTP method
+            dataType: 'json', // Expected response type
+            success: function (response) {
+                // Convert the JSON response into a structured object
+                const pagingInfo = {
+                    totalResults: response.totalResults,
+                    currentPage: response.currentPage,
+                    itemsPerPage: response.itemsPerPage
+                };
+
+                // Map the items (blog posts) from the response to the desired structure
+                const blogPosts = response.items.map(post => ({
+                    id: post.id,
+                    name: post.title,
+                    html: post.html,
+                    categoryId: post.categoryId,
+                    headerImage: post.headerImage,
+                    dateCreated: formatBlogDate(post.dateCreated)
+                }));
+
+                if (blogPosts.length == 0) {
+                    emptyHtml();
+                } else {
+                    updateBlogPreviewsUI(blogPosts);
+                    setupPagingUI(pagingInfo);
+                }
+            },
+            error: function (xhr, status, error) {
+                // Handle errors
+                console.error('Error fetching categories:', error);
+            }
+        });
+    }
+
+    function getPageNumber() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const page = urlParams.get("page");
+
+        // Check if page is a valid positive integer
+        if (!page || isNaN(page) || parseInt(page) <= 0) {
+            return 1;
+        }
+
+        return parseInt(page);
+    }
+
+    function setupPagingUI(pagingInfo) {
+
+        const totalPages = Math.ceil(pagingInfo.totalResults / pagingInfo.itemsPerPage);
+
+        // no pagination when there is nothing to page
+        if (totalPages == 1)
+            return;
+
+        const container = $('#pagination_list'); // Assuming a container div with this ID
+        container.empty(); // Clear previous content
+
+        var currentPage = pagingInfo.currentPage;
+
+        // previous
+        var prevClss = currentPage == 1 ? 'disabled' : '';
+        const prevItem = `
+                <li class="page-item ${prevClss}">
+                    <a class="page-link" href="?page=${currentPage - 1}" aria-label="Previous">
+                        <span aria-hidden="true">Previous</span>
+                    </a>
+                </li>
+                `;
+        container.append(prevItem);
+
+        // each page
+        var minPage = currentPage - 5;
+        var maxPage = currentPage + 5;
+        minPage = Math.max(1, minPage);
+        maxPage = Math.min(maxPage, totalPages);
+        for (var i = minPage; i <= maxPage; i++) {
+            var pageCss = (currentPage == i) ? 'active' : '';
+            const pageItem = `
+                <li class="page-item ${pageCss}"><a class="page-link" href="?page=${i}">${i}</a></li>
+                `;
+            container.append(pageItem);
+        }
+
+        // next
+        var nextCss = (currentPage == (totalPages)) ? 'disabled' : '';
+        const nextItem = `
+                <li class="page-item ${nextCss}">
+                    <a class="page-link" href="?page=${currentPage + 1}" aria-label="Previous">
+                        <span aria-hidden="true">Next</span>
+                    </a>
+                </li>
+                `;
+        container.append(nextItem);
+
+        //lastly show pagination
+        $("#pagination").show();
+    }
+
+    function emptyHtml() {
+        const blogListContainer = $('#bloglistcontainer'); // Assuming a container div with this ID
+        blogListContainer.empty(); // Clear previous content
+        const blogItem = `
+             <div>
+                This topic has no posts yet
+            </div>
+            `;
+        blogListContainer.append(blogItem);
+    }
+
+    // Function to update the UI
+    function updateBlogPreviewsUI(blogPosts) {
+        const blogListContainer = $('#bloglistcontainer'); // Assuming a container div with this ID
+        blogListContainer.empty(); // Clear previous content
+
+        blogPosts.forEach(blogPost => {
+
+            var encodedName = encodeURIComponent(blogPost.name);
+
+            var imageHtml = blogPost.headerImage
+                ? `<img src="/File/${blogPost.headerImage}" class="mr-3" alt="Thumbnail" style="width: 150px; height: auto;">`
+                : `
+                    <div class="mr-3" style="width: 150px; height: 150px; position: relative;">
+                        <!-- Background Rectangle -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="150" height="150" viewBox="0 0 150 150" class="placeholder-svg">
+                            <rect width="150" height="150" rx="8" ry="0" style="fill:#f0f0f0;" />
+                        </svg>
+
+                        <!-- Book Icon -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="#B8945C" class="bi bi-book-half" viewBox="0 0 16 16" style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);">
+                            <path d="M1 2.828c.885-.37 2.154-.769 3.388-.893 1.33-.134 2.458.063 3.112.752v9.746c-.935-.53-2.12-.603-3.213-.493-1.18.12-2.37.461-3.287.811zm7.5-.141c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.923c-.918-.35-2.107-.692-3.287-.81-1.094-.111-2.278-.039-3.213.492zM8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783" />
+                        </svg>
+                    </div>
+                
+                `;
+
+            var categoryLine = '';
+            if (blogPost.categoryId > 0) {
+                // Get the value of an option in the <select> with id "topicFilter" based on a specific categoryId
+                const categoryName = $("#topicFilter option[value='" + blogPost.categoryId + "']").text();
+                categoryLine = `<p class="fw-bold text-muted">${categoryName}</p>`;
+            }
+
+            const blogItem = `
+             <div class="d-flex mb-4">
+                ${imageHtml}
+                <div class="flex-grow-1 ms-3 me-3">
+                    <h5 class="mt-0">${blogPost.name}</h5>
+                    ${categoryLine}
+                    <p class="text-muted">${blogPost.dateCreated}</p>
+                    <p>${blogPost.html}</p>
+                    <a href="/Blog/${blogPost.id}/${encodedName}" class="btn btn-link p-0">Continue Reading</a>
+                </div>
+            </div>
+            `;
+            blogListContainer.append(blogItem);
+        });
+    }
+
+    function formatBlogDate(dateString) {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+    }
+
+    </script>

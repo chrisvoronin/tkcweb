@@ -20,7 +20,13 @@ namespace TKC.Models
         public List<KeyValuePair<string, string>> governingDocs = new();
     }
 
-    
+    public class TopicsPageModel
+    {
+        public BlogCategory result;
+        public List<BlogCategory> allTopics;
+    }
+
+
     public class AppSettingModel
     {
         public required string Key { get; set; }
@@ -103,6 +109,21 @@ namespace TKC.Models
 
         [JsonPropertyName("items")]
         public List<Sermon> Items { get; set; } = new List<Sermon>();
+    }
+
+    public class PagedResponse<T>
+    {
+        [JsonPropertyName("totalResults")]
+        public int TotalResults { get; set; }
+
+        [JsonPropertyName("currentPage")]
+        public int CurrentPage { get; set; }
+
+        [JsonPropertyName("itemsPerPage")]
+        public int ItemsPerPage { get; set; }
+
+        [JsonPropertyName("items")]
+        public List<T> Items { get; set; } = new List<T>();
     }
 
     public class MusicResponse

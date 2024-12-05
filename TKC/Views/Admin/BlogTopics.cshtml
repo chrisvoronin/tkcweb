@@ -1,0 +1,248 @@
+﻿<section class="sermon_video_btn">
+    <div class="container">
+        <div class="inner_video_sermons">
+
+            <div class="info_sermon_img">
+                <img src="/img/book.svg" alt="" class="me-3">
+                <span>Edit Blog</span>
+            </div>
+            <div class="sermons_btns">
+                <a class="all_btns_sermon" href="/Admin">Admin Home</a>
+                <a class="all_btns_sermon_highlight" onclick="createTopicShowPopUp(); return false;">Add New</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="container my-4">
+    <h1 class="mb-4">Manage Blog Topics</h1>
+
+    <!-- Blog Topic Table -->
+    <table class="table table-bordered table-hover placeholder-glow">
+        <thead class="thead-light">
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Is Listed</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="blogtopics">
+            <!-- Sample Row -->
+            <tr>
+                <td><span class="placeholder col-1" /></td>
+                <td><span class="placeholder col-5" /></td>
+                <td>
+                    <span class="placeholder col-2" />
+                </td>
+                <td>
+                    <span class="placeholder col-4" />
+                </td>
+            </tr>
+            <tr>
+                <td><span class="placeholder col-1" /></td>
+                <td><span class="placeholder col-5" /></td>
+                <td>
+                    <span class="placeholder col-2" />
+                </td>
+                <td>
+                    <span class="placeholder col-4" />
+                </td>
+            </tr>
+            <tr>
+                <td><span class="placeholder col-1" /></td>
+                <td><span class="placeholder col-4" /></td>
+                <td>
+                    <span class="placeholder col-2" />
+                </td>
+                <td>
+                    <span class="placeholder col-4" />
+                </td>
+            </tr>
+            <!-- Add more rows dynamically as needed -->
+        </tbody>
+    </table>
+</div>
+
+<div class="modal fade" id="blogModal" tabindex="-1" aria-labelledby="blogModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="blogModalLabel">Add New Topic</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="blogForm" onsubmit="handleSave(event)">
+                    <input type="hidden" id="editid" value="0" />
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Blog Title</label>
+                        <input type="text" class="form-control" id="title" placeholder="Enter blog title" required>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input type="checkbox" class="form-check-input" id="flags">
+                        <label for="flags" class="form-check-label">Display on sidebar?</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        // Perform the GET request
+        getBlogCategories();
+    });
+
+    function getBlogCategories() {
+        $.ajax({
+            url: '/api/blogtopic', // Endpoint URL
+            type: 'GET', // HTTP method
+            dataType: 'json', // Expected response type
+            success: function (categories) {
+                // Convert the JSON response into a structured object
+                const categoryData = categories.map(category => ({
+                    id: category.id,
+                    name: category.name,
+                    flags: category.flags
+                }));
+                // Now you can use categoryData to update the UI
+                updateAllTopicUI(categoryData);
+            },
+            error: function (xhr, status, error) {
+                // Handle errors
+                console.error('Error fetching categories:', error);
+            }
+        });
+    }
+
+    function updateAllTopicUI(categoryData) {
+        const categoryContainer = $('#blogtopics'); // Assuming a container div with this ID
+        categoryContainer.empty(); // Clear previous content
+
+        categoryData.forEach(category => {
+            appendRowToContainer(category, categoryContainer);
+        });
+    }
+
+    function appendRowToContainer(category, categoryContainer) {
+        var className = category.flags == 1 ? 'bg-success' : 'bg-secondary'
+        var encodedName = encodeURIComponent(category.name);
+        var flagText = category.flags == 1 ? 'Yes' : 'No';
+        const categoryItem = `
+            <tr id="topic_${category.id}">
+                <td>${category.id}</td>
+                <td id="topic_name_${category.id}" >${category.name}</td>
+                <td>
+                    <span id="topic_flags_${category.id}" class="badge ${className}">${flagText}</span>
+                </td>
+                <td>
+                    <button class="btn btn-sm btn-primary" onclick="editTopicShowPopUp(${category.id});" >Edit</button>
+                </td>
+            </tr>
+            `;
+        categoryContainer.append(categoryItem);
+    }
+
+    // Gets called from modal save
+    function handleSave(event) {
+        event.preventDefault(); // Prevent form from refreshing the page
+        const title = document.getElementById('title').value;
+        const isListed = document.getElementById('flags').checked;
+        const topicId = $("#editid").val();
+
+        console.log('New Topic:', { topicId, isListed, title, });
+        var uri = topicId == 0 ? '/api/blogtopic/' : '/api/blogtopic/' + topicId;
+        var method = topicId == 0 ? 'POST' : 'PATCH';
+
+        // Close the modal after saving
+        const modal = bootstrap.Modal.getInstance(document.getElementById('blogModal'));
+        modal.hide();
+
+        var formData = new FormData();
+        formData.append('name', title);
+        formData.append('flags', isListed ? 1 : 0);
+
+        //API CALL TO SAVE TOPIC
+        $.ajax({
+            url: uri,
+            type: method,
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+
+                const categoryItem = {
+                    id: response.id,
+                    name: response.name,
+                    flags: response.flags
+                };
+
+                // Now you can use categoryData to update the UI
+                updateTopicUI(categoryItem);
+            },
+            error: function (xhr, status, error) {
+                // Handle errors
+                console.error('Error fetching categories:', error);
+            }
+        });
+
+        
+    }
+
+    function updateTopicUI(category) {
+
+        const rowSelector = '#topic_' + category.id;
+        const topicId = category.id;
+        // if exists, it's just an update
+        if ($(rowSelector).length > 0) {
+            // update name
+            const topicNameSelect = '#topic_name_' + topicId;
+            $(topicNameSelect).text(category.name);
+
+            // update flags
+            const topicFlagsSelector = '#topic_flags_' + topicId;
+            const className = category.flags == 1 ? 'bg-success' : 'bg-secondary'
+            const flagText = category.flags == 1 ? 'Yes' : 'No';
+            $(topicFlagsSelector).text(flagText);
+            $(topicFlagsSelector).removeClass('bg-success')
+                .removeClass('bg-secondary')
+                .addClass(className);
+            
+        } else {
+            const categoryContainer = $('#blogtopics');
+            appendRowToContainer(category, categoryContainer);
+        }
+    }
+
+    function createTopicShowPopUp() {
+        $("#blogModalLabel").text("Add New Topic");
+        $("#title").val("");
+        $("#flags").prop("checked", true);
+        $("#editid").val("0");
+        const blogModal = new bootstrap.Modal(document.getElementById('blogModal'));
+        blogModal.show();
+    }
+
+    function editTopicShowPopUp(topicId) {
+
+        const rowSelector = '#topic_' + topicId;
+        const topicNameSelect = '#topic_name_' + topicId;
+        const topicFlagsSelector = '#topic_flags_' + topicId;
+        
+        const text = $(topicNameSelect).text();
+        const flagText = $(topicFlagsSelector).text();
+        const flags = flagText == "Yes" ? 1 : 0;
+
+        $("#blogModalLabel").text("Edit Topic");
+        $("#title").val(text);
+        $("#flags").prop("checked", flags == 1);
+        $("#editid").val(topicId);
+        const blogModal = new bootstrap.Modal(document.getElementById('blogModal'));
+        blogModal.show();
+    }
+
+
+</script>

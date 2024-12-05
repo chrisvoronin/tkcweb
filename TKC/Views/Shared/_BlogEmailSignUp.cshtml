@@ -1,0 +1,57 @@
+﻿<div class="card mb-4 rounded-0">
+    <div class="card-body">
+        <h5 class="card-title">Stay Updated</h5>
+        <p class="card-text">Sign up to receive updates directly in your inbox.</p>
+        <form id="emailForm">
+            <div class="form-group mb-2 mt-2">
+                <input type="email" class="form-control rounded-0" id="email" placeholder="Enter your email">
+            </div>
+            <button type="submit" class="btn custom-subscribe-btn">Subscribe</button>
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript">// Function to handle the form submission and make the GET request
+    function emailSignUp(event) {
+        event.preventDefault(); // Prevent the form from submitting normally
+
+        // Get the email value from the input field
+        var email = $("#email").val();
+
+        // Check if the email is valid
+        if (!email) {
+            alert("Please enter a valid email address.");
+            return;
+        }
+
+        // Regular expression for validating email format
+        var emailPattern = /^[a-zA-Z0-9._-]+@@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+
+        if (emailPattern.test(email)) {
+            console.log("Email is valid");
+        } else {
+            alert("Please enter a valid email address.");
+            return;
+        }
+
+        // Perform the jQuery GET request to the /api/join endpoint with the email as a query parameter
+        $.ajax({
+            url: '/api/join',
+            type: 'GET',
+            data: { email: email },  // Pass email as query parameter
+            success: function (response) {
+                // Handle the response from the server
+                alert("Successfully subscribed!");
+                console.log(response);
+            },
+            error: function (xhr, status, error) {
+                // Handle any errors
+                alert("An error occurred: " + error);
+            }
+        });
+    }
+
+    // Attach the emailSignUp function to the form's submit event
+    $("#emailForm").on("submit", emailSignUp);
+
+</script>

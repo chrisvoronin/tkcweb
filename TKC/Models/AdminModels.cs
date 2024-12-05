@@ -69,6 +69,39 @@ namespace TKC.Models
         public List<ResourceItem> Items { get; set; } = new List<ResourceItem>();
     }
 
+    public class BlogPost
+    {
+        public long id { get; set; }
+        public int status { get; set; }
+        public int categoryId { get; set; }
+        public string? headerImage { get; set; }
+        public string title { get; set; } = "";
+        public string? html { get; set; }
+        public DateTime dateCreated { get; set; }
+        public string createdBy { get; set; }
+    }
+
+    public enum BlogStatus
+    {
+        Draft = 0,
+        Published = 1,
+        Deleted = 2
+    }
+
+    public class BlogCategory
+    {
+        public int id { get; set; }
+        public string name { get; set; } = "";
+        public int flags { get; set; }
+    }
+
+    public class EmailSignUp
+    {
+        public int id { get; set; }
+        public string email { get; set; }
+        public DateTime dateCreated { get; set; }
+    }
+
     public class ResourceItem
     {
         public long Id { get; set; }

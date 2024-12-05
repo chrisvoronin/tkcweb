@@ -14,6 +14,9 @@ public class ApplicationDbContext : IdentityDbContext
     public DbSet<Staff> Employees { get; set; }
     public DbSet<ResourceGroup> ResourceGroups { get; set; }
     public DbSet<ResourceItem> Resources { get; set; }
+    public DbSet<BlogPost> Blogs { get; set; }
+    public DbSet<BlogCategory> BlogCategories { get; set; }
+    public DbSet<EmailSignUp> EmailSignUps { get; set; }
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
@@ -56,6 +59,20 @@ public class ApplicationDbContext : IdentityDbContext
         modelBuilder.Entity<Staff>(entity =>
         {
             entity.ToTable("Staff");
+        });
+
+        modelBuilder.Entity<BlogPost>(entity =>
+        {
+            entity.ToTable("BlogPosts");
+        });
+
+        modelBuilder.Entity<BlogCategory>(entity =>
+        {
+            entity.ToTable("BlogCategory");
+        });
+
+        modelBuilder.Entity<EmailSignUp>(entity => {
+            entity.ToTable("EmailSignUps");
         });
 
         modelBuilder.Entity<HTMLContent>(entity =>

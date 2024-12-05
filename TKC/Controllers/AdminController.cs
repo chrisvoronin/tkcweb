@@ -48,6 +48,34 @@ namespace TKC.Controllers
             return View(sum);
         }
 
+        [HttpGet("Blog")]
+        public async Task<IActionResult> BlogList()
+        {
+            var categories = await _context.BlogCategories.ToListAsync();
+            return View(categories);
+        }
+
+        [HttpGet("Blog/{id}")]
+        public async Task<IActionResult> BlogDetail(int id)
+        {
+            var categories = await _context.BlogCategories.ToListAsync();
+            return View(categories);
+        }
+
+        [HttpGet("Blog/new")]
+        public async Task<IActionResult> BlogCreate(int id)
+        {
+            var categories = await _context.BlogCategories.ToListAsync();
+            return View("BlogNew", categories);
+        }
+
+        [HttpGet("BlogTopics")]
+        public IActionResult BlogTopics()
+        {
+            return View();
+        }
+
+
         private async Task Stuffstuff()
         {
             IdentityRole role = new IdentityRole("Admin");

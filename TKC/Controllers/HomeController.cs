@@ -163,7 +163,7 @@ public class HomeController : Controller
         string from = settings.First(f => f.Key == "EmailFrom").Value;
         string password = settings.First(f => f.Key == "EmailPassword").Value;
         string host = settings.First(f => f.Key == "EmailHost").Value;
-        int port = Convert.ToInt32(settings.First(f => f.Key == "EmailPort").Value); ;
+        int port = Convert.ToInt32(settings.First(f => f.Key == "EmailPort").Value);
 
         var m = new Mailer();
         bool success = m.SendEmail(to, subject, body, from, password, host, port);

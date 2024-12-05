@@ -1,0 +1,55 @@
+﻿<div class="card mb-4 rounded-0">
+    <div class="card-body placeholder-glow">
+        <h5 class="card-title">Recent Posts</h5>
+        <ul class="list-unstyled" id="recentposts">
+            <li><span class="placeholder col-6"></span></li>
+            <li><span class="placeholder col-7"></span></li>
+            <li><span class="placeholder col-5"></span></li>
+        </ul>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        // Perform the GET request
+        getRecentPosts();
+    });
+
+    function getRecentPosts() {
+        $.ajax({
+            url: '/blog/recentposts', // Endpoint URL
+            type: 'GET', // HTTP method
+            dataType: 'json', // Expected response type
+            success: function (categories) {
+                // Convert the JSON response into a structured object
+                const categoryData = categories.map(category => ({
+                    id: category.id,
+                    name: category.title
+                }));
+
+                // Now you can use categoryData to update the UI
+                updateRecentPostUI(categoryData);
+            },
+            error: function (xhr, status, error) {
+                // Handle errors
+                console.error('Error fetching categories:', error);
+            }
+        });
+    }
+
+    // Function to update the UI
+    function updateRecentPostUI(categoryData) {
+        const categoryContainer = $('#recentposts'); // Assuming a container div with this ID
+        categoryContainer.empty(); // Clear previous content
+
+        categoryData.forEach(category => {
+            var encodedName = encodeURIComponent(category.name);
+            const categoryItem = `
+                 <li><a href="/blog/${category.id}/${encodedName}">${category.name}</a></li>
+            `;
+            categoryContainer.append(categoryItem);
+        });
+    }
+
+</script>

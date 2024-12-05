@@ -1,0 +1,243 @@
+﻿@{
+    ViewData["Title"] = Model.title;
+}
+
+@model BlogPost
+
+<style type="text/css">
+    .custom-subscribe-btn {
+        background-color: #B8945C;
+        color: white;
+        border-radius: 0;
+        border: none; /* Optional: Removes border if needed */
+    }
+        /* On mouseover (hover) */
+        .custom-subscribe-btn:hover {
+            background-color: #B8945C; /* Keeps the same color on hover */
+        }
+
+        /* On click (active state) */
+        .custom-subscribe-btn:active {
+            background-color: #B8945C; /* Keeps the same color on click */
+        }
+</style>
+
+<style>
+    /* Styles for blog content only */
+    .blog-content {
+        font-family: 'Arial', sans-serif;
+        line-height: 1.6;
+        background-color: #f8f9fa;
+        color: #333;
+        padding: 20px;
+    }
+
+        /* Header styles for blog content */
+        .blog-content h1,
+        .blog-content h2,
+        .blog-content h3,
+        .blog-content h4,
+        .blog-content h5,
+        .blog-content h6 {
+            color: #333;
+            margin-top: 30px;
+            margin-bottom: 10px;
+        }
+
+        /* Main blog title */
+        .blog-content h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        /* Subheading styles */
+        .blog-content h2 {
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+
+        .blog-content h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        /* Paragraph styling */
+        .blog-content p {
+            font-size: 1rem;
+            margin-bottom: 15px;
+            padding: 0 15px;
+        }
+
+        /* For any text that needs to be right aligned */
+        .blog-content .text-end {
+            text-align: right;
+        }
+
+        /* Blockquote styling */
+        .blog-content blockquote {
+            font-size: 1.25rem;
+            padding: 15px;
+            margin: 20px 0;
+            border-left: 5px solid #B8945C;
+            background-color: #f7f7f7;
+            color: #555;
+            font-style: italic;
+            position: relative;
+        }
+
+            .blog-content blockquote::before {
+                content: "“";
+                font-size: 2rem;
+                color: #B8945C;
+                position: absolute;
+                top: -10px;
+                left: 10px;
+            }
+
+            .blog-content blockquote p {
+                margin: 0;
+            }
+
+            .blog-content blockquote a {
+                color: #B8945C;
+                text-decoration: none;
+            }
+
+                .blog-content blockquote a:hover {
+                    text-decoration: underline;
+                }
+
+        /* Code styling for inline code blocks */
+        .blog-content code {
+            background-color: #f8f9fa;
+            padding: 0 4px;
+            font-family: 'Courier New', monospace;
+            border-radius: 3px;
+        }
+
+        /* Image Styling */
+        .blog-content img {
+            max-width: 100%;
+            height: auto;
+            margin: 20px 0;
+        }
+
+        /* Margin for larger sections to give spacing between blocks */
+        .blog-content .mb-4 {
+            margin-bottom: 30px;
+        }
+
+        .blog-content .mt-4 {
+            margin-top: 30px;
+        }
+
+        .blog-content .text-center {
+            text-align: center;
+        }
+
+        /* Lists (unordered/ordered) */
+        .blog-content ul,
+        .blog-content ol {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        .blog-content li {
+            margin-bottom: 8px;
+        }
+
+        /* Styling for images and text side by side */
+        .blog-content .media {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+            .blog-content .media img {
+                max-width: 200px;
+                margin-right: 20px;
+            }
+
+        .blog-content .media-body {
+            flex-grow: 1;
+        }
+
+        /* Styling for the sidebar subscribe form */
+        .blog-content .card {
+            margin-bottom: 20px;
+            border: none;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .blog-content .card-body {
+            padding: 15px;
+        }
+
+            .blog-content .card-body input {
+                width: 100%;
+                padding: 10px;
+                margin-bottom: 10px;
+                border-radius: 5px;
+                border: 1px solid #ddd;
+            }
+
+            .blog-content .card-body button {
+                background-color: #B8945C;
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                font-size: 1rem;
+                cursor: pointer;
+                border-radius: 0;
+            }
+
+                .blog-content .card-body button:hover {
+                    background-color: #a07b4b;
+                }
+</style>
+
+
+
+<div class="container mt-5 mb-5">
+    <!-- Breadcrumbs -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item"><a href="/Blog">Blog</a></li>
+            <li class="breadcrumb-item active" aria-current="page"><a href="/Blog/@Model.id/@Uri.EscapeDataString(Model.title ?? "")">@Model.title</a></li>
+        </ol>
+    </nav>
+
+    <!-- Blog Title -->
+    <h1 class="mb-4 display-4">@Model.title</h1>
+
+    <div class="row">
+        <!-- Left Column: List of Blogs -->
+        <div class="col-md-8 blog-content">
+
+            <!-- Blog Featured Image -->
+            @if (!string.IsNullOrEmpty(Model.headerImage))
+            {
+            <div class="mb-4">
+                <img src="/File/@Model.headerImage" alt="Blog Post Image" class="img-fluid rounded" />
+            </div>
+            }
+
+            @Html.Raw(Model.html)
+
+        </div>
+
+        <!-- Right Column: Email Signup and Blog Topics -->
+        <aside class="col-md-4">
+            <!-- Email Signup -->
+            @await Html.PartialAsync("_BlogEmailSignUp")
+
+            <!-- Recent Posts -->
+            @await Html.PartialAsync("_BlogRecentPosts")
+
+
+            <!-- Blog Topics -->
+            @await Html.PartialAsync("_BlogCategories")
+        </aside>
+    </div>
+</div>

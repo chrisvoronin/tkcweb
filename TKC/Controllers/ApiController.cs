@@ -8,13 +8,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using TKC.Data;
 using TKC.Models;
+using System.Text.RegularExpressions;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace TKC.Controllers
 {
     [ApiController]
-    [Authorize]
+    
     [Route("[controller]")]
     public class ApiController : Controller
     {
@@ -29,6 +30,33 @@ namespace TKC.Controllers
             _api = api;
         }
 
+        [HttpGet("join")]
+        public async Task<IActionResult> JoinMailingList([FromQuery] string email)
+        {
+
+            if (!IsValidEmail(email))
+                return Ok();
+
+            try
+            {
+                EmailSignUp signUp = new EmailSignUp() { email = email, dateCreated = DateTime.Now };
+                _context.EmailSignUps.Add(signUp);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return Ok();
+        }
+
+        public static bool IsValidEmail(string email)
+        {
+            var regex = new Regex(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
+            return regex.IsMatch(email);
+        }
+
+        [Authorize]
         [HttpPost("upload")]
         public async Task<IActionResult> UploadFile(IFormFile file)
         {

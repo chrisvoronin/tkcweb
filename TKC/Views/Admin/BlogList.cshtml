@@ -1,0 +1,329 @@
+﻿@model List<BlogCategory>
+
+<section class="sermon_video_btn">
+    <div class="container">
+        <div class="inner_video_sermons">
+
+            <div class="info_sermon_img">
+                <img src="/img/book.svg" alt="" class="me-3">
+                <span>Blog</span>
+            </div>
+            <div class="sermons_btns">
+                <a class="all_btns_sermon" asp-controller="Admin" asp-action="Index">Admin Home</a>
+                <a class="all_btns_sermon_highlight" href="/Admin/Blog/New">Add New</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="container mt-5 mb-5 pb-5">
+
+    <h1 class="mb-4">Blog Management</h1>
+
+    <!-- Search & Filter -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <input type="text" class="form-control" id="searchInput" placeholder="Search Blog Posts">
+        </div>
+        <div class="col-md-3">
+            <select class="form-select" id="topicFilter">
+                <option value="">All Topics</option>
+                @foreach (var item in Model)
+                {
+                    <option value="@item.id">@item.name</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-3">
+            <select class="form-select" id="statusFilter">
+                <option value="0">Draft</option>
+                <option value="1">Published</option>
+                <option value="2">Deleted</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button class="btn btn-primary w-100" onclick="filterPosts();">Search</button>
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col-md-4">
+
+        </div>
+        <div class="col-md-6">
+            <label for="fromDate" class="form-label me-3">From</label>
+            <input id="fromDate" name="fromDate" class="form-control" style="width:auto;display:inline-block;" type="date" autocomplete="off" value="" />
+            <label for="toDate" class="form-label ms-3 me-3">To</label>
+            <input id="toDate" name="toDate" class="form-control" style="width:auto;display:inline-block;" type="date" placeholder="To Date" autocomplete="off" value="" />
+        </div>
+
+        <div class="col-md-2">
+            <button class="btn btn-secondary w-100" onclick="clearFilters();">Clear Filters</button>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="row-mb-4 mb-4 mt-4" id="pagination">
+
+        <nav aria-label="Blog pagination">
+            <ul class="pagination pagination-md justify-content-center mt-4" id="pagination_list">
+                <!-- Previous Page -->
+                <li class="page-item disabled">
+                    <a class="page-link" href="?page=1" aria-label="Previous">
+                        <span aria-hidden="true">Previous</span>
+                    </a>
+                </li>
+
+                <!-- Individual Pages -->
+                <li class="page-item active"><a class="page-link" href="?page=1">1</a></li>
+                <li class="page-item"><a class="page-link" href="?page=2">2</a></li>
+                <li class="page-item"><a class="page-link" href="?page=3">3</a></li>
+
+                <!-- Next Page -->
+                <li class="page-item">
+                    <a class="page-link" href="?page=2" aria-label="Next">
+                        <span aria-hidden="true">Next</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <!-- Blog Post List -->
+    <div class="row">
+        <!-- Blog Posts will go here -->
+        <div class="col-md-12 placeholder-glow">
+            @*<button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#blogModal">Add New Blog Post</button>*@
+
+            <!-- Blog Post List -->
+            <div class="list-group" id="bloglistcontainer">
+                <!-- Example Blog Post Item -->
+                <div id="bloglistcontainer">
+                    @for (int i = 0; i < 5; i++)
+                    {
+                        <div class="d-flex mb-4">
+
+                            <div class="placeholder rounded me-3" style="width: 150px; height: 150px;"></div>
+                            <div class="flex-grow-1 ms-3 me-3">
+                                <span class="placeholder col-6"></span>
+                                <span class="placeholder w-75"></span>
+                                <span class="placeholder" style="width: 25%;"></span>
+                                <span class="placeholder col-7"></span>
+                                <span class="placeholder col-4"></span>
+                                <span class="placeholder col-4"></span>
+                                <span class="placeholder col-6"></span>
+                                <span class="placeholder col-8"></span>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        filterPosts();
+    });
+
+    function filterPosts() {
+        goToPage(1);
+    }
+
+    function clearFilters() {
+        $("#searchInput").val("");
+        $("#topicFilter").val("");
+        $("#statusFilter").val("0");
+        $("#fromDate").val("");
+        $("#toDate").val("");
+        filterPosts();
+    }
+
+    function goToPage(page) {
+
+        $("#pagination").hide();
+
+        const text = $("#searchInput").val();
+        const topic = $("#topicFilter").val();
+        const status = $("#statusFilter").val();
+        const fromDate = $("#fromDate").val();
+        const toDate = $("#toDate").val();
+        getBlogPreviewPosts(page, topic, status, text, fromDate, toDate);
+    }
+
+    function buildSearchUri(page, topic, status, text, fromDate, toDate) {
+        const params = new URLSearchParams();
+
+        if (topic.length > 0) params.append('topic', topic);
+        if (status.length > 0) params.append('status', status);
+        if (text.length > 0) params.append('text', text);
+        if (fromDate && fromDate.trim().length > 0) params.append('fromDate', fromDate);
+        if (toDate && toDate.trim().length > 0) params.append('toDate', toDate);
+
+        return `/api/blog/page/${page}?${params.toString()}`;
+    }
+
+    function getBlogPreviewPosts(page, topic, status, text) {
+
+        const uri = buildSearchUri(page, topic, status, text);
+
+        $.ajax({
+            url: uri, // Endpoint URL
+            type: 'GET', // HTTP method
+            dataType: 'json', // Expected response type
+            success: function (response) {
+                // Convert the JSON response into a structured object
+                const pagingInfo = {
+                    totalResults: response.totalResults,
+                    currentPage: response.currentPage,
+                    itemsPerPage: response.itemsPerPage
+                };
+
+                // Map the items (blog posts) from the response to the desired structure
+                const blogPosts = response.items.map(post => ({
+                    id: post.id,
+                    name: post.title,
+                    html: post.html,
+                    categoryId: post.categoryId,
+                    headerImage: post.headerImage,
+                    dateCreated: formatBlogDate(post.dateCreated)
+                }));
+
+                if (blogPosts.length == 0) {
+                    emptyHtml();
+                } else {
+                    updateBlogPreviewsUI(blogPosts);
+                    setupPagingUI(pagingInfo);
+                }
+            },
+            error: function (xhr, status, error) {
+                // Handle errors
+                console.error('Error fetching categories:', error);
+            }
+        });
+    }
+
+    function setupPagingUI(pagingInfo) {
+
+        const totalPages = Math.ceil(pagingInfo.totalResults / pagingInfo.itemsPerPage);
+
+        // no pagination when there is nothing to page
+        if (totalPages == 1)
+            return;
+
+        const container = $('#pagination_list'); // Assuming a container div with this ID
+        container.empty(); // Clear previous content
+
+        var currentPage = pagingInfo.currentPage;
+
+        // previous
+        var prevClss = currentPage == 1 ? 'disabled' : '';
+        const prevItem = `
+                <li class="page-item ${prevClss}">
+                    <a class="page-link" href="#" onclick="goToPage(${currentPage - 1}); return false;" aria-label="Previous">
+                        <span aria-hidden="true">Previous</span>
+                    </a>
+                </li>
+                `;
+        container.append(prevItem);
+
+        // each page
+        var minPage = currentPage - 5;
+        var maxPage = currentPage + 5;
+        minPage = Math.max(1, minPage);
+        maxPage = Math.min(maxPage, totalPages);
+        for (var i = minPage; i <= maxPage; i++) {
+            var pageCss = (currentPage == i) ? 'active' : '';
+            const pageItem = `
+                <li class="page-item ${pageCss}"><a class="page-link" href="#" onclick="goToPage(${i}); return false;">${i}</a></li>
+                `;
+            container.append(pageItem);
+        }
+
+        // next
+        var nextCss = (currentPage == (totalPages)) ? 'disabled' : '';
+        const nextItem = `
+                <li class="page-item ${nextCss}">
+                    <a class="page-link" href="#" onclick="goToPage(${currentPage + 1}); return false;" aria-label="Previous">
+                        <span aria-hidden="true">Next</span>
+                    </a>
+                </li>
+                `;
+        container.append(nextItem);
+
+        //lastly show pagination
+        $("#pagination").show();
+    }
+
+    function emptyHtml() {
+        const blogListContainer = $('#bloglistcontainer'); // Assuming a container div with this ID
+        blogListContainer.empty(); // Clear previous content
+        const blogItem = `
+             <div>
+                There is nothing written here yet.
+            </div>
+            `;
+        blogListContainer.append(blogItem);
+    }
+
+    // Function to update the UI
+    function updateBlogPreviewsUI(blogPosts) {
+        const blogListContainer = $('#bloglistcontainer'); // Assuming a container div with this ID
+        blogListContainer.empty(); // Clear previous content
+
+        blogPosts.forEach(blogPost => {
+
+            var encodedName = encodeURIComponent(blogPost.name);
+
+            var imageHtml = blogPost.headerImage
+                ? `<img src="/File/${blogPost.headerImage}" class="mr-3" alt="Thumbnail" style="width: 150px; height: auto;">`
+                : `
+                    <div class="mr-3" style="width: 150px; height: 150px; position: relative;">
+                        <!-- Background Rectangle -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="150" height="150" viewBox="0 0 150 150" class="placeholder-svg">
+                            <rect width="150" height="150" rx="8" ry="0" style="fill:#f0f0f0;" />
+                        </svg>
+
+                        <!-- Book Icon -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="#B8945C" class="bi bi-book-half" viewBox="0 0 16 16" style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);">
+                            <path d="M1 2.828c.885-.37 2.154-.769 3.388-.893 1.33-.134 2.458.063 3.112.752v9.746c-.935-.53-2.12-.603-3.213-.493-1.18.12-2.37.461-3.287.811zm7.5-.141c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.923c-.918-.35-2.107-.692-3.287-.81-1.094-.111-2.278-.039-3.213.492zM8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783" />
+                        </svg>
+                    </div>
+
+                `;
+
+            var categoryLine = '';
+            if (blogPost.categoryId > 0) {
+                // Get the value of an option in the <select> with id "topicFilter" based on a specific categoryId
+                const categoryName = $("#topicFilter option[value='" + blogPost.categoryId + "']").text();
+                categoryLine = `<p class="fw-bold text-muted">${categoryName}</p>`;
+            }
+            
+
+            const blogItem = `
+             <div class="d-flex mb-4">
+                ${imageHtml}
+                <div class="flex-grow-1 ms-3 me-3">
+                    <h5 class="mt-0">${blogPost.name}</h5>
+                    ${categoryLine}
+                    <p class="text-muted">${blogPost.dateCreated}</p>
+                    <p>${blogPost.html}</p>
+                    <a href="/Admin/Blog/${blogPost.id}" class="btn btn-link p-0">Edit</a>
+                </div>
+            </div>
+            `;
+            blogListContainer.append(blogItem);
+        });
+    }
+
+    function formatBlogDate(dateString) {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+    }</script>
